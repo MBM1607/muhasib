@@ -5,6 +5,7 @@
 <Dashboard>:
 	orientation: "vertical"
 	salah_button_list: salah_button_list
+	spacing: 20
 
 	ActionBar:
 		ActionView:
@@ -17,16 +18,25 @@
 					text: "Settings"
 					on_press: app.open_settings()
 
-	ListView:
-		id: salah_button_list
-		adapter:
-			ListAdapter(
-			args_converter=args_salah_converter,
-			data=["Fajr", "Sunrise", "Zuhr", "Asr", "Maghrib", "Isha"],
-			cls=main.SalahButton,
-			selection_mode="single")
+	BoxLayout:
+		orientation: "horizontal"
+		size_hint_y: 25
 
+		BoxLayout:
+			orientation: "vertical"
+			padding: 20
+			Label:
+				text: "Current Prayer"
+				text_size: self.size
+				halign: "left"
+			Label:
+				text: "Time left"
+				text_size: self.size
+				halign: "left"
+			Label:
+				text_size: self.size
+				halign: "left"
+				text: "Location"
 
-<SalahButton>:
-	size_hint_y: None
-	height: "60dp"
+		Label:
+			text: "Qibla Direction"
