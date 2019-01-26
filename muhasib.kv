@@ -1,0 +1,32 @@
+#: import main main
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+#: import args_salah_converter helpers.args_salah_converter
+
+<Dashboard>:
+	orientation: "vertical"
+	salah_button_list: salah_button_list
+
+	ActionBar:
+		ActionView:
+			use_seperator: True
+			ActionPrevious:
+				title: "Muhasib"
+				with_previous: False
+			ActionOverflow:
+				ActionButton:
+					text: "Settings"
+					on_press: app.open_settings()
+
+	ListView:
+		id: salah_button_list
+		adapter:
+			ListAdapter(
+			args_converter=args_salah_converter,
+			data=["Fajr", "Sunrise", "Zuhr", "Asr", "Maghrib", "Isha"],
+			cls=main.SalahButton,
+			selection_mode="single")
+
+
+<SalahButton>:
+	size_hint_y: None
+	height: "60dp"
