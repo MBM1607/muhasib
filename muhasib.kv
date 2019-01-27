@@ -44,26 +44,29 @@
 
 		BoxLayout:
 			orientation: "vertical"
-			padding: dp(20)
+			padding: dp(10)
+			spacing: dp(5)
 			Label:
 				text: "Current Prayer"
+				font_size: sp(15)
 				color: 0, 0, 0, 1
-				text_size: self.size
 				halign: "left"
 			Label:
 				text: "Time left"
+				font_size: sp(15)
 				color: 0, 0, 0, 1
-				text_size: self.size
 				halign: "left"
 			Label:
-				text_size: self.size
+				text: "Location"
+				font_size: sp(15)
 				color: 0, 0, 0, 1
 				halign: "left"
-				text: "Location"
+				
 
 		Label:
-			color: 0, 0, 0, 1
 			text: "Qibla Direction"
+			font_size: sp(15)
+			color: 0, 0, 0, 1
 
 	RecycleView:
 		id: salah_buttons_list
