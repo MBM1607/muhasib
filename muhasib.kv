@@ -1,11 +1,13 @@
 #: import main main
-#: import ListAdapter kivy.adapters.listadapter.ListAdapter
-#: import args_salah_converter helpers.args_salah_converter
+
+<SalahButton>:
+	background_normal: ""
+	background_color: 0, 51/255, 19/255, 1
+
 
 <Dashboard>:
 	orientation: "vertical"
-	salah_button_list: salah_button_list
-	spacing: 20
+	salah_buttons_list: salah_buttons_list
 
 	ActionBar:
 		ActionView:
@@ -24,7 +26,7 @@
 
 		BoxLayout:
 			orientation: "vertical"
-			padding: 20
+			padding: dp(20)
 			Label:
 				text: "Current Prayer"
 				text_size: self.size
@@ -40,3 +42,18 @@
 
 		Label:
 			text: "Qibla Direction"
+
+	RecycleView:
+		id: salah_buttons_list
+		viewclass: "SalahButton"
+		size_hint_y: 75
+		padding: dp(5)
+		scroll_type: ["content", "bars"]
+		data: [{"text": x} for x in ["Fajr", "Sunrise", "Zuhr", "Asr", "Maghrib", "Isha"]]
+		RecycleBoxLayout:
+			default_size: None, dp(40)
+			default_size_hint: 1, None
+			size_hint_y: None
+			height: self.minimum_height
+			spacing: dp(5)
+			orientation: "vertical"

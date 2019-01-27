@@ -2,6 +2,7 @@
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
 from kivy.properties import ObjectProperty
 
 
@@ -9,6 +10,10 @@ class Dashboard(BoxLayout):
 	""" Class for the main screen of the app """
 
 	salah_buttons_list = ObjectProperty()
+
+
+class SalahButton(Button):
+	pass
 
 
 class MuhasibApp(App):
