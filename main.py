@@ -3,17 +3,18 @@
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, StringProperty
 
 
 class Dashboard(BoxLayout):
 	""" Class for the main screen of the app """
 
 	salah_buttons_list = ObjectProperty()
+	
 
-
-class SalahButton(Button):
-	pass
+class SalahButton(BoxLayout):
+	name = StringProperty()
+	time = StringProperty("0:00")
 
 
 class MuhasibApp(App):
@@ -21,7 +22,6 @@ class MuhasibApp(App):
 	
 	def build(self):
 		return Dashboard()
-
 
 if __name__ == "__main__":
 	MuhasibApp().run()

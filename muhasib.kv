@@ -1,12 +1,31 @@
 #: import main main
 
 <SalahButton>:
-	background_color: 0.3, .51, .19, 1
+	spacing: dp(10)
+	canvas.before:
+		Color:
+			rgba: 0, 0, 0, 1
+		Rectangle:
+			pos: self.pos
+			size: self.size
+
+	Label:
+		text: root.name
+
+	Label:
+		text: root.time
 
 
 <Dashboard>:
 	orientation: "vertical"
 	salah_buttons_list: salah_buttons_list
+
+	canvas.before:
+		Color:
+			rgba: 1, 1, 1, 1
+		Rectangle:
+			pos: self.pos
+			size: self.size
 
 	ActionBar:
 		ActionView:
@@ -28,18 +47,22 @@
 			padding: dp(20)
 			Label:
 				text: "Current Prayer"
+				color: 0, 0, 0, 1
 				text_size: self.size
 				halign: "left"
 			Label:
 				text: "Time left"
+				color: 0, 0, 0, 1
 				text_size: self.size
 				halign: "left"
 			Label:
 				text_size: self.size
+				color: 0, 0, 0, 1
 				halign: "left"
 				text: "Location"
 
 		Label:
+			color: 0, 0, 0, 1
 			text: "Qibla Direction"
 
 	RecycleView:
@@ -48,7 +71,7 @@
 		size_hint_y: 75
 		padding: dp(10)
 		scroll_type: ["content", "bars"]
-		data: [{"text": x} for x in ["Fajr", "Sunrise", "Zuhr", "Asr", "Maghrib", "Isha"]]
+		data: [{"name": x} for x in ["Fajr", "Sunrise", "Zuhr", "Asr", "Maghrib", "Isha"]]
 
 		RecycleBoxLayout:
 			default_size: None, dp(40)
