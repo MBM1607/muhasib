@@ -1,1 +1,1 @@
-""" Module to hold the helper functions """
+''' Module to hold the helper functions '''

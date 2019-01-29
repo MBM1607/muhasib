@@ -36,10 +36,10 @@ import math
 class PrayerTimes():
 	''' A class to hold all the prayer times calculation capabilities '''
 
-	def __init__(self, method = "MWL") :
+	def __init__(self, method = "MWL", time_format="24h") :
 		
-		self.time_format = '24h'
-		self.time_suffixes = ['am', 'pm']
+		self.time_format = time_format
+		self.time_suffixes = ["am", "pm"]
 		self.invalid_time =  '-----'
 		self.num_iterations = 1
 
@@ -97,12 +97,10 @@ class PrayerTimes():
 		self.calc_method = method
 
 	# return prayer times for a given date
-	def get_times(self, date, coords, timezone, dst = 0, format = None):
+	def get_times(self, date, coords, timezone, dst = 0):
 		self.lat = coords[0]
 		self.lng = coords[1]
 		self.elv = coords[2] if len(coords) > 2 else 0
-		if format != None:
-			self.time_format = format
 		if type(date).__name__ == 'date':
 			date = (date.year, date.month, date.day)
 		self.timeZone = timezone + (1 if dst else 0)
@@ -124,7 +122,7 @@ class PrayerTimes():
 		minutes = math.floor((time- hours)* 60)
 		suffix = suffixes[ 0 if hours < 12 else 1 ] if format == '12h' else ''
 		formattedTime = "%02d:%02d" % (hours, minutes) if format == "24h" else "%d:%02d" % ((hours+11)%12+1, minutes)
-		return formattedTime + suffix
+		return formattedTime + " " + suffix
 
 
 	#---------------------- Calculation Functions -----------------------
