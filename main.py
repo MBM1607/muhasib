@@ -1,6 +1,8 @@
 ''' Main python file for running and defining the app object. '''
 
 from datetime import date
+import time
+import requests
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -22,7 +24,7 @@ class Dashboard(BoxLayout):
 	
 	# Update the prayer times
 	def update_prayer_times(self):
-		prayer_times = self.prayer_times.get_times(date.today(), (34.1687502, 73.2214982, 1214), 5)
+		prayer_times = self.prayer_times.get_times(date.today())
 		self.salah_buttons_list.data = [{"name": name.capitalize(), "time": time} for name, time in prayer_times.items()]
 
 	
@@ -39,11 +41,37 @@ class MuhasibApp(App):
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 
+		# https://stackoverflow.com/a/10854983/9159700
+		timezone = time.timezone if time.localtime().tm_isdst == 0 else time.altzone
+		timezone /= 3600 * -1
+
 		# Initializing the prayer times
-		self.prayer_times = PrayerTimes()
+		coords = self.get_geolocation("Haripur")
+		self.prayer_times = PrayerTimes(timezone=timezone, coords=coords)
 		self.methods = {data["name"]: method for method, data in self.prayer_times.methods.items()}
 	
-	# Function which 
+	# Get the longitude, latitude and elevation of a place
+	def get_geolocation(self, place):
+		latitude, longitude, altitude = 0.0, 0.0, 0.0
+
+		# Use the locationiq api for geocode
+		try:
+			params = {"key": "f2b114be03b247", "q": place, "format": "json"}
+			response = requests.get("https://us1.locationiq.com/v1/search.php", params=params).json()[0]
+			latitude, longitude = response["lat"], response["lon"]
+		except Exception as e:
+			print("loctioniq api get request failed", e)
+
+		# Use the jawg-labs api for altitude
+		try:
+			url = f"https://api.jawg.io/elevations?locations={latitude},{longitude}&access-token=qKEjwRnew0P72dTdvugpdyEiz77iu9WRyB4tFlhxLHAqOZChB5nTfufUnqhZtYJh"
+			altitude = requests.get(url).json()[0]["elevation"]
+		except Exception as e:
+			print("jawg-labs api get request failed", e)
+
+		return float(latitude), float(longitude), float(altitude)
+
+	# Create configuration file
 	def build_config(self, config):
 		config.setdefaults("Prayer Times", {"calc_method": "Karachi", "time_format": "24h"})
 

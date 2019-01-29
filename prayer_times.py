@@ -36,12 +36,16 @@ import math
 class PrayerTimes():
 	''' A class to hold all the prayer times calculation capabilities '''
 
-	def __init__(self, method = "MWL", time_format="24h") :
+	def __init__(self, method="MWL", time_format="24h", timezone=0, coords=(34.1687502, 73.2214982, 1214)) :
 		
 		self.time_format = time_format
+		self.timezone = timezone
 		self.time_suffixes = ["am", "pm"]
 		self.invalid_time =  '-----'
 		self.num_iterations = 1
+		self.lat = coords[0]
+		self.lng = coords[1]
+		self.elv = coords[2] if len(coords) > 2 else 0
 
 		self.time_names = {'imsak', 'fajr', 'sunrise', 'dhuhr', 'asr',
 							'sunset', 'maghrib', 'isha', 'midnight'}
@@ -97,13 +101,9 @@ class PrayerTimes():
 		self.calc_method = method
 
 	# return prayer times for a given date
-	def get_times(self, date, coords, timezone, dst = 0):
-		self.lat = coords[0]
-		self.lng = coords[1]
-		self.elv = coords[2] if len(coords) > 2 else 0
+	def get_times(self, date):
 		if type(date).__name__ == 'date':
 			date = (date.year, date.month, date.day)
-		self.timeZone = timezone + (1 if dst else 0)
 		self.jDate = self.julian(date[0], date[1], date[2]) - self.lng / (15 * 24.0)
 		return self.compute_times()
 
@@ -223,9 +223,9 @@ class PrayerTimes():
 	# adjust times in a prayer time array
 	def adjust_times(self, times):
 		params = self.settings
-		tzAdjust = self.timeZone - self.lng / 15.0
+		tz_adjust = self.timezone - self.lng / 15.0
 		for t in times.keys():
-			times[t] += tzAdjust
+			times[t] += tz_adjust
 
 		if params['highLats'] != 'None':
 			times = self.adjust_high_lats(times)
@@ -243,9 +243,9 @@ class PrayerTimes():
 		return times
 
 	# get asr shadow factor
-	def asr_factor(self, asrParam):
+	def asr_factor(self, asr_param):
 		methods = {'Standard': 1, 'Hanafi': 2}
-		return methods[asrParam] if asrParam in methods else self.eval(asrParam)
+		return methods[asr_param] if asr_param in methods else self.eval(asr_param)
 
 	# return sun angle for sunset/sunrise
 	def rise_set_angle(self, elevation = 0):
@@ -337,10 +337,3 @@ class PrayerTimes():
 			return a
 		a = a - mode * (math.floor(a / mode))
 		return a + mode if a < 0 else a
-	
-if __name__ == "__main__":
-	from datetime import date
-	print('Prayer Times for today in Waterloo/Canada\n'+ ('='* 41))
-	times = PrayerTimes().get_times(date.today(), (43, -80), -5)
-	for i in ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha', 'Midnight']:
-		print(i+ ': '+ times[i.lower()])
