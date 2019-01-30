@@ -1,6 +1,6 @@
 #: import main main
 
-<SalahButton>:
+<SalahLabel>:
 	spacing: dp(10)
 	canvas.before:
 		Color:
@@ -15,10 +15,12 @@
 	Label:
 		text: root.time
 
-
 <Dashboard>:
 	orientation: "vertical"
-	salah_buttons_list: salah_buttons_list
+	salah_list: salah_list
+	current_prayer: current_prayer
+	prayer_time_left: prayer_time_left
+	location: location
 
 	canvas.before:
 		Color:
@@ -46,19 +48,23 @@
 			orientation: "vertical"
 			padding: dp(10)
 			spacing: dp(5)
+
 			Label:
+				id: current_prayer
 				text: "Current Prayer"
-				font_size: sp(15)
+				font_size: sp(20)
 				color: 0, 0, 0, 1
 				halign: "left"
 			Label:
+				id: prayer_time_left
 				text: "Time left"
-				font_size: sp(15)
+				font_size: sp(20)
 				color: 0, 0, 0, 1
 				halign: "left"
 			Label:
+				id: location
 				text: "Location"
-				font_size: sp(15)
+				font_size: sp(20)
 				color: 0, 0, 0, 1
 				halign: "left"
 				
@@ -69,8 +75,8 @@
 			color: 0, 0, 0, 1
 
 	RecycleView:
-		id: salah_buttons_list
-		viewclass: "SalahButton"
+		id: salah_list
+		viewclass: "SalahLabel"
 		size_hint_y: .75
 		padding: dp(10)
 		scroll_type: ["content", "bars"]

@@ -15,21 +15,35 @@ from prayer_times import PrayerTimes
 class Dashboard(BoxLayout):
 	''' Class for the main screen of the app '''
 
-	salah_buttons_list = ObjectProperty()
+	salah_list = ObjectProperty()
+	current_prayer = ObjectProperty()
+	prayer_time_left = ObjectProperty()
+	location = ObjectProperty()
+
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
-		self.prayer_times = App.get_running_app().prayer_times
+		
+		self.app = App.get_running_app()
+		self.location.text = self.app.location
+		self.prayer_times = self.app.prayer_times
 		self.update_prayer_times()
 	
 	# Update the prayer times
-	def update_prayer_times(self):
+	def update_prayer_times(self, time_format="", calc_method=""):
+		if not time_format:
+			time_format = self.app.config.getdefault("Prayer Times", "time_format", "24h")
+		if not calc_method:
+			calc_method = self.app.config.getdefault("Prayer Times", "calc_method", "Karachi")
+
+		self.prayer_times.time_format = time_format
+		self.prayer_times.set_method(self.app.methods[calc_method])
 		prayer_times = self.prayer_times.get_times(date.today())
-		self.salah_buttons_list.data = [{"name": name.capitalize(), "time": time} for name, time in prayer_times.items()]
+		self.salah_list.data = [{"name": name.capitalize(), "time": time} for name, time in prayer_times.items()]
 
 	
 
-class SalahButton(BoxLayout):
+class SalahLabel(BoxLayout):
 	name = StringProperty()
 	time = StringProperty("0:00")
 
@@ -41,12 +55,15 @@ class MuhasibApp(App):
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 
+		# Get the current location by prompting the user
+		self.location = "Haripur Khyber Pakhtunkhwa Pakistan"
+
 		# https://stackoverflow.com/a/10854983/9159700
 		timezone = time.timezone if time.localtime().tm_isdst == 0 else time.altzone
 		timezone /= 3600 * -1
 
 		# Initializing the prayer times
-		coords = self.get_geolocation("Haripur")
+		coords = self.get_geolocation(self.location)
 		self.prayer_times = PrayerTimes(timezone=timezone, coords=coords)
 		self.methods = {data["name"]: method for method, data in self.prayer_times.methods.items()}
 	
@@ -77,7 +94,7 @@ class MuhasibApp(App):
 
 	# Build the settings's panel
 	def build_settings(self, settings):
-		settings.add_json_panel("Prayer Times", self.config, data='''
+		settings.add_json_panel("Prayer Times Setting", self.config, data='''
 			[
 				{"type": "options",
 				"title": "Calculation method",
@@ -100,11 +117,9 @@ class MuhasibApp(App):
 	def on_config_change(self, config, section, key, value):
 		if section == "Prayer Times":
 			if key == "calc_method":
-				self.prayer_times.set_method(self.methods[value])
-				self.root.update_prayer_times()
+				self.root.update_prayer_times(calc_method=value)
 			elif key == "time_format":
-				self.prayer_times.time_format = value
-				self.root.update_prayer_times()
+				self.root.update_prayer_times(time_format=value)
 
 	def build(self):
 		return Dashboard()
