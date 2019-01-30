@@ -15,10 +15,16 @@
 	Label:
 		text: root.time
 
+<DashboardLabel@Label>:
+	font_size: sp(15)
+	color: 0, 0, 0, 1
+	halign: "left"
+
 <Dashboard>:
 	orientation: "vertical"
 	salah_list: salah_list
 	current_prayer: current_prayer
+	next_prayer: next_prayer
 	prayer_time_left: prayer_time_left
 	location: location
 
@@ -49,25 +55,18 @@
 			padding: dp(10)
 			spacing: dp(5)
 
-			Label:
+			DashboardLabel:
 				id: current_prayer
 				text: "Current Prayer"
-				font_size: sp(20)
-				color: 0, 0, 0, 1
-				halign: "left"
-			Label:
+			DashboardLabel:
+				id: next_prayer
+				text: "Next Prayer"
+			DashboardLabel:
 				id: prayer_time_left
 				text: "Time left"
-				font_size: sp(20)
-				color: 0, 0, 0, 1
-				halign: "left"
-			Label:
+			DashboardLabel:
 				id: location
-				text: "Location"
-				font_size: sp(20)
-				color: 0, 0, 0, 1
-				halign: "left"
-				
+				text: "Location"	
 
 		Label:
 			text: "Qibla Direction"

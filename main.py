@@ -1,6 +1,6 @@
 ''' Main python file for running and defining the app object. '''
 
-from datetime import date
+from datetime import datetime, date
 import time
 import requests
 
@@ -39,9 +39,8 @@ class Dashboard(BoxLayout):
 		self.prayer_times.time_format = time_format
 		self.prayer_times.set_method(self.app.methods[calc_method])
 		prayer_times = self.prayer_times.get_times(date.today())
-		self.salah_list.data = [{"name": name.capitalize(), "time": time} for name, time in prayer_times.items()]
+		self.salah_list.data = [{"name": name.capitalize(), "time": time} for name, time in prayer_times.items()]		
 
-	
 
 class SalahLabel(BoxLayout):
 	name = StringProperty()
@@ -63,19 +62,25 @@ class MuhasibApp(App):
 		timezone /= 3600 * -1
 
 		# Initializing the prayer times
-		coords = self.get_geolocation(self.location)
+		coords = self.get_geolocation()
 		self.prayer_times = PrayerTimes(timezone=timezone, coords=coords)
 		self.methods = {data["name"]: method for method, data in self.prayer_times.methods.items()}
-	
+
+	# Set the location on all classes
+	def set_location(self, location):
+		self.location = location
+		self.root.location.text = location
+		
 	# Get the longitude, latitude and elevation of a place
-	def get_geolocation(self, place):
+	def get_geolocation(self):
 		latitude, longitude, altitude = 0.0, 0.0, 0.0
 
 		# Use the locationiq api for geocode
 		try:
-			params = {"key": "f2b114be03b247", "q": place, "format": "json"}
-			response = requests.get("https://us1.locationiq.com/v1/search.php", params=params).json()[0]
+			url = f"https://us1.locationiq.com/v1/search.php?q={self.location}&key=f2b114be03b247&format=json"
+			response = requests.get(url).json()[0]
 			latitude, longitude = response["lat"], response["lon"]
+
 		except Exception as e:
 			print("loctioniq api get request failed", e)
 
@@ -83,6 +88,7 @@ class MuhasibApp(App):
 		try:
 			url = f"https://api.jawg.io/elevations?locations={latitude},{longitude}&access-token=qKEjwRnew0P72dTdvugpdyEiz77iu9WRyB4tFlhxLHAqOZChB5nTfufUnqhZtYJh"
 			altitude = requests.get(url).json()[0]["elevation"]
+
 		except Exception as e:
 			print("jawg-labs api get request failed", e)
 

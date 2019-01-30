@@ -45,7 +45,7 @@ class PrayerTimes():
 		self.num_iterations = 1
 		self.lat = coords[0]
 		self.lng = coords[1]
-		self.elv = coords[2] if len(coords) > 2 else 0
+		self.alt = coords[2] if len(coords) > 2 else 0
 
 		self.time_names = {'imsak', 'fajr', 'sunrise', 'dhuhr', 'asr',
 							'sunset', 'maghrib', 'isha', 'midnight'}
@@ -187,10 +187,10 @@ class PrayerTimes():
 
 		imsak   = self.sun_angle_time(self.eval(params['imsak']), times['imsak'], 'ccw')
 		fajr    = self.sun_angle_time(self.eval(params['fajr']), times['fajr'], 'ccw')
-		sunrise = self.sun_angle_time(self.rise_set_angle(self.elv), times['sunrise'], 'ccw')
+		sunrise = self.sun_angle_time(self.rise_set_angle(self.alt), times['sunrise'], 'ccw')
 		dhuhr   = self.mid_day(times['dhuhr'])
 		asr     = self.asr_time(self.asr_factor(params['asr']), times['asr'])
-		sunset  = self.sun_angle_time(self.rise_set_angle(self.elv), times['sunset'])
+		sunset  = self.sun_angle_time(self.rise_set_angle(self.alt), times['sunset'])
 		maghrib = self.sun_angle_time(self.eval(params['maghrib']), times['maghrib'])
 		isha    = self.sun_angle_time(self.eval(params['isha']), times['isha'])
 		return {
