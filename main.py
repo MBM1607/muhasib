@@ -1,6 +1,6 @@
 ''' Main python file for running and defining the app object. '''
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import time
 import requests
 
@@ -18,6 +18,7 @@ class Dashboard(BoxLayout):
 	salah_list = ObjectProperty()
 	current_prayer = ObjectProperty()
 	prayer_time_left = ObjectProperty()
+	next_prayer = ObjectProperty()
 	location = ObjectProperty()
 
 
@@ -26,7 +27,6 @@ class Dashboard(BoxLayout):
 		
 		self.app = App.get_running_app()
 		self.location.text = self.app.location
-		self.prayer_times = self.app.prayer_times
 		self.update_prayer_times()
 	
 	# Update the prayer times
@@ -36,11 +36,39 @@ class Dashboard(BoxLayout):
 		if not calc_method:
 			calc_method = self.app.config.getdefault("Prayer Times", "calc_method", "Karachi")
 
-		self.prayer_times.time_format = time_format
-		self.prayer_times.set_method(self.app.methods[calc_method])
-		prayer_times = self.prayer_times.get_times(date.today())
-		self.salah_list.data = [{"name": name.capitalize(), "time": time} for name, time in prayer_times.items()]		
+		self.app.prayer_times.time_format = time_format
+		self.app.prayer_times.set_method(self.app.methods[calc_method])
+		prayer_data = self.app.prayer_times.get_times(date.today())
+		self.update_prayer_labels(prayer_data)
+		self.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in prayer_data.items()]
 
+	# Change the labels reporting information about prayers
+	def update_prayer_labels(self, prayer_data):
+
+		current_time = datetime.strptime(datetime.strftime(datetime.now(), "%H:%M"), "%H:%M")
+		time_left = timedelta(24)
+		current_prayer = ""
+		next_prayer = ""
+		prayer_names = list(prayer_data.keys())
+		prayer_index = 0
+
+		for n, t in prayer_data.items():
+			if self.app.prayer_times.time_format == "12h":
+				t = datetime.strptime(t, "%I:%M %p")
+				if t < current_time:
+					t += timedelta(1)
+
+			dt = t - current_time
+			if dt < time_left:
+				time_left = dt
+				current_prayer = prayer_names[prayer_index-1]
+				next_prayer = n
+
+			prayer_index += 1
+
+		self.prayer_time_left.text = (datetime.min + dt).time().strftime("%H:%M")	
+		self.current_prayer.text = current_prayer.capitalize()
+		self.next_prayer.text = next_prayer.capitalize()
 
 class SalahLabel(BoxLayout):
 	name = StringProperty()
