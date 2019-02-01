@@ -9,7 +9,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.properties import ObjectProperty, StringProperty
 
-from prayer_times import PrayerTimes
+from scripts.prayer_times import PrayerTimes
+from scripts.calendar import Calendar
 
 
 class Dashboard(BoxLayout):
@@ -66,7 +67,7 @@ class Dashboard(BoxLayout):
 
 			prayer_index += 1
 
-		self.prayer_time_left.text = (datetime.min + dt).time().strftime("%H:%M")	
+		self.prayer_time_left.text = (datetime.min + time_left).time().strftime("%H:%M")	
 		self.current_prayer.text = current_prayer.capitalize()
 		self.next_prayer.text = next_prayer.capitalize()
 
@@ -93,6 +94,8 @@ class MuhasibApp(App):
 		coords = self.get_geolocation()
 		self.prayer_times = PrayerTimes(timezone=timezone, coords=coords)
 		self.methods = {data["name"]: method for method, data in self.prayer_times.methods.items()}
+
+		self.calendar = Calendar()
 
 	# Set the location on all classes
 	def set_location(self, location):
@@ -154,6 +157,10 @@ class MuhasibApp(App):
 				self.root.update_prayer_times(calc_method=value)
 			elif key == "time_format":
 				self.root.update_prayer_times(time_format=value)
+
+	# Open the calendar modal view
+	def open_calendar(self):
+		self.calendar.open()
 
 	def build(self):
 		return Dashboard()

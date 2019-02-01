@@ -1,0 +1,70 @@
+<CalendarLabel@Label>:
+	color: 0, 0, 0, 1
+
+<CalendarButton>:
+	background_color: 14/255, 160/255, 31/255, 1
+	background_normal: ""
+	color: 1, 1, 1, 1
+
+<Empty>:
+	canvas.before:
+		Color:
+			rgba: 153/255, 153/255, 155/255, 0.4
+		Rectangle:
+			pos: self.pos
+			size: self.size
+
+<Calendar>:
+	days: days
+	dates: dates
+
+	BoxLayout:
+		orientation: "vertical"
+
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, 1
+			Rectangle:
+				size: self.size
+				pos: self.pos
+		BoxLayout:
+			orientation: "horizontal"
+			size_hint_y: 0.1
+			CalendarButton:
+				text: "<"
+				on_press: root.previous_month()
+				size_hint_x: 0.1
+			CalendarLabel:
+				text: root.title
+				size_hint_x: 0.8
+			CalendarButton:
+				text: ">"
+				on_press: root.next_month()
+				size_hint_x: 0.1
+		Days:
+			id: days
+			size_hint_y: 0.1
+		Dates:
+			id: dates
+			size_hint_y: 0.8
+
+<Days>:
+	orientation: "horizontal"
+	CalendarLabel:
+		text: root.days[0]
+	CalendarLabel:
+		text: root.days[1]
+	CalendarLabel:
+		text: root.days[2]
+	CalendarLabel:
+		text: root.days[3]
+	CalendarLabel:
+		text: root.days[4]
+	CalendarLabel:
+		text: root.days[5]
+	CalendarLabel:
+		text: root.days[6]
+
+<Dates>:
+	cols: 7
+	spacing: dp(5)
