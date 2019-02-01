@@ -7,15 +7,35 @@ import requests
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.uix.behaviors.button import ButtonBehavior
+from kivy.uix.popup import Popup
+from kivy.properties import ObjectProperty, StringProperty, ListProperty
 
 from scripts.prayer_times import PrayerTimes
 from scripts.calendar import Calendar
 
 
+class PrayerOptions(Popup):
+	''' Popup to be display when a prayer button is released '''
+	prayer = StringProperty()
+
+class PrayerOptionsButton(Button):
+	''' Button to be used on prayer options popup'''
+
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		self.app = App.get_running_app()
+
+	def on_release(self):
+		popup = self.parent.parent.parent.parent
+		self.app.prayer_record[popup.prayer] = self.text
+		print(self.app.prayer_record)
+		popup.dismiss()
+
 class Dashboard(BoxLayout):
 	''' Class for the main screen of the app '''
 
+	times_list = ObjectProperty()
 	salah_list = ObjectProperty()
 	current_prayer = ObjectProperty()
 	prayer_time_left = ObjectProperty()
@@ -41,7 +61,8 @@ class Dashboard(BoxLayout):
 		self.app.prayer_times.set_method(self.app.methods[calc_method])
 		prayer_data = self.app.prayer_times.get_times(date.today())
 		self.update_prayer_labels(prayer_data)
-		self.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in prayer_data.items()]
+		self.times_list.data = [{"name": n.capitalize(), "time": t} for n, t in prayer_data.items()]
+		self.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in prayer_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
 
 	# Change the labels reporting information about prayers
 	def update_prayer_labels(self, prayer_data):
@@ -72,8 +93,22 @@ class Dashboard(BoxLayout):
 		self.next_prayer.text = next_prayer.capitalize()
 
 class SalahLabel(BoxLayout):
+	''' Class used to show salah name and time '''
 	name = StringProperty()
 	time = StringProperty("0:00")
+	background_color = ListProperty((14/255, 160/255, 31/255, 1))
+
+class SalahButton(ButtonBehavior, SalahLabel):
+	''' Button used with salah button on home screen with popup functionality'''
+
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		self.prayer_options = PrayerOptions()
+
+	# On button release open the popup
+	def on_release(self):
+		self.prayer_options.prayer = self.name.lower()
+		self.prayer_options.open()
 
 
 class MuhasibApp(App):
@@ -82,6 +117,10 @@ class MuhasibApp(App):
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
+
+		# Initialize today's prayer's record
+		self.prayer_record = {"fajr": "not_prayed", "dhuhr": "not_prayed", "asr": "not_prayed",
+							"maghrib": "not_prayed", "isha": "not_prayed"}
 
 		# Get the current location by prompting the user
 		self.location = "Haripur Khyber Pakhtunkhwa Pakistan"
