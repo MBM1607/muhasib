@@ -77,8 +77,11 @@ class Dashboard(BoxLayout):
 		for n, t in prayer_data.items():
 			if self.app.prayer_times.time_format == "12h":
 				t = datetime.strptime(t, "%I:%M %p")
-				if t < current_time:
-					t += timedelta(1)
+			else:
+				t = datetime.strptime(t, "%H:%M ")
+
+			if t < current_time:
+				t += timedelta(1)
 
 			dt = t - current_time
 			if dt < time_left:
