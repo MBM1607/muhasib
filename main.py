@@ -9,10 +9,11 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.popup import Popup
-from kivy.properties import ObjectProperty, StringProperty, ListProperty
+from kivy.properties import ObjectProperty, StringProperty, ListProperty, DictProperty
 
 from scripts.prayer_times import PrayerTimes
 from scripts.calendar import Calendar
+from scripts.database import Database
 
 
 class PrayerOptions(Popup):
@@ -29,8 +30,39 @@ class PrayerOptionsButton(Button):
 	def on_release(self):
 		popup = self.parent.parent.parent.parent
 		self.app.prayer_record[popup.prayer] = self.text
-		print(self.app.prayer_record)
 		popup.dismiss()
+
+
+class SalahLabel(BoxLayout):
+	''' Class used to show salah name and time '''
+	name = StringProperty()
+	time = StringProperty("0:00")
+	background_color = ListProperty((14/255, 160/255, 31/255, 1))
+
+
+class SalahButton(ButtonBehavior, SalahLabel):
+	''' Button used with salah button on home screen with popup functionality'''
+	record = StringProperty()
+
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		self.prayer_options = PrayerOptions()
+
+	# On button release open the popup
+	def on_release(self):
+		self.prayer_options.prayer = self.name.lower()
+		self.prayer_options.open()
+
+	def on_record(self, instance, value):
+		if value == "not_prayed":
+			self.background_color = (0, 0, 0, 1)
+		elif value == "Alone":
+			self.background_color = (1, 1, 0, 1)
+		elif value == "Delayed":
+			self.background_color = (1, 0, 0, 1)
+		elif value == "Group":
+			self.background_color = (14/255, 160/255, 31/255, 1)
+
 
 class Dashboard(BoxLayout):
 	''' Class for the main screen of the app '''
@@ -59,10 +91,20 @@ class Dashboard(BoxLayout):
 
 		self.app.prayer_times.time_format = time_format
 		self.app.prayer_times.set_method(self.app.methods[calc_method])
-		prayer_data = self.app.prayer_times.get_times(date.today())
+		prayer_data = self.app.prayer_times.get_times(self.app.today)
 		self.update_prayer_labels(prayer_data)
+		
+		# Populate the lists on the dashboard
 		self.times_list.data = [{"name": n.capitalize(), "time": t} for n, t in prayer_data.items()]
 		self.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in prayer_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
+		for x in self.salah_list.data:
+			x["record"] = self.app.prayer_record[x["name"].lower()]
+
+	# Update the record of salah buttons
+	def update_salah_buttons_record(self):
+		for x in self.salah_list.children[0].children:
+			x.record = self.app.prayer_record[x.name.lower()]
+
 
 	# Change the labels reporting information about prayers
 	def update_prayer_labels(self, prayer_data):
@@ -95,38 +137,30 @@ class Dashboard(BoxLayout):
 		self.current_prayer.text = current_prayer.capitalize()
 		self.next_prayer.text = next_prayer.capitalize()
 
-class SalahLabel(BoxLayout):
-	''' Class used to show salah name and time '''
-	name = StringProperty()
-	time = StringProperty("0:00")
-	background_color = ListProperty((14/255, 160/255, 31/255, 1))
-
-class SalahButton(ButtonBehavior, SalahLabel):
-	''' Button used with salah button on home screen with popup functionality'''
-
-	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
-		self.prayer_options = PrayerOptions()
-
-	# On button release open the popup
-	def on_release(self):
-		self.prayer_options.prayer = self.name.lower()
-		self.prayer_options.open()
-
 
 class MuhasibApp(App):
 	''' Muhasib app object '''
 	use_kivy_settings = False
+	prayer_record = DictProperty()
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 
-		# Initialize today's prayer's record
-		self.prayer_record = {"fajr": "not_prayed", "dhuhr": "not_prayed", "asr": "not_prayed",
-							"maghrib": "not_prayed", "isha": "not_prayed"}
-
 		# Get the current location by prompting the user
 		self.location = "Haripur Khyber Pakhtunkhwa Pakistan"
+
+		# get today's date
+		self.today = date.today()
+
+		# Initialize the database
+		self.database = Database()
+		self.database.create_prayer_record(self.today)
+
+		today_record = self.database.get_prayer_record(self.today)
+
+		# Initialize today's prayer's record
+		self.prayer_record = {"fajr": today_record[2], "dhuhr": today_record[3], "asr": today_record[4],
+							"maghrib": today_record[5], "isha": today_record[6]}
 
 		# https://stackoverflow.com/a/10854983/9159700
 		timezone = time.timezone if time.localtime().tm_isdst == 0 else time.altzone
@@ -143,6 +177,13 @@ class MuhasibApp(App):
 	def set_location(self, location):
 		self.location = location
 		self.root.location.text = location
+
+	# On change of prayer_record store it on the drive
+	def on_prayer_record(self, instance, value):
+		# If their is a window then update the dashboard button's color
+		if self.root:
+			self.root.update_salah_buttons_record()
+		self.database.update_prayer_record(self.today, **self.prayer_record)
 		
 	# Get the longitude, latitude and elevation of a place
 	def get_geolocation(self):
