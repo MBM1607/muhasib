@@ -6,10 +6,14 @@ from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.recycleview import RecycleView
 from kivy.app import App
-from kivy.properties import StringProperty, ListProperty, ObjectProperty
+from kivy.properties import StringProperty, ListProperty, ObjectProperty, BooleanProperty
 
 
-class PrayerOptions(Popup):
+class CustomPopup(Popup):
+	''' Base class for all the popups '''
+	pass
+
+class PrayerOptions(CustomPopup):
 	''' Popup to be display when a prayer button is released '''
 	prayer = StringProperty()
 	base = ObjectProperty()
@@ -37,6 +41,8 @@ class SalahLabel(BoxLayout):
 class SalahButton(ButtonBehavior, SalahLabel):
 	''' Button used with salah button on home screen with popup functionality'''
 	record = StringProperty()
+	base = ObjectProperty()
+	editable = BooleanProperty()
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
@@ -44,18 +50,27 @@ class SalahButton(ButtonBehavior, SalahLabel):
 
 	# On button release open the popup
 	def on_release(self):
-		self.prayer_options.prayer = self.name.lower()
-		self.prayer_options.open()
+		if self.editable:
+			self.prayer_options.prayer = self.name.lower()
+			self.prayer_options.open()
 
 	def on_record(self, instance, value):
 		if value == "not_prayed":
-			self.background_color = (0, 0, 0, 1)
+			self.background_color = (191/255, 69/255, 49/255, 1)
 		elif value == "Alone":
 			self.background_color = (96/255, 170/255, 37/255, 1)
 		elif value == "Delayed":
 			self.background_color =  (209/255, 168/255, 64/255, 1)
 		elif value == "Group":
 			self.background_color = (14/255, 160/255, 31/255, 1)
+
+	def on_base(self, instance, value):
+		self.prayer_options.base = self.base
+
+class DashboardSalahButton(SalahButton):
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		self.prayer_options.base = App.get_running_app()
 
 class ItemsList(RecycleView):
 	''' Class for various lists of items '''

@@ -27,20 +27,16 @@ class Dashboard(BoxLayout):
 		self.update_prayer_times()
 	
 	# Update the prayer times
-	def update_prayer_times(self, time_format="", calc_method=""):
-		if not time_format:
-			time_format = self.app.config.getdefault("Prayer Times", "time_format", "24h")
-		if not calc_method:
-			calc_method = self.app.config.getdefault("Prayer Times", "calc_method", "Karachi")
-
-		self.app.prayer_times.time_format = time_format
+	def update_prayer_times(self):
+		calc_method = self.app.config.getdefault("Prayer Times", "calc_method", "Karachi")
+		self.app.prayer_times.time_format = self.app.config.getdefault("Prayer Times", "time_format", "24h")
 		self.app.prayer_times.set_method(self.app.methods[calc_method])
-		prayer_data = self.app.prayer_times.get_times(self.app.today)
-		self.update_prayer_labels(prayer_data)
+		times_data = self.app.prayer_times.get_times(self.app.today)
+		self.update_prayer_labels(times_data)
 		
 		# Populate the lists on the dashboard
-		self.times_list.data = [{"name": n.capitalize(), "time": t} for n, t in prayer_data.items()]
-		self.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in prayer_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
+		self.times_list.data = [{"name": n.capitalize(), "time": t} for n, t in times_data.items()]
+		self.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in times_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
 		for x in self.salah_list.data:
 			x["record"] = self.app.prayer_record[x["name"].lower()]
 
@@ -51,16 +47,16 @@ class Dashboard(BoxLayout):
 
 
 	# Change the labels reporting information about prayers
-	def update_prayer_labels(self, prayer_data):
+	def update_prayer_labels(self, times_data):
 
 		current_time = datetime.strptime(datetime.strftime(datetime.now(), "%H:%M"), "%H:%M")
 		time_left = timedelta(24)
 		current_prayer = ""
 		next_prayer = ""
-		prayer_names = list(prayer_data.keys())
+		prayer_names = list(times_data.keys())
 		prayer_index = 0
 
-		for n, t in prayer_data.items():
+		for n, t in times_data.items():
 			if self.app.prayer_times.time_format == "12h":
 				t = datetime.strptime(t, "%I:%M %p")
 			else:

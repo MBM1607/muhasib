@@ -36,11 +36,11 @@ class MuhasibApp(App):
 		self.database = Database()
 		self.database.create_prayer_record(self.today)
 
-		today_record = self.database.get_prayer_record(self.today)
+		prayer_record = self.database.get_prayer_record(self.today)
 
 		# Initialize today's prayer's record
-		self.prayer_record = {"fajr": today_record[2], "dhuhr": today_record[3], "asr": today_record[4],
-							"maghrib": today_record[5], "isha": today_record[6]}
+		self.prayer_record = {"fajr": prayer_record[2], "dhuhr": prayer_record[3], "asr": prayer_record[4],
+							"maghrib": prayer_record[5], "isha": prayer_record[6]}
 
 		# https://stackoverflow.com/a/10854983/9159700
 		timezone = time.timezone if time.localtime().tm_isdst == 0 else time.altzone
@@ -117,9 +117,9 @@ class MuhasibApp(App):
 	def on_config_change(self, config, section, key, value):
 		if section == "Prayer Times":
 			if key == "calc_method":
-				self.root.update_prayer_times(calc_method=value)
+				self.root.update_prayer_times()
 			elif key == "time_format":
-				self.root.update_prayer_times(time_format=value)
+				self.root.update_prayer_times()
 
 	# Open the calendar modal view
 	def open_calendar(self):
