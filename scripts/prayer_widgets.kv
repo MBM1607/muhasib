@@ -1,0 +1,58 @@
+<SalahLabel>:
+	spacing: dp(10)
+	canvas.before:
+		Color:
+			rgba: root.background_color
+		Rectangle:
+			pos: self.pos
+			size: self.size
+
+	Label:
+		text: root.name
+
+	Label:
+		text: root.time
+
+<PrayerOptionsButton>:
+	background_image: ""
+	background_color: 14/255, 160/255, 31/255, 1
+
+<PrayerOptions>:
+	background: ""
+	base: app
+	separator_color: 86/255, 86/255, 56/255, 1
+	title_color: 0, 0, 0, 1
+	title_align: "center"
+	title: "Praying way"
+	size_hint: 0.5, 0.3
+	BoxLayout:
+		orientation: "horizontal"
+		PrayerOptionsButton:
+			text: "Group"
+			base: root.base
+			size_hint_y: 0.5
+			pos_hint: {"center_y": 0.5}
+		PrayerOptionsButton:
+			text: "Alone"
+			base: root.base
+			size_hint_y: 0.5
+			pos_hint: {"center_y": 0.5}
+		PrayerOptionsButton:
+			text: "Delayed"
+			base: root.base
+			size_hint_y: 0.5
+			pos_hint: {"center_y": 0.5}
+
+<ItemsList>:
+	padding: dp(10)
+	scroll_type: ["content", "bars"]
+	bar_color: 0, 0, 0, 1
+
+	RecycleBoxLayout:
+		orientation: "vertical"
+		default_size: None, dp(40)
+		default_size_hint: 1, None
+		size_hint_y: None
+		height: self.minimum_height
+		spacing: dp(10)
+		padding: dp(10)

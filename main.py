@@ -1,142 +1,22 @@
 ''' Main python file for running and defining the app object. '''
 
-from datetime import datetime, date, timedelta
+from datetime import date
 import time
 import requests
 
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.behaviors.button import ButtonBehavior
-from kivy.uix.popup import Popup
-from kivy.properties import ObjectProperty, StringProperty, ListProperty, DictProperty
+from kivy.properties import DictProperty
+from kivy.lang.builder import Builder
 
 from scripts.prayer_times import PrayerTimes
 from scripts.calendar import Calendar
 from scripts.database import Database
+from scripts.dashboard import Dashboard
 
 
-class PrayerOptions(Popup):
-	''' Popup to be display when a prayer button is released '''
-	prayer = StringProperty()
-
-class PrayerOptionsButton(Button):
-	''' Button to be used on prayer options popup'''
-
-	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
-		self.app = App.get_running_app()
-
-	def on_release(self):
-		popup = self.parent.parent.parent.parent
-		self.app.prayer_record[popup.prayer] = self.text
-		popup.dismiss()
-
-
-class SalahLabel(BoxLayout):
-	''' Class used to show salah name and time '''
-	name = StringProperty()
-	time = StringProperty("0:00")
-	background_color = ListProperty((14/255, 160/255, 31/255, 1))
-
-
-class SalahButton(ButtonBehavior, SalahLabel):
-	''' Button used with salah button on home screen with popup functionality'''
-	record = StringProperty()
-
-	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
-		self.prayer_options = PrayerOptions()
-
-	# On button release open the popup
-	def on_release(self):
-		self.prayer_options.prayer = self.name.lower()
-		self.prayer_options.open()
-
-	def on_record(self, instance, value):
-		if value == "not_prayed":
-			self.background_color = (0, 0, 0, 1)
-		elif value == "Alone":
-			self.background_color = (1, 1, 0, 1)
-		elif value == "Delayed":
-			self.background_color = (1, 0, 0, 1)
-		elif value == "Group":
-			self.background_color = (14/255, 160/255, 31/255, 1)
-
-
-class Dashboard(BoxLayout):
-	''' Class for the main screen of the app '''
-
-	times_list = ObjectProperty()
-	salah_list = ObjectProperty()
-	current_prayer = ObjectProperty()
-	prayer_time_left = ObjectProperty()
-	next_prayer = ObjectProperty()
-	location = ObjectProperty()
-
-
-	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
-		
-		self.app = App.get_running_app()
-		self.location.text = self.app.location
-		self.update_prayer_times()
-	
-	# Update the prayer times
-	def update_prayer_times(self, time_format="", calc_method=""):
-		if not time_format:
-			time_format = self.app.config.getdefault("Prayer Times", "time_format", "24h")
-		if not calc_method:
-			calc_method = self.app.config.getdefault("Prayer Times", "calc_method", "Karachi")
-
-		self.app.prayer_times.time_format = time_format
-		self.app.prayer_times.set_method(self.app.methods[calc_method])
-		prayer_data = self.app.prayer_times.get_times(self.app.today)
-		self.update_prayer_labels(prayer_data)
-		
-		# Populate the lists on the dashboard
-		self.times_list.data = [{"name": n.capitalize(), "time": t} for n, t in prayer_data.items()]
-		self.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in prayer_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
-		for x in self.salah_list.data:
-			x["record"] = self.app.prayer_record[x["name"].lower()]
-
-	# Update the record of salah buttons
-	def update_salah_buttons_record(self):
-		for x in self.salah_list.children[0].children:
-			x.record = self.app.prayer_record[x.name.lower()]
-
-
-	# Change the labels reporting information about prayers
-	def update_prayer_labels(self, prayer_data):
-
-		current_time = datetime.strptime(datetime.strftime(datetime.now(), "%H:%M"), "%H:%M")
-		time_left = timedelta(24)
-		current_prayer = ""
-		next_prayer = ""
-		prayer_names = list(prayer_data.keys())
-		prayer_index = 0
-
-		for n, t in prayer_data.items():
-			if self.app.prayer_times.time_format == "12h":
-				t = datetime.strptime(t, "%I:%M %p")
-			else:
-				t = datetime.strptime(t, "%H:%M ")
-
-			if t < current_time:
-				t += timedelta(1)
-
-			dt = t - current_time
-			if dt < time_left:
-				time_left = dt
-				current_prayer = prayer_names[prayer_index-1]
-				next_prayer = n
-
-			prayer_index += 1
-
-		self.prayer_time_left.text = (datetime.min + time_left).time().strftime("%H:%M")	
-		self.current_prayer.text = current_prayer.capitalize()
-		self.next_prayer.text = next_prayer.capitalize()
-
+Builder.load_file("scripts/dashboard.kv")
+Builder.load_file("scripts/prayer_widgets.kv")
+Builder.load_file("scripts/calendar.kv")
 
 class MuhasibApp(App):
 	''' Muhasib app object '''

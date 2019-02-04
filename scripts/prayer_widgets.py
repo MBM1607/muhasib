@@ -1,0 +1,62 @@
+''' Module to hold all of the various widgets used for setting and getting information about prayers '''
+
+from kivy.uix.popup import Popup
+from kivy.uix.button import Button
+from kivy.uix.behaviors.button import ButtonBehavior
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.recycleview import RecycleView
+from kivy.app import App
+from kivy.properties import StringProperty, ListProperty, ObjectProperty
+
+
+class PrayerOptions(Popup):
+	''' Popup to be display when a prayer button is released '''
+	prayer = StringProperty()
+	base = ObjectProperty()
+
+class PrayerOptionsButton(Button):
+	''' Button to be used on prayer options popup'''
+	base = ObjectProperty()
+
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+
+	def on_release(self):
+		popup = self.parent.parent.parent.parent
+		self.base.prayer_record[popup.prayer] = self.text
+		popup.dismiss()
+
+
+class SalahLabel(BoxLayout):
+	''' Class used to show salah name and time '''
+	name = StringProperty()
+	time = StringProperty("0:00")
+	background_color = ListProperty((14/255, 160/255, 31/255, 1))
+
+
+class SalahButton(ButtonBehavior, SalahLabel):
+	''' Button used with salah button on home screen with popup functionality'''
+	record = StringProperty()
+
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		self.prayer_options = PrayerOptions()
+
+	# On button release open the popup
+	def on_release(self):
+		self.prayer_options.prayer = self.name.lower()
+		self.prayer_options.open()
+
+	def on_record(self, instance, value):
+		if value == "not_prayed":
+			self.background_color = (0, 0, 0, 1)
+		elif value == "Alone":
+			self.background_color = (96/255, 170/255, 37/255, 1)
+		elif value == "Delayed":
+			self.background_color =  (209/255, 168/255, 64/255, 1)
+		elif value == "Group":
+			self.background_color = (14/255, 160/255, 31/255, 1)
+
+class ItemsList(RecycleView):
+	''' Class for various lists of items '''
+	pass
