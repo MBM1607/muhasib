@@ -3,6 +3,7 @@
 from datetime import date
 import time
 import requests
+from requests_cache import install_cache
 
 from kivy.app import App
 from kivy.properties import DictProperty
@@ -129,4 +130,5 @@ class MuhasibApp(App):
 		return Dashboard()
 
 if __name__ == "__main__":
+	install_cache(cache_name="muhasib", backend="sqlite")
 	MuhasibApp().run()
