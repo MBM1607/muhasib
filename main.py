@@ -91,36 +91,39 @@ class MuhasibApp(App):
 
 	# Create configuration file
 	def build_config(self, config):
-		config.setdefaults("Prayer Times", {"calc_method": "Karachi", "time_format": "24h"})
+		config.setdefaults("Prayer Settings", {"calc_method": "Karachi", "time_format": "24h", "asr_factor": "Standard"})
 
 	# Build the settings's panel
 	def build_settings(self, settings):
 		settings.add_json_panel("Prayer Times Setting", self.config, data='''
 			[
 				{"type": "options",
-				"title": "Calculation method",
-				"section": "Prayer Times",
+				"title": "Prayer time conventions",
+				"section": "Prayer Settings",
 				"key": "calc_method",
 				"options": ["Muslim World League", "Islamic Society of North America (ISNA)", "Egyptian General Authority of Survey",
 							"Umm Al-Qura University, Makkah", "University of Islamic Sciences, Karachi", "Institute of Geophysics, University of Tehran",
 							"Shia Ithna-Ashari, Leva Institute, Qum"]
 				},
 				{"type": "options",
-				"title": "Time Format",
-				"section": "Prayer Times",
+				"title": "Time format",
+				"section": "Prayer Settings",
 				"key": "time_format",
 				"options": ["24h", "12h"]
+				},
+				{"type": "options",
+				"title": "Asr calculation",
+				"section": "Prayer Settings",
+				"key": "asr_factor",
+				"options": ["Standard", "Hanafi"]
 				}
 			]'''
 			)
 
 	# React when configuration is changed in settings
 	def on_config_change(self, config, section, key, value):
-		if section == "Prayer Times":
-			if key == "calc_method":
-				self.root.update_prayer_times()
-			elif key == "time_format":
-				self.root.update_prayer_times()
+		if section == "Prayer Settings":
+			self.root.update_prayer_times()
 
 	# Open the calendar modal view
 	def open_calendar(self):

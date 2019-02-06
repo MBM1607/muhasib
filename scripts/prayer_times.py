@@ -100,6 +100,9 @@ class PrayerTimes():
 		self.settings.update(self.methods[method]["params"])
 		self.calc_method = method
 
+	def set_asr(self, asr):
+		self.settings.update({"asr": asr})
+
 	# return prayer times for a given date
 	def get_times(self, date):
 		if type(date).__name__ == 'date':
