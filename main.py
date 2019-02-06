@@ -21,6 +21,7 @@ Builder.load_file("scripts/calendar.kv")
 
 class MuhasibApp(App):
 	''' Muhasib app object '''
+
 	use_kivy_settings = False
 	prayer_record = DictProperty()
 
@@ -48,26 +49,27 @@ class MuhasibApp(App):
 		timezone /= 3600 * -1
 
 		# Initializing the prayer times
-		coords = self.get_geolocation()
-		self.prayer_times = PrayerTimes(timezone=timezone, coords=coords)
+		self.prayer_times = PrayerTimes(timezone=timezone, coords=self.get_geolocation())
 		self.methods = {data["name"]: method for method, data in self.prayer_times.methods.items()}
 
+		# Initializing calendar to be opened
 		self.calendar = Calendar()
 
-	# Set the location on all classes
 	def set_location(self, location):
+		''' Set the location on all classes '''
 		self.location = location
 		self.root.location.text = location
 
-	# On change of prayer_record store it on the drive
 	def on_prayer_record(self, instance, value):
+		''' On change of prayer_record store it on the drive '''
+
 		# If their is a window then update the dashboard button's color
 		if self.root:
 			self.root.update_salah_buttons_record()
 		self.database.update_prayer_record(self.today, **self.prayer_record)
 		
-	# Get the longitude, latitude and elevation of a place
 	def get_geolocation(self):
+		''' Get the longitude, latitude and elevation of a place '''
 		latitude, longitude, altitude = 0.0, 0.0, 0.0
 
 		# Use the locationiq api for geocode
@@ -89,12 +91,13 @@ class MuhasibApp(App):
 
 		return float(latitude), float(longitude), float(altitude)
 
-	# Create configuration file
 	def build_config(self, config):
+		''' Create configuration file '''
 		config.setdefaults("Prayer Settings", {"calc_method": "Karachi", "time_format": "24h", "asr_factor": "Standard"})
 
-	# Build the settings's panel
 	def build_settings(self, settings):
+		''' Build the settings's panel '''
+
 		settings.add_json_panel("Prayer Times Setting", self.config, data='''
 			[
 				{"type": "options",
@@ -120,13 +123,13 @@ class MuhasibApp(App):
 			]'''
 			)
 
-	# React when configuration is changed in settings
 	def on_config_change(self, config, section, key, value):
+		''' React when configuration is changed in settings '''
 		if section == "Prayer Settings":
 			self.root.update_prayer_times()
 
-	# Open the calendar modal view
 	def open_calendar(self):
+		''' Open the calendar modal view '''
 		self.calendar.open()
 
 	def build(self):

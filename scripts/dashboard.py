@@ -17,6 +17,7 @@ class Dashboard(BoxLayout):
 	prayer_time_left = ObjectProperty()
 	next_prayer = ObjectProperty()
 	location = ObjectProperty()
+	qibla_direction = ObjectProperty()
 
 
 	def __init__(self, **kwargs):
@@ -26,8 +27,9 @@ class Dashboard(BoxLayout):
 		self.location.text = self.app.location
 		self.update_prayer_times()
 	
-	# Update the prayer times
 	def update_prayer_times(self):
+		''' Update the prayer times '''
+		
 		self.app.prayer_times.time_format = self.app.config.getdefault("Prayer Settings", "time_format", "24h")
 		calc_method = self.app.config.getdefault("Prayer Settings", "calc_method", "Muslim World League")
 		self.app.prayer_times.set_method(self.app.methods[calc_method])
@@ -35,6 +37,7 @@ class Dashboard(BoxLayout):
 
 		times_data = self.app.prayer_times.get_times(self.app.today)
 		self.update_prayer_labels(times_data)
+		self.set_qibla_direction()
 		
 		# Populate the lists on the dashboard
 		self.times_list.data = [{"name": n.capitalize(), "time": t} for n, t in times_data.items()]
@@ -42,14 +45,15 @@ class Dashboard(BoxLayout):
 		for x in self.salah_list.data:
 			x["record"] = self.app.prayer_record[x["name"].lower()]
 
-	# Update the record of salah buttons
 	def update_salah_buttons_record(self):
+		''' Update the record of salah buttons '''
+
 		for x in self.salah_list.children[0].children:
 			x.record = self.app.prayer_record[x.name.lower()]
 
 
-	# Change the labels reporting information about prayers
 	def update_prayer_labels(self, times_data):
+		''' Change the labels reporting information about prayers '''
 
 		current_time = datetime.strptime(datetime.strftime(datetime.now(), "%H:%M"), "%H:%M")
 		time_left = timedelta(24)
@@ -78,3 +82,13 @@ class Dashboard(BoxLayout):
 		self.prayer_time_left.text = (datetime.min + time_left).time().strftime("%H:%M")	
 		self.current_prayer.text = current_prayer.capitalize()
 		self.next_prayer.text = next_prayer.capitalize()
+
+	def set_qibla_direction(self):
+		''' Set the qibla direction from current position '''
+
+		qibla_direction = self.app.prayer_times.get_qibla()
+
+		if qibla_direction < 0:
+			self.qibla_direction.text = f"{abs(qibla_direction)} from North towards West"
+		else:
+			self.qibla_direction.text = f"{qibla_direction} from North towards East"

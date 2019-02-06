@@ -95,23 +95,24 @@ class PrayerTimes():
 		self.set_method(method)
 
 
-	# Set the method of measuring prayer time
 	def set_method(self, method):
+		''' Set the method of measuring prayer time '''
 		self.settings.update(self.methods[method]["params"])
 		self.calc_method = method
 
 	def set_asr(self, asr):
+		''' Set the asr juristic calculation method '''
 		self.settings.update({"asr": asr})
 
-	# return prayer times for a given date
 	def get_times(self, date):
+		''' Return prayer times for a given date '''
 		if type(date).__name__ == 'date':
 			date = (date.year, date.month, date.day)
 		self.jDate = self.julian(date[0], date[1], date[2]) - self.lng / (15 * 24.0)
 		return self.compute_times()
 
-	# convert float time to the given format (see time_formats)
 	def get_formatted_time(self, time, format, suffixes = None):
+		''' Convert float time to the given format (see time_formats) '''
 		if math.isnan(time):
 			return self.invalid_time
 		if format == 'Float':
@@ -130,13 +131,14 @@ class PrayerTimes():
 
 	#---------------------- Calculation Functions -----------------------
 
-	# compute mid-day time
 	def mid_day(self, time):
+		''' Compute mid-day time '''
 		eqt = self.sun_position(self.jDate + time)[1]
 		return self.fixhour(12 - eqt)
 
-	# compute the time at which sun reaches a specific angle below horizon
 	def sun_angle_time(self, angle, time, direction = None):
+		''' Compute the time at which sun reaches a specific angle below horizon '''
+
 		try:
 			decl = self.sun_position(self.jDate + time)[0]
 			noon = self.mid_day(time)
@@ -146,15 +148,16 @@ class PrayerTimes():
 		except ValueError:
 			return float('nan')
 
-	# compute asr time
 	def asr_time(self, factor, time):
+		''' Compute asr time '''
 		decl = self.sun_position(self.jDate + time)[0]
 		angle = -self.arccot(factor + self.tan(abs(self.lat - decl)))
 		return self.sun_angle_time(angle, time)
 
-	# compute declination angle of sun and equation of time
-	# Ref: http://aa.usno.navy.mil/faq/docs/SunApprox.php
 	def sun_position(self, jd):
+		''' Compute declination angle of sun and equation of time
+	  		Ref: http://aa.usno.navy.mil/faq/docs/SunApprox.php '''
+
 		D = jd - 2451545.0
 		g = self.fixangle(357.529 + 0.98560028* D)
 		q = self.fixangle(280.459 + 0.98564736* D)
@@ -169,9 +172,10 @@ class PrayerTimes():
 
 		return (decl, eqt)
 
-	# convert Gregorian date to Julian day
-	# Ref: Astronomical Algorithms by Jean Meeus
 	def julian(self, year, month, day):
+		''' Convert Gregorian date to Julian day
+			Ref: Astronomical Algorithms by Jean Meeus '''
+
 		if month <= 2:
 			year -= 1
 			month += 12
@@ -183,8 +187,8 @@ class PrayerTimes():
 
 	#---------------------- Compute Prayer Times -----------------------
 
-	# compute prayer times at given julian date
 	def compute_prayer_times(self, times):
+		''' Compute prayer times at given julian date '''
 		times = self.day_portion(times)
 		params = self.settings
 
@@ -201,8 +205,8 @@ class PrayerTimes():
 			'asr': asr, 'sunset': sunset, 'maghrib': maghrib, 'isha': isha
 		}
 
-	# compute prayer times
 	def compute_times(self):
+		''' Compute prayer times '''
 		times = {
 			'imsak': 5, 'fajr': 5, 'sunrise': 6, 'dhuhr': 12,
 			'asr': 13, 'sunset': 18, 'maghrib': 18, 'isha': 18
@@ -223,8 +227,8 @@ class PrayerTimes():
 		times = self.tune_times(times)
 		return self.modify_formats(times)
 
-	# adjust times in a prayer time array
 	def adjust_times(self, times):
+		''' Adjust times in a prayer time array '''
 		params = self.settings
 		tz_adjust = self.timezone - self.lng / 15.0
 		for t in times.keys():
@@ -245,30 +249,31 @@ class PrayerTimes():
 
 		return times
 
-	# get asr shadow factor
 	def asr_factor(self, asr_param):
+		''' Get asr shadow factor '''
 		methods = {'Standard': 1, 'Hanafi': 2}
 		return methods[asr_param] if asr_param in methods else self.eval(asr_param)
 
-	# return sun angle for sunset/sunrise
 	def rise_set_angle(self, elevation = 0):
+		''' Return sun angle for sunset/sunrise '''
 		elevation = 0 if elevation == None else elevation
 		return 0.833 + 0.0347 * math.sqrt(elevation) # an approximation
 
-	# apply offsets to the times
 	def tune_times(self, times):
+		''' Apply offsets to the times '''
 		for name in times.keys():
 			times[name] += self.offset[name] / 60.0
 		return times
 
-	# convert times to given time format
 	def modify_formats(self, times):
+		''' Convert times to given time format '''
 		for name in times.keys():
 			times[name] = self.get_formatted_time(times[name], self.time_format)
 		return times
 
-	# adjust times for locations in higher latitudes
 	def adjust_high_lats(self, times):
+		''' Adjust times for locations in higher latitudes '''
+
 		params = self.settings
 		nightTime = self.time_diff(times['sunset'], times['sunrise']) # sunset to sunrise
 		times['imsak'] = self.adjust_HL_time(times['imsak'], times['sunrise'], self.eval(params['imsak']), nightTime, 'ccw')
@@ -277,16 +282,18 @@ class PrayerTimes():
 		times['maghrib'] = self.adjust_HL_time(times['maghrib'], times['sunset'], self.eval(params['maghrib']), nightTime)
 		return times
 
-	# adjust a time for higher latitudes
 	def adjust_HL_time(self, time, base, angle, night, direction = None):
+		''' Adjust a time for higher latitudes '''
+
 		portion = self.night_portion(angle, night)
 		diff = self.time_diff(time, base) if direction == 'ccw' else self.time_diff(base, time)
 		if math.isnan(time) or diff > portion:
 			time = base + (-portion if direction == 'ccw' else portion)
 		return time
 
-	# the night portion used for adjusting times in higher latitudes
 	def night_portion(self, angle, night):
+		''' The night portion used for adjusting times in higher latitudes '''
+
 		method = self.settings['highLats']
 		portion = 1/2.0  # midnight
 		if method == 'AngleBased':
@@ -295,8 +302,8 @@ class PrayerTimes():
 			portion = 1/7.0
 		return portion * night
 
-	# convert hours to day portions
 	def day_portion(self, times):
+		''' Convert hours to day portions '''
 		for i in times:
 			times[i] /= 24.0
 		return times
@@ -304,19 +311,29 @@ class PrayerTimes():
 
 	#---------------------- Misc Functions -----------------------
 
-	# compute the difference between two times
 	def time_diff(self, time1, time2):
+		''' Compute the difference between two times '''
 		return self.fixhour(time2- time1)
 
-	# convert given string into a number
 	def eval(self, st):
+		''' Convert given string into a number '''
 		if isinstance(st, str):
 			return float(st.split()[0])
 		return st
 
-	# detect if input contains 'min'
 	def is_min(self, arg):
+		''' Detect if input contains 'min' '''
 		return isinstance(arg, str) and arg.find('min') > -1
+
+	def get_qibla(self):
+		''' Get the qibla direction from current position '''
+		qaba_lat = 21.423333
+		qaba_lon = 39.823333
+
+		numerator = self.sin(qaba_lon - self.lng)
+		denominator = (self.cos(self.lat) * self.tan(qaba_lat)) - (self.sin(self.lat) * self.cos(qaba_lon - self.lng))
+
+		return round(self.arctan2(numerator, denominator))
 
 
 	#----------------- Degree-Based Math Functions -------------------

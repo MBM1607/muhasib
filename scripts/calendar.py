@@ -44,7 +44,7 @@ class DateButton(CalendarButton):
 						"maghrib": prayer_record[5], "isha": prayer_record[6]}
 
 	# Display the popup with prayer record of the date
-	def on_press(self):	
+	def on_press(self):
 		times_data = self.app.prayer_times.get_times(self.date)
 		self.popup.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in times_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
 		for x in self.popup.salah_list.data:

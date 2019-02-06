@@ -40,6 +40,7 @@ class SalahLabel(BoxLayout):
 
 class SalahButton(ButtonBehavior, SalahLabel):
 	''' Button used with salah button on home screen with popup functionality'''
+
 	record = StringProperty()
 	base = ObjectProperty()
 	editable = BooleanProperty()
@@ -48,13 +49,14 @@ class SalahButton(ButtonBehavior, SalahLabel):
 		super().__init__(**kwargs)
 		self.prayer_options = PrayerOptions()
 
-	# On button release open the popup
 	def on_release(self):
+		''' On button release open the popup '''
 		if self.editable:
 			self.prayer_options.prayer = self.name.lower()
 			self.prayer_options.open()
 
 	def on_record(self, instance, value):
+		''' React to prayer record changing '''
 		if value == "not_prayed":
 			self.background_color = (191/255, 69/255, 49/255, 1)
 		elif value == "Alone":
