@@ -17,7 +17,7 @@ from scripts.dashboard import Dashboard
 
 Builder.load_file("scripts/dashboard.kv")
 Builder.load_file("scripts/prayer_widgets.kv")
-Builder.load_file("scripts/calendar.kv")
+#Builder.load_file("scripts/calendar.kv")
 
 class MuhasibApp(App):
 	''' Muhasib app object '''

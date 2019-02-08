@@ -3,7 +3,6 @@
 
 <CalendarButton>:
 	background_color: 14/255, 160/255, 31/255, 1
-	background_normal: ""
 	color: 1, 1, 1, 1
 
 <Empty>:
@@ -22,9 +21,72 @@
 		id: salah_list
 		viewclass: "SalahButton"
 
+<MonthDropDown>:
+	CalendarButton:
+		text: "January"
+		on_release: root.select(1)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "February"
+		on_release: root.select(2)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "March"
+		on_release: root.select(3)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "April"
+		on_release: root.select(4)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "May"
+		on_release: root.select(5)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "June"
+		on_release: root.select(6)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "July"
+		on_release: root.select(7)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "August"
+		on_release: root.select(8)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "September"
+		on_release: root.select(9)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "October"
+		on_release: root.select(10)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "November"
+		on_release: root.select(11)
+		height: dp(40)
+		size_hint_y: None
+	CalendarButton:
+		text: "December"
+		on_release: root.select(12)
+		height: dp(40)
+		size_hint_y: None
+
 <Calendar>:
 	days: days
 	dates: dates
+	month_menu: month
 
 	BoxLayout:
 		orientation: "vertical"
@@ -38,13 +100,29 @@
 		BoxLayout:
 			orientation: "horizontal"
 			size_hint_y: 0.1
+			spacing: dp(10)
 			CalendarButton:
 				text: "<"
 				on_press: root.previous_month()
 				size_hint_x: 0.1
-			CalendarLabel:
-				text: root.title
-				size_hint_x: 0.8
+			BoxLayout:
+				orientation: "horizontal"
+				size_hint_x: 0.4
+				CalendarLabel:
+					text: root.year_menu
+					size_hint_x: 0.8
+				BoxLayout:
+					orientation: "vertical"
+					size_hint_x: 0.2
+					CalendarButton:
+						text: "+"
+						on_press: root.next_year()
+					CalendarButton:
+						text: "-"
+						on_press: root.previous_year()
+			CalendarButton:
+				id: month
+				size_hint_x: 0.4
 			CalendarButton:
 				text: ">"
 				on_press: root.next_month()

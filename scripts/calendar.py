@@ -8,8 +8,12 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, DictProperty
 from kivy.uix.button import Button
+from kivy.uix.dropdown import DropDown
 from kivy.uix.widget import Widget
 from kivy.app import App
+from kivy.lang.builder import Builder
+
+Builder.load_file("scripts/calendar.kv")
 
 from prayer_widgets import CustomPopup
 
@@ -24,6 +28,10 @@ class Empty(Widget):
 
 class CalendarButton(Button):
 	''' Basic button on the calendar screen '''
+	pass
+
+class MonthDropDown(DropDown):
+	''' Drop down list for months '''
 	pass
 
 class DateButton(CalendarButton):
@@ -66,30 +74,53 @@ class DateButton(CalendarButton):
 class Calendar(ModalView):
 	''' Class to hold all the calendar functionality '''
 
-	title = StringProperty("Year Month")
+	year_menu = StringProperty("Year")
+	month_menu = ObjectProperty()
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 		d = datetime.datetime.today()
 		self.year, self.month = d.year, d.month
 		self.populate()
-		
-	# Create the current month and year's calendar
+
+		# Create the dropdown
+		self.month_dropdown = MonthDropDown()
+		self.month_dropdown.container.spacing = 1
+		self.month_dropdown.container.padding = (0, 1, 0, 0)
+		self.month_menu.bind(on_release=self.month_dropdown.open)
+		self.month_dropdown.bind(on_select=self.change_month)
+
 	def populate(self):
+		''' Create the current month and year's calendar '''
 		month = calendar.month(self.year, self.month)
 		month = [x.strip() for x in month.split("\n")]
-		self.title = month[0]
+		self.month_menu.text, self.year_menu = month[0].split()
 		self.days.days = month[1].split()
 		self.dates.populate(self.year, self.month)
 	
-	# Move back one month
 	def previous_month(self):
+		''' Move back one month '''
 		self.year, self.month = calendar.prevmonth(self.year, self.month)
 		self.populate()
 
-	# Move one month forward
 	def next_month(self):
+		''' Move one month forward '''
 		self.year, self.month = calendar.nextmonth(self.year, self.month)
+		self.populate()
+
+	def change_month(self, instance, value):
+		''' Change the month '''
+		self.month = value
+		self.populate()
+
+	def next_year(self):
+		''' Move to next year '''
+		self.year += 1
+		self.populate()
+	
+	def previous_year(self):
+		''' Move to previous year '''
+		self.year -= 1
 		self.populate()
 
 class Days(BoxLayout):
@@ -99,8 +130,8 @@ class Days(BoxLayout):
 class Dates(GridLayout):
 	''' Class to layout the day of a month '''
 
-	# Add the dates
 	def populate(self, year, month):
+		''' Create the dates buttons according to year and month '''
 		cal = self.parent.parent
 		app = App.get_running_app()
 
@@ -108,7 +139,7 @@ class Dates(GridLayout):
 		dates = calendar.monthcalendar(year, month)
 		for i in dates:
 			for j in i:
-				if j == 0:
+				if not j:
 					self.add_widget(Empty())
 				else:
 					date = datetime.date(cal.year, cal.month, int(f"{j}"))
