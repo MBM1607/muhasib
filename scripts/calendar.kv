@@ -110,18 +110,25 @@
 				size_hint_x: 0.4
 				CalendarLabel:
 					text: root.year_menu
+					font_size: sp(20)
 					size_hint_x: 0.8
 				BoxLayout:
 					orientation: "vertical"
 					size_hint_x: 0.2
+					spacing: dp(5)
 					CalendarButton:
 						text: "+"
 						on_press: root.next_year()
+						size_hint_x: 0.8
+						pos_hint: {"center_x": 0.5}
 					CalendarButton:
 						text: "-"
 						on_press: root.previous_year()
+						size_hint_x: 0.8
+						pos_hint: {"center_x": 0.5}
 			CalendarButton:
 				id: month
+				font_size: sp(20)
 				size_hint_x: 0.4
 			CalendarButton:
 				text: ">"

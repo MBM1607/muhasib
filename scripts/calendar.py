@@ -45,14 +45,11 @@ class DateButton(CalendarButton):
 		self.editable = editable
 		self.popup = DatePopup()
 
-		# Get the prayer_record of the date
-		self.app.database.create_prayer_record(self.date)
-		prayer_record = self.app.database.get_prayer_record(self.date)
-		self.prayer_record = {"fajr": prayer_record[2], "dhuhr": prayer_record[3], "asr": prayer_record[4],
-						"maghrib": prayer_record[5], "isha": prayer_record[6]}
-
 	# Display the popup with prayer record of the date
 	def on_press(self):
+		if not self.prayer_record:
+			self.get_prayer_record()
+
 		times_data = self.app.prayer_times.get_times(self.date)
 		self.popup.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in times_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
 		for x in self.popup.salah_list.data:
@@ -60,6 +57,13 @@ class DateButton(CalendarButton):
 			x["base"] = self
 			x["editable"] = self.editable
 		self.popup.open()
+
+	def get_prayer_record(self):
+		''' Get the prayer_record of the date from the database '''
+		self.app.database.create_prayer_record(self.date)
+		prayer_record = self.app.database.get_prayer_record(self.date)
+		self.prayer_record = {"fajr": prayer_record[2], "dhuhr": prayer_record[3], "asr": prayer_record[4],
+							"maghrib": prayer_record[5], "isha": prayer_record[6]}
 
 	# When prayer_record is changed
 	def on_prayer_record(self, instance, value):
