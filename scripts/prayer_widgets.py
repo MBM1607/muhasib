@@ -57,7 +57,7 @@ class SalahButton(ButtonBehavior, SalahLabel):
 
 	def on_record(self, instance, value):
 		''' React to prayer record changing '''
-		if value == "not_prayed":
+		if value == "Not prayed":
 			self.background_color = (191/255, 69/255, 49/255, 1)
 		elif value == "Alone":
 			self.background_color = (96/255, 170/255, 37/255, 1)
