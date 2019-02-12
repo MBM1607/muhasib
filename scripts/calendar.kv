@@ -8,7 +8,7 @@
 <Empty>:
 	canvas.before:
 		Color:
-			rgba: 153/255, 153/255, 155/255, 0.4
+			rgba: 153/255, 153/255, 153/255, 0.4
 		Rectangle:
 			pos: self.pos
 			size: self.size
@@ -23,70 +23,70 @@
 
 <MonthDropDown>:
 	CalendarButton:
-		text: "January"
+		text: root.months[0]
 		on_release: root.select(1)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "February"
+		text: root.months[1]
 		on_release: root.select(2)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "March"
+		text: root.months[2]
 		on_release: root.select(3)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "April"
+		text: root.months[3]
 		on_release: root.select(4)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "May"
+		text: root.months[4]
 		on_release: root.select(5)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "June"
+		text: root.months[5]
 		on_release: root.select(6)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "July"
+		text: root.months[6]
 		on_release: root.select(7)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "August"
+		text: root.months[7]
 		on_release: root.select(8)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "September"
+		text: root.months[8]
 		on_release: root.select(9)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "October"
+		text: root.months[9]
 		on_release: root.select(10)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "November"
+		text: root.months[10]
 		on_release: root.select(11)
 		height: dp(40)
 		size_hint_y: None
 	CalendarButton:
-		text: "December"
+		text: root.months[11]
 		on_release: root.select(12)
 		height: dp(40)
 		size_hint_y: None
 
 <Calendar>:
-	days: days
 	dates: dates
-	month_menu: month
+	days: days
+	month_menu: month_menu
 
 	BoxLayout:
 		orientation: "vertical"
@@ -127,7 +127,7 @@
 						size_hint_x: 0.8
 						pos_hint: {"center_x": 0.5}
 			CalendarButton:
-				id: month
+				id: month_menu
 				font_size: sp(20)
 				size_hint_x: 0.4
 			CalendarButton:
@@ -139,24 +139,33 @@
 			size_hint_y: 0.1
 		Dates:
 			id: dates
-			size_hint_y: 0.8
-
+			size_hint_y: 0.7
+		BoxLayout:
+			padding: 0, dp(5), 0, 0
+			orientation: "horizontal"
+			size_hint_y: 0.1
+			CalendarButton:
+				text: "To Hijri"
+				on_press: root.convert_to_islamic()
+			CalendarButton:
+				text: "To Gregorian"
+				on_press: root.convert_to_gregorian()
 <Days>:
 	orientation: "horizontal"
 	CalendarLabel:
-		text: root.days[0]
+		text: root.weekdays[0]
 	CalendarLabel:
-		text: root.days[1]
+		text: root.weekdays[1]
 	CalendarLabel:
-		text: root.days[2]
+		text: root.weekdays[2]
 	CalendarLabel:
-		text: root.days[3]
+		text: root.weekdays[3]
 	CalendarLabel:
-		text: root.days[4]
+		text: root.weekdays[4]
 	CalendarLabel:
-		text: root.days[5]
+		text: root.weekdays[5]
 	CalendarLabel:
-		text: root.days[6]
+		text: root.weekdays[6]
 
 <Dates>:
 	cols: 7

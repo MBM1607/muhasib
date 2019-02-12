@@ -130,6 +130,7 @@ class MuhasibApp(App):
 
 	def open_calendar(self):
 		''' Open the calendar modal view '''
+		self.calendar.populate()
 		self.calendar.open()
 
 	def build(self):

@@ -13,10 +13,15 @@ from kivy.uix.widget import Widget
 from kivy.app import App
 from kivy.lang.builder import Builder
 
+from prayer_widgets import CustomPopup
+import convertdate.islamic as islamic
+
 Builder.load_file("scripts/calendar.kv")
 
-from prayer_widgets import CustomPopup
+MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
+		"August", "September", "October", "November", "December"]
 
+WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 class DatePopup(CustomPopup):
 	''' Popup displaying prayer record for each date '''
@@ -32,7 +37,7 @@ class CalendarButton(Button):
 
 class MonthDropDown(DropDown):
 	''' Drop down list for months '''
-	pass
+	months = ListProperty(MONTHS)
 
 class DateButton(CalendarButton):
 	''' Button for a day in a month '''
@@ -45,12 +50,29 @@ class DateButton(CalendarButton):
 		self.editable = editable
 		self.popup = DatePopup()
 
-	# Display the popup with prayer record of the date
+		self.color_button()
+
+	def get_date(self):
+		if self.app.calendar.islamic:
+			date = islamic.to_gregorian(self.date.year, self.date.month, self.date.day)
+			return datetime.date(*date)
+		else:
+			return self.date
+
+	def color_button(self):
+		''' Color the button based on special conditions of the date '''
+
+		if self.get_date() == self.app.today:
+			self.background_color = (191/255, 69/255, 49/255, 1)
+		elif self.get_date().weekday() == 4:
+			self.background_color = (0, 1, 0, 1)
+
 	def on_press(self):
+		'''  Display the popup with prayer record of the date '''
 		if not self.prayer_record:
 			self.get_prayer_record()
 
-		times_data = self.app.prayer_times.get_times(self.date)
+		times_data = self.app.prayer_times.get_times(self.get_date())
 		self.popup.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in times_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
 		for x in self.popup.salah_list.data:
 			x["record"] = self.prayer_record[x["name"].lower()]
@@ -60,17 +82,18 @@ class DateButton(CalendarButton):
 
 	def get_prayer_record(self):
 		''' Get the prayer_record of the date from the database '''
-		self.app.database.create_prayer_record(self.date)
-		prayer_record = self.app.database.get_prayer_record(self.date)
+		self.app.database.create_prayer_record(self.get_date())
+		prayer_record = self.app.database.get_prayer_record(self.get_date())
 		self.prayer_record = {"fajr": prayer_record[2], "dhuhr": prayer_record[3], "asr": prayer_record[4],
 							"maghrib": prayer_record[5], "isha": prayer_record[6]}
 
-	# When prayer_record is changed
 	def on_prayer_record(self, instance, value):
+		''' Refresh the prayer_records when changed '''
 		self.update_salah_buttons_record()
-		self.app.database.update_prayer_record(self.date, **self.prayer_record)
+		self.app.database.update_prayer_record(self.get_date(), **self.prayer_record)
 
 	def update_salah_buttons_record(self):
+		''' Change the record on individual labels '''
 		for x in self.popup.salah_list.children[0].children:
 			x.record = self.prayer_record[x.name.lower()]
 
@@ -80,26 +103,26 @@ class Calendar(ModalView):
 
 	year_menu = StringProperty("Year")
 	month_menu = ObjectProperty()
+	days = ObjectProperty()
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 		d = datetime.datetime.today()
-		self.year, self.month = d.year, d.month
-		self.populate()
+		self.year, self.month, self.day = d.year, d.month, d.day
 
-		# Create the dropdown
+		# Create the dropdown and bind the functionality
 		self.month_dropdown = MonthDropDown()
 		self.month_dropdown.container.spacing = 1
 		self.month_dropdown.container.padding = (0, 1, 0, 0)
 		self.month_menu.bind(on_release=self.month_dropdown.open)
 		self.month_dropdown.bind(on_select=self.change_month)
 
+		self.islamic = False
+
 	def populate(self):
 		''' Create the current month and year's calendar '''
-		month = calendar.month(self.year, self.month)
-		month = [x.strip() for x in month.split("\n")]
-		self.month_menu.text, self.year_menu = month[0].split()
-		self.days.days = month[1].split()
+		self.month_menu.text = self.month_dropdown.months[self.month-1]
+		self.year_menu = str(self.year)
 		self.dates.populate(self.year, self.month)
 	
 	def previous_month(self):
@@ -127,9 +150,26 @@ class Calendar(ModalView):
 		self.year -= 1
 		self.populate()
 
+	def convert_to_islamic(self):
+		''' Converts the gregorian calendar to islamic calendar using current date '''
+		self.month_dropdown.months = islamic.MONTHS
+		self.days.weekdays = islamic.WEEKDAYS
+		self.year, self.month, self.day = islamic.from_gregorian(self.year, self.month, self.day)
+		self.islamic = True
+		self.populate()
+
+	def convert_to_gregorian(self):
+		''' Converts the islamic calendar to gregorian calendar using current date '''
+		self.month_dropdown.months = MONTHS
+		self.days.weekdays = WEEKDAYS
+		self.year, self.month, self.day = islamic.to_gregorian(self.year, self.month, self.day)
+		self.islamic = False
+		self.populate()
+
+
 class Days(BoxLayout):
 	''' Class to layout the day's labels in a month '''
-	days = ListProperty(["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"])
+	weekdays = ListProperty(WEEKDAYS)
 
 class Dates(GridLayout):
 	''' Class to layout the day of a month '''
@@ -140,13 +180,18 @@ class Dates(GridLayout):
 		app = App.get_running_app()
 
 		self.clear_widgets()
-		dates = calendar.monthcalendar(year, month)
+		if cal.islamic:
+			dates = islamic.monthcalendar(year, month)
+		else:
+			dates = calendar.monthcalendar(year, month)
 		for i in dates:
 			for j in i:
 				if not j:
 					self.add_widget(Empty())
 				else:
-					date = datetime.date(cal.year, cal.month, int(f"{j}"))
+					day = int(f"{j}")
+					date = datetime.date(cal.year, cal.month, day)
+					# If date is of the future make the popup uneditable
 					if date > app.today:
 						editable = False
 					else:
