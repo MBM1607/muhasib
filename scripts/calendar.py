@@ -8,13 +8,13 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, DictProperty
 from kivy.uix.button import Button
-from kivy.uix.dropdown import DropDown
-from kivy.uix.widget import Widget
 from kivy.app import App
 from kivy.lang.builder import Builder
 
-from prayer_widgets import CustomPopup
+from custom_widgets import CustomButton, BlackLabel, Empty, CustomPopup, CustomDropDown
+
 import convertdate.islamic as islamic
+
 
 Builder.load_file("scripts/calendar.kv")
 
@@ -23,28 +23,18 @@ MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
+
 class DatePopup(CustomPopup):
 	''' Popup displaying prayer record for each date '''
 	salah_list = ObjectProperty()
 
-class Empty(Widget):
-	''' Empty spot on the calendar '''
-	pass
 
-class CalendarButton(Button):
-	''' Basic button on the calendar screen '''
-	pass
-
-class MonthDropDown(DropDown):
+class MonthDropDown(CustomDropDown):
 	''' Drop down list for months '''
 	months = ListProperty(MONTHS)
 
-	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
-		self.container.spacing = 1
-		self.container.padding = (0, 1, 0, 0)
 
-class DateButton(CalendarButton):
+class DateButton(CustomButton):
 	''' Button for a day in a month '''
 	prayer_record = DictProperty()
 

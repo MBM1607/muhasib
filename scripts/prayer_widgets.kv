@@ -18,12 +18,6 @@
 	background_image: ""
 	background_color: 14/255, 160/255, 31/255, 1
 
-<CustomPopup>:
-	background: ""
-	separator_color: 86/255, 86/255, 56/255, 1
-	title_color: 0, 0, 0, 1
-	title_align: "center"
-
 <PrayerOptions>:
 	title: "Praying way"
 	size_hint: 0.5, 0.3
@@ -44,17 +38,3 @@
 			base: root.base
 			size_hint_y: 0.5
 			pos_hint: {"center_y": 0.5}
-
-<ItemsList>:
-	padding: dp(10)
-	scroll_type: ["content", "bars"]
-	bar_color: 0, 0, 0, 1
-
-	RecycleBoxLayout:
-		orientation: "vertical"
-		default_size: None, dp(40)
-		default_size_hint: 1, None
-		size_hint_y: None
-		height: self.minimum_height
-		spacing: dp(10)
-		padding: dp(10)

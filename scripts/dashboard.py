@@ -6,7 +6,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
 from kivy.app import App
 
-from prayer_widgets import ItemsList
+from custom_widgets import ItemsList
+from prayer_widgets import SalahLabel
 
 class Dashboard(BoxLayout):
 	''' Class for the main screen of the app '''

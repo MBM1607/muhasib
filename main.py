@@ -19,7 +19,6 @@ from scripts.locations import LocationForm
 Builder.load_file("scripts/dashboard.kv")
 Builder.load_file("scripts/prayer_widgets.kv")
 Builder.load_file("scripts/locations.kv")
-#Builder.load_file("scripts/calendar.kv")
 
 class MuhasibApp(App):
 	''' Muhasib app object '''

@@ -3,19 +3,13 @@
 import json
 
 from kivy.uix.modalview import ModalView
-from kivy.uix.button import Button
-from kivy.uix.dropdown import DropDown
 from kivy.properties import ObjectProperty
 from kivy.app import App
 
+from custom_widgets import CustomButton, CustomDropDown
 
-class LocationDropDown(DropDown):
+class LocationDropDown(CustomDropDown):
 	''' Dropdown lists for countries and cities '''
-	
-	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
-		self.container.spacing = 1
-		self.container.padding = (0, 1, 0, 0)
 
 	def dismiss(self):
 		''' Clear children when dismissed '''
@@ -23,7 +17,7 @@ class LocationDropDown(DropDown):
 		super().dismiss()
 
 
-class LocationButton(Button):
+class LocationButton(CustomButton):
 	pass
 
 class LocationForm(ModalView):
@@ -35,7 +29,7 @@ class LocationForm(ModalView):
 		super().__init__(**kwargs)
 		self.app = App.get_running_app()
 		
-		with open("cities.json") as cities:
+		with open("data/cities.json") as cities:
 			self.cities = json.load(cities)
 			self.countries = set(self.cities.keys())
 

@@ -4,7 +4,7 @@ class Database():
 	''' Class to handle all the database related functionality '''
 
 	def __init__(self):
-		self.db = sqlite3.connect("muhasib.db", detect_types=sqlite3.PARSE_DECLTYPES)
+		self.db = sqlite3.connect("data/muhasib.db", detect_types=sqlite3.PARSE_DECLTYPES)
 
 	def create_prayer_record(self, date):
 		''' Create a prayer record of this date '''

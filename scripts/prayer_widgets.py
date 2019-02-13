@@ -1,17 +1,13 @@
 ''' Module to hold all of the various widgets used for setting and getting information about prayers '''
 
-from kivy.uix.popup import Popup
 from kivy.uix.button import Button
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.recycleview import RecycleView
 from kivy.app import App
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, BooleanProperty
 
+from custom_widgets import CustomPopup
 
-class CustomPopup(Popup):
-	''' Base class for all the popups '''
-	pass
 
 class PrayerOptions(CustomPopup):
 	''' Popup to be display when a prayer button is released '''
@@ -73,7 +69,3 @@ class DashboardSalahButton(SalahButton):
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 		self.prayer_options.base = App.get_running_app()
-
-class ItemsList(RecycleView):
-	''' Class for various lists of items '''
-	pass

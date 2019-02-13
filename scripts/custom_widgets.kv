@@ -1,0 +1,34 @@
+<CustomButton>:
+	background_color: 14/255, 160/255, 31/255, 1
+	color: 1, 1, 1, 1
+
+<BlackLabel>:
+	color: 0, 0, 0, 1
+
+<Empty>:
+	canvas.before:
+		Color:
+			rgba: 153/255, 153/255, 153/255, 0.4
+		Rectangle:
+			pos: self.pos
+			size: self.size
+
+<ItemsList>:
+	padding: dp(10)
+	scroll_type: ["content", "bars"]
+	bar_color: 0, 0, 0, 1
+
+	RecycleBoxLayout:
+		orientation: "vertical"
+		default_size: None, dp(40)
+		default_size_hint: 1, None
+		size_hint_y: None
+		height: self.minimum_height
+		spacing: dp(10)
+		padding: dp(10)
+
+<CustomPopup>:
+	background: ""
+	separator_color: 86/255, 86/255, 56/255, 1
+	title_color: 0, 0, 0, 1
+	title_align: "center"
