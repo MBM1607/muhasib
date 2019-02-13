@@ -1,0 +1,45 @@
+<LocationForm>:
+	city_text: city_text
+	country_text: country_text
+
+	BoxLayout:
+		orientation: "horizontal"
+
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, 1
+			Rectangle:
+				size: self.size
+				pos: self.pos
+
+		LocationText:
+			id: country_text
+			hint_text: "Country"
+			focus: True
+		LocationText:
+			id: city_text
+			hint_text: "City"
+			on_text_validate: root.set_location()
+		Button:
+			background_color: 14/255, 160/255, 31/255, 1
+			color: 1, 1, 1, 1
+			pos_hint: {'top': 1}
+			text: "Submit"
+			size_hint: 0.2, 0
+			height: dp(50)
+			on_press: root.set_location()
+
+<LocationText@TextInput>:
+	multiline: False
+	hint_text_color: 5/255, 55/255, 11/255, 1
+	selection_color: 5/255, 55/255, 11/255, .5
+	foreground_color: 5/255, 55/255, 11/255, 1
+	pos_hint: {'top': 1}
+	size_hint: 0.4, 0
+	height: dp(50)
+
+<LocationButton>:
+	background_color: 14/255, 160/255, 31/255, 1
+	color: 1, 1, 1, 1
+	size_hint_y: None
+	height: dp(40)

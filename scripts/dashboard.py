@@ -24,8 +24,6 @@ class Dashboard(BoxLayout):
 		super().__init__(**kwargs)
 		
 		self.app = App.get_running_app()
-		self.location.text = self.app.location
-		self.update_prayer_times()
 	
 	def update_prayer_times(self):
 		''' Update the prayer times '''

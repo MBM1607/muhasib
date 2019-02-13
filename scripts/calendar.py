@@ -39,6 +39,11 @@ class MonthDropDown(DropDown):
 	''' Drop down list for months '''
 	months = ListProperty(MONTHS)
 
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		self.container.spacing = 1
+		self.container.padding = (0, 1, 0, 0)
+
 class DateButton(CalendarButton):
 	''' Button for a day in a month '''
 	prayer_record = DictProperty()
@@ -112,8 +117,6 @@ class Calendar(ModalView):
 
 		# Create the dropdown and bind the functionality
 		self.month_dropdown = MonthDropDown()
-		self.month_dropdown.container.spacing = 1
-		self.month_dropdown.container.padding = (0, 1, 0, 0)
 		self.month_menu.bind(on_release=self.month_dropdown.open)
 		self.month_dropdown.bind(on_select=self.change_month)
 
@@ -152,19 +155,21 @@ class Calendar(ModalView):
 
 	def convert_to_islamic(self):
 		''' Converts the gregorian calendar to islamic calendar using current date '''
-		self.month_dropdown.months = islamic.MONTHS
-		self.days.weekdays = islamic.WEEKDAYS
-		self.year, self.month, self.day = islamic.from_gregorian(self.year, self.month, self.day)
-		self.islamic = True
-		self.populate()
+		if not self.islamic:
+			self.month_dropdown.months = islamic.MONTHS
+			self.days.weekdays = islamic.WEEKDAYS
+			self.year, self.month, self.day = islamic.from_gregorian(self.year, self.month, self.day)
+			self.islamic = True
+			self.populate()
 
 	def convert_to_gregorian(self):
 		''' Converts the islamic calendar to gregorian calendar using current date '''
-		self.month_dropdown.months = MONTHS
-		self.days.weekdays = WEEKDAYS
-		self.year, self.month, self.day = islamic.to_gregorian(self.year, self.month, self.day)
-		self.islamic = False
-		self.populate()
+		if self.islamic:
+			self.month_dropdown.months = MONTHS
+			self.days.weekdays = WEEKDAYS
+			self.year, self.month, self.day = islamic.to_gregorian(self.year, self.month, self.day)
+			self.islamic = False
+			self.populate()
 
 
 class Days(BoxLayout):

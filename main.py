@@ -1,22 +1,24 @@
 ''' Main python file for running and defining the app object. '''
 
 from datetime import date
-import time
 import requests
 from requests_cache import install_cache
 
 from kivy.app import App
-from kivy.properties import DictProperty
+from kivy.properties import DictProperty, ListProperty
+from kivy.clock import Clock
 from kivy.lang.builder import Builder
 
 from scripts.prayer_times import PrayerTimes
 from scripts.calendar import Calendar
 from scripts.database import Database
 from scripts.dashboard import Dashboard
+from scripts.locations import LocationForm
 
 
 Builder.load_file("scripts/dashboard.kv")
 Builder.load_file("scripts/prayer_widgets.kv")
+Builder.load_file("scripts/locations.kv")
 #Builder.load_file("scripts/calendar.kv")
 
 class MuhasibApp(App):
@@ -24,12 +26,10 @@ class MuhasibApp(App):
 
 	use_kivy_settings = False
 	prayer_record = DictProperty()
+	location = ListProperty()
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
-
-		# Get the current location by prompting the user
-		self.location = "Haripur Khyber Pakhtunkhwa Pakistan"
 
 		# get today's date
 		self.today = date.today()
@@ -44,21 +44,23 @@ class MuhasibApp(App):
 		self.prayer_record = {"fajr": prayer_record[2], "dhuhr": prayer_record[3], "asr": prayer_record[4],
 							"maghrib": prayer_record[5], "isha": prayer_record[6]}
 
-		# https://stackoverflow.com/a/10854983/9159700
-		timezone = time.timezone if time.localtime().tm_isdst == 0 else time.altzone
-		timezone /= 3600 * -1
+		# Initializing calendar and location form to be opened
+		self.calendar = Calendar()
+		self.location_form = LocationForm()
 
 		# Initializing the prayer times
-		self.prayer_times = PrayerTimes(timezone=timezone, coords=self.get_geolocation())
+		self.prayer_times = PrayerTimes()
 		self.methods = {data["name"]: method for method, data in self.prayer_times.methods.items()}
 
-		# Initializing calendar to be opened
-		self.calendar = Calendar()
+		Clock.schedule_once(self.location_form.open)
 
-	def set_location(self, location):
-		''' Set the location on all classes '''
-		self.location = location
-		self.root.location.text = location
+	def on_location(self, instance, value):
+		''' Change the location text when location is changed '''
+		self.root.location.text = value[0] + ", " + value[1]
+		coords = self.get_geolocation()
+		self.prayer_times.set_coords(coords)
+		self.prayer_times.timezone = self.get_timezone(coords[0], coords[1])
+		self.root.update_prayer_times()
 
 	def on_prayer_record(self, instance, value):
 		''' On change of prayer_record store it on the drive '''
@@ -74,12 +76,12 @@ class MuhasibApp(App):
 
 		# Use the locationiq api for geocode
 		try:
-			url = f"https://us1.locationiq.com/v1/search.php?q={self.location}&key=f2b114be03b247&format=json"
+			url = f"https://us1.locationiq.com/v1/search.php?city={self.location[1]}&country={self.location[0]}&key=f2b114be03b247&format=json"
 			response = requests.get(url).json()[0]
 			latitude, longitude = response["lat"], response["lon"]
 
 		except Exception as e:
-			print("loctioniq api get request failed", e)
+			print("Geocode api get request failed", e)
 
 		# Use the jawg-labs api for altitude
 		try:
@@ -87,9 +89,22 @@ class MuhasibApp(App):
 			altitude = requests.get(url).json()[0]["elevation"]
 
 		except Exception as e:
-			print("jawg-labs api get request failed", e)
+			print("Altitude api get request failed", e)
 
 		return float(latitude), float(longitude), float(altitude)
+
+	def get_timezone(self, lat, lon):
+		''' Get the timezone from longitude and latitude '''
+		timezone = 0
+		try:
+			url = f"https://us1.unwiredlabs.com/v2/timezone.php?token=f2b114be03b247&lat={lat}&lon={lon}"
+			timezone = requests.get(url).json()["timezone"]
+			timezone = timezone["offset_sec"] // 3600
+
+		except Exception as e:
+			print("Timezone api get request failed", e)
+
+		return timezone
 
 	def build_config(self, config):
 		''' Create configuration file '''

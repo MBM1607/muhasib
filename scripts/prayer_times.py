@@ -43,9 +43,7 @@ class PrayerTimes():
 		self.time_suffixes = ["am", "pm"]
 		self.invalid_time =  '-----'
 		self.num_iterations = 1
-		self.lat = coords[0]
-		self.lng = coords[1]
-		self.alt = coords[2] if len(coords) > 2 else 0
+		self.set_coords(coords)
 
 		self.time_names = {'imsak', 'fajr', 'sunrise', 'dhuhr', 'asr',
 							'sunset', 'maghrib', 'isha', 'midnight'}
@@ -100,6 +98,12 @@ class PrayerTimes():
 		self.settings.update(self.methods[method]["params"])
 		self.calc_method = method
 
+	def set_coords(self, coords):
+		''' Set the current coordinates '''
+		self.lat = coords[0]
+		self.lon = coords[1]
+		self.alt = coords[2] if len(coords) > 2 else 0
+
 	def set_asr(self, asr):
 		''' Set the asr juristic calculation method '''
 		self.settings.update({"asr": asr})
@@ -108,7 +112,7 @@ class PrayerTimes():
 		''' Return prayer times for a given date '''
 		if type(date).__name__ == 'date':
 			date = (date.year, date.month, date.day)
-		self.jDate = self.julian(date[0], date[1], date[2]) - self.lng / (15 * 24.0)
+		self.jDate = self.julian(date[0], date[1], date[2]) - self.lon / (15 * 24.0)
 		return self.compute_times()
 
 	def get_formatted_time(self, time, format, suffixes = None):
@@ -230,7 +234,7 @@ class PrayerTimes():
 	def adjust_times(self, times):
 		''' Adjust times in a prayer time array '''
 		params = self.settings
-		tz_adjust = self.timezone - self.lng / 15.0
+		tz_adjust = self.timezone - self.lon / 15.0
 		for t in times.keys():
 			times[t] += tz_adjust
 
@@ -330,8 +334,8 @@ class PrayerTimes():
 		qaba_lat = 21.423333
 		qaba_lon = 39.823333
 
-		numerator = self.sin(qaba_lon - self.lng)
-		denominator = (self.cos(self.lat) * self.tan(qaba_lat)) - (self.sin(self.lat) * self.cos(qaba_lon - self.lng))
+		numerator = self.sin(qaba_lon - self.lon)
+		denominator = (self.cos(self.lat) * self.tan(qaba_lat)) - (self.sin(self.lat) * self.cos(qaba_lon - self.lon))
 
 		return round(self.arctan2(numerator, denominator))
 
