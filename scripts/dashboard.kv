@@ -1,5 +1,7 @@
+#: import Gradient custom_widgets.Gradient
+
 <DashboardLabel@BlackLabel>:
-	font_size: sp(15)
+	font_size: sp(18)
 	halign: "left"
 
 <Dashboard>:
@@ -21,7 +23,12 @@
 
 	ActionBar:
 		background_image: ""
-		background_color: 5/255, 55/255, 11/255, 1
+		canvas:
+			Rectangle:
+				pos: self.pos
+				size: self.size
+				texture: Gradient.vertical((5, 55, 11, 255), (2, 40, 14, 255))
+
 		ActionView:
 			use_seperator: True
 			ActionPrevious:
@@ -64,14 +71,20 @@
 				BlackLabel:
 					id: qibla_direction
 					text: "Qibla Direction"
-					font_size: sp(15)
+					font_size: sp(18)
 
 			ItemsList:
 				id: salah_list
 				viewclass: "DashboardSalahButton"
 				size_hint_y: .75
 
-		ItemsList:
-			id: times_list
-			viewclass: "SalahLabel"
-			size_hint_y: 1
+		BoxLayout:
+			orientation: "vertical"
+			BlackLabel:
+				size_hint_y: 0.1
+				text: "Prayer Times"
+				font_size: sp(20)
+			ItemsList:
+				id: times_list
+				viewclass: "SalahLabel"
+				size_hint_y: 0.9

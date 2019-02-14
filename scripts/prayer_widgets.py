@@ -1,12 +1,11 @@
 ''' Module to hold all of the various widgets used for setting and getting information about prayers '''
 
-from kivy.uix.button import Button
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, BooleanProperty
 
-from custom_widgets import CustomPopup
+from custom_widgets import CustomPopup, CustomButton
 
 
 class PrayerOptions(CustomPopup):
@@ -14,7 +13,7 @@ class PrayerOptions(CustomPopup):
 	prayer = StringProperty()
 	base = ObjectProperty()
 
-class PrayerOptionsButton(Button):
+class PrayerOptionsButton(CustomButton):
 	''' Button to be used on prayer options popup'''
 	base = ObjectProperty()
 
@@ -22,7 +21,7 @@ class PrayerOptionsButton(Button):
 		super().__init__(**kwargs)
 
 	def on_release(self):
-		popup = self.parent.parent.parent.parent
+		popup = self.parent.parent
 		self.base.prayer_record[popup.prayer] = self.text
 		popup.dismiss()
 
@@ -31,7 +30,7 @@ class SalahLabel(BoxLayout):
 	''' Class used to show salah name and time '''
 	name = StringProperty()
 	time = StringProperty("0:00")
-	background_color = ListProperty((14/255, 160/255, 31/255, 1))
+	background_colors = ListProperty(((5, 55, 11, 255), (2, 40, 14, 255)))
 
 
 class SalahButton(ButtonBehavior, SalahLabel):
@@ -54,13 +53,13 @@ class SalahButton(ButtonBehavior, SalahLabel):
 	def on_record(self, instance, value):
 		''' React to prayer record changing '''
 		if value == "Not prayed":
-			self.background_color = (191/255, 69/255, 49/255, 1)
+			self.background_colors = ((191, 69, 49, 255), (161, 39, 19, 255))
 		elif value == "Alone":
-			self.background_color = (96/255, 170/255, 37/255, 1)
+			self.background_colors = ((96, 170, 37, 255), (46, 130, 0, 255))
 		elif value == "Delayed":
-			self.background_color =  (209/255, 168/255, 64/255, 1)
+			self.background_colors =  ((209, 168, 64, 255), (169, 128, 24, 255))
 		elif value == "Group":
-			self.background_color = (14/255, 160/255, 31/255, 1)
+			self.background_colors = ((14, 160, 31, 255), (0, 120, 0, 255))
 
 	def on_base(self, instance, value):
 		self.prayer_options.base = self.base

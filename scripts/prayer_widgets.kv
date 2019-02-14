@@ -1,12 +1,12 @@
+#: import Gradient custom_widgets.Gradient
+
 <SalahLabel>:
 	spacing: dp(10)
-	background_color: 5/255, 55/255, 11/255, 1
 	canvas.before:
-		Color:
-			rgba: root.background_color
 		Rectangle:
 			pos: self.pos
 			size: self.size
+			texture: Gradient.vertical(*root.background_colors)
 
 	Label:
 		text: root.name
@@ -14,15 +14,11 @@
 	Label:
 		text: root.time
 
-<PrayerOptionsButton>:
-	background_image: ""
-	background_color: 14/255, 160/255, 31/255, 1
-
 <PrayerOptions>:
-	title: "Praying way"
 	size_hint: 0.5, 0.3
 	BoxLayout:
 		orientation: "horizontal"
+		padding: dp(10)
 		PrayerOptionsButton:
 			text: "Group"
 			base: root.base

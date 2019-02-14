@@ -1,10 +1,17 @@
 <DatePopup>:
-	title: "Prayer record"
 	salah_list: salah_list
-	size_hint: 0.8, 0.8
-	ItemsList:
-		id: salah_list
-		viewclass: "SalahButton"
+	size_hint: 0.8, 0.6
+	BoxLayout:
+		orientation: "vertical"
+		padding: dp(5)
+		BlackLabel:
+			font_size: sp(18)
+			text: "Prayer Record"
+			size_hint_y: 0.1
+		ItemsList:
+			id: salah_list
+			viewclass: "SalahButton"
+			size_hint_y: 0.9
 
 <MonthDropDown>:
 	CustomButton:
