@@ -46,13 +46,14 @@ class LocationForm(ModalView):
 		''' Open and populate the city dropdown '''
 		text = instance.text.capitalize()
 
-		for city in self.cities[self.country_text.text]:
-			if city.startswith(text) and city != text:
-				btn = LocationButton(text=city)
-				btn.bind(on_release=lambda btn: self.city_dropdown.select(btn.text))
-				self.city_dropdown.add_widget(btn)
+		if self.country_text.text in self.countries:
+			for city in self.cities[self.country_text.text]:
+				if city.startswith(text) and city != text:
+					btn = LocationButton(text=city)
+					btn.bind(on_release=lambda btn: self.city_dropdown.select(btn.text))
+					self.city_dropdown.add_widget(btn)
 
-		self.city_dropdown.open(instance)
+			self.city_dropdown.open(instance)
 
 	def change_city(self, instance, value):
 		''' Change the city based on the value chosen on dropdown '''

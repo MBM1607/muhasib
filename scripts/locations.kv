@@ -22,12 +22,11 @@
 			on_text_validate: root.set_location()
 		Button:
 			background_color: 14/255, 160/255, 31/255, 1
-			color: 1, 1, 1, 1
-			pos_hint: {'top': 1}
 			text: "Submit"
+			on_press: root.set_location()
+			pos_hint: {"top": 1}
 			size_hint: 0.2, 0
 			height: dp(50)
-			on_press: root.set_location()
 
 <LocationText@TextInput>:
 	multiline: False
@@ -40,4 +39,4 @@
 
 <LocationButton>:
 	size_hint_y: None
-	height: dp(40)
+	height: dp(50)

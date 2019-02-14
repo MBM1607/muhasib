@@ -3,6 +3,7 @@
 import calendar
 import datetime
 
+from kivy.uix.widget import Widget
 from kivy.uix.modalview import ModalView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -11,7 +12,7 @@ from kivy.uix.button import Button
 from kivy.app import App
 from kivy.lang.builder import Builder
 
-from custom_widgets import CustomButton, BlackLabel, Empty, CustomPopup, CustomDropDown
+from custom_widgets import CustomButton, BlackLabel, CustomPopup, CustomDropDown
 
 import convertdate.islamic as islamic
 
@@ -58,9 +59,9 @@ class DateButton(CustomButton):
 		''' Color the button based on special conditions of the date '''
 
 		if self.get_date() == self.app.today:
-			self.background_color = (191/255, 69/255, 49/255, 1)
+			self.background_colors = ((191, 69, 49, 220), (161, 39, 19, 255))
 		elif self.get_date().weekday() == 4:
-			self.background_color = (0, 1, 0, 1)
+			self.background_colors = ((14, 160, 31, 220), (0, 120, 0, 255))
 
 	def on_press(self):
 		'''  Display the popup with prayer record of the date '''
@@ -182,7 +183,7 @@ class Dates(GridLayout):
 		for i in dates:
 			for j in i:
 				if not j:
-					self.add_widget(Empty())
+					self.add_widget(Widget())
 				else:
 					day = int(f"{j}")
 					date = datetime.date(cal.year, cal.month, day)

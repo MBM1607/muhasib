@@ -1,17 +1,16 @@
+#: import Gradient custom_widgets.Gradient
+
 <CustomButton>:
-	background_color: 14/255, 160/255, 31/255, 1
-	color: 1, 1, 1, 1
-
-<BlackLabel>:
-	color: 0, 0, 0, 1
-
-<Empty>:
 	canvas.before:
-		Color:
-			rgba: 153/255, 153/255, 153/255, 0.4
 		Rectangle:
 			pos: self.pos
 			size: self.size
+			texture: Gradient.vertical(*root.background_colors)
+
+
+
+<BlackLabel>:
+	color: 0, 0, 0, 1
 
 <ItemsList>:
 	padding: dp(10)

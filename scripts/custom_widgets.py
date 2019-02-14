@@ -3,19 +3,19 @@
 from itertools import chain
 
 from kivy.uix.button import Button
+from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.dropdown import DropDown
 from kivy.uix.label import Label
-from kivy.uix.widget import Widget
 from kivy.uix.modalview import ModalView
 from kivy.graphics.texture import Texture
+from kivy.graphics import Rectangle
 from kivy.uix.recycleview import RecycleView
 from kivy.lang.builder import Builder
+from kivy.properties import ListProperty
 
-Builder.load_file("scripts/custom_widgets.kv")
 
-
-class CustomButton(Button):
-	pass
+class CustomButton(ButtonBehavior, Label):
+	background_colors = ListProperty(((5, 55, 11, 230), (2, 40, 14, 255)))
 
 
 class CustomDropDown(DropDown):
@@ -28,10 +28,6 @@ class CustomDropDown(DropDown):
 class BlackLabel(Label):
 	pass
 
-
-class Empty(Widget):
-	''' Empty spot on the calendar '''
-	pass
 
 class CustomPopup(ModalView):
 	''' Base class for all the popups '''
@@ -58,3 +54,5 @@ class Gradient():
 		buffer = bytes([ int(v)  for v in chain(*args) ])  # flattens
 		texture.blit_buffer(buffer, colorfmt='rgba', bufferfmt='ubyte')
 		return texture
+
+Builder.load_file("scripts/custom_widgets.kv")

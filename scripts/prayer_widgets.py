@@ -15,14 +15,13 @@ class PrayerOptions(CustomPopup):
 
 class PrayerOptionsButton(CustomButton):
 	''' Button to be used on prayer options popup'''
-	base = ObjectProperty()
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 
 	def on_release(self):
 		popup = self.parent.parent
-		self.base.prayer_record[popup.prayer] = self.text
+		popup.base.prayer_record[popup.prayer] = self.text
 		popup.dismiss()
 
 
@@ -30,7 +29,7 @@ class SalahLabel(BoxLayout):
 	''' Class used to show salah name and time '''
 	name = StringProperty()
 	time = StringProperty("0:00")
-	background_colors = ListProperty(((5, 55, 11, 255), (2, 40, 14, 255)))
+	background_colors = ListProperty(((5, 55, 11, 230), (2, 40, 14, 255)))
 
 
 class SalahButton(ButtonBehavior, SalahLabel):
@@ -53,13 +52,13 @@ class SalahButton(ButtonBehavior, SalahLabel):
 	def on_record(self, instance, value):
 		''' React to prayer record changing '''
 		if value == "Not prayed":
-			self.background_colors = ((191, 69, 49, 255), (161, 39, 19, 255))
+			self.background_colors = ((191, 69, 49, 220), (161, 39, 19, 255))
 		elif value == "Alone":
-			self.background_colors = ((96, 170, 37, 255), (46, 130, 0, 255))
+			self.background_colors = ((96, 170, 37, 220), (46, 130, 0, 255))
 		elif value == "Delayed":
-			self.background_colors =  ((209, 168, 64, 255), (169, 128, 24, 255))
+			self.background_colors =  ((209, 168, 64, 220), (169, 128, 24, 255))
 		elif value == "Group":
-			self.background_colors = ((14, 160, 31, 255), (0, 120, 0, 255))
+			self.background_colors = ((14, 160, 31, 220), (0, 120, 0, 255))
 
 	def on_base(self, instance, value):
 		self.prayer_options.base = self.base
