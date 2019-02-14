@@ -79,3 +79,10 @@ class LocationForm(ModalView):
 		if self.country_text.text in self.countries and self.city_text.text in self.cities[self.country_text.text]:
 			self.app.location = [self.city_text.text, self.country_text.text]
 			self.dismiss()
+
+			with open("data/location.json", "r") as json_file:
+				location = json.load(json_file)
+		
+			location["location"] = self.app.location
+			with open("data/location.json", "w") as json_file:
+				json.dump(location, json_file)

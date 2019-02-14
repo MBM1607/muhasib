@@ -3,6 +3,7 @@
 from datetime import date
 import requests
 from requests_cache import install_cache
+import json
 
 from kivy.app import App
 from kivy.properties import DictProperty, ListProperty
@@ -51,7 +52,16 @@ class MuhasibApp(App):
 		self.prayer_times = PrayerTimes()
 		self.methods = {data["name"]: method for method, data in self.prayer_times.methods.items()}
 
-		Clock.schedule_once(self.location_form.open)
+		Clock.schedule_once(self.location_check)
+
+	def location_check(self, *args):
+		''' Check if location is present if not open the form to get location '''
+		with open("data/location.json", "r") as json_file:
+			location = json.load(json_file)
+		if location["location"]:
+			self.location = location["location"]
+		else:
+			self.location_form.open()
 
 	def on_location(self, instance, value):
 		''' Change the location text when location is changed '''
