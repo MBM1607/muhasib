@@ -2,7 +2,6 @@
 
 from itertools import chain
 
-from kivy.uix.button import Button
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.dropdown import DropDown
 from kivy.uix.label import Label

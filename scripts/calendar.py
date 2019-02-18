@@ -24,6 +24,14 @@ MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
+ISLAMIC_WEEKDAYS = ("al-'ahad", "al-'ithnayn",
+					"ath-thalatha'", "al-'arb`a'",
+					"al-khamis", "al-jum`a", "as-sabt")
+
+ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabo' ath-Thani ",
+			"Jumada al-Ula", "Jumada al-Akhirah", "Rajab", "Sha'ban",
+			"Ramadan", "Shawwal", "Dhu al-Qa‘dah", "Dhu al-Hijjah")
+
 
 class DatePopup(CustomPopup):
 	''' Popup displaying prayer record for each date '''
@@ -147,8 +155,8 @@ class Calendar(ModalView):
 	def convert_to_islamic(self):
 		''' Converts the gregorian calendar to islamic calendar using current date '''
 		if not self.islamic:
-			self.month_dropdown.months = islamic.MONTHS
-			self.days.weekdays = islamic.WEEKDAYS
+			self.month_dropdown.months = ISLAMIC_MONTHS
+			self.days.weekdays = ISLAMIC_WEEKDAYS
 			self.year, self.month, self.day = islamic.from_gregorian(self.year, self.month, self.day)
 			self.islamic = True
 			self.populate()
