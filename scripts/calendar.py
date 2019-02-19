@@ -7,7 +7,7 @@ from kivy.uix.widget import Widget
 from kivy.uix.modalview import ModalView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import StringProperty, ListProperty, ObjectProperty, DictProperty
+from kivy.properties import StringProperty, ListProperty, ObjectProperty, DictProperty, BooleanProperty
 from kivy.uix.button import Button
 from kivy.app import App
 from kivy.lang.builder import Builder
@@ -46,6 +46,7 @@ class MonthDropDown(CustomDropDown):
 class DateButton(CustomButton):
 	''' Button for a day in a month '''
 	prayer_record = DictProperty()
+	is_fast = BooleanProperty(False)
 
 	def __init__(self, date=None, editable=True, **kwargs):
 		super().__init__(**kwargs)
@@ -90,6 +91,7 @@ class DateButton(CustomButton):
 		prayer_record = self.app.database.get_prayer_record(self.get_date())
 		self.prayer_record = {"fajr": prayer_record[2], "dhuhr": prayer_record[3], "asr": prayer_record[4],
 							"maghrib": prayer_record[5], "isha": prayer_record[6]}
+		self.is_fast = prayer_record[7]
 
 	def on_prayer_record(self, instance, value):
 		''' Refresh the prayer_records when changed '''

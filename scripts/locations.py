@@ -45,6 +45,8 @@ class LocationForm(ModalView):
 	def city_dropdown_open(self, instance):
 		''' Open and populate the city dropdown '''
 		text = instance.text.capitalize()
+		self.city_text.text = self.city_text.text.capitalize()
+		self.country_text.text = self.country_text.text.capitalize()
 
 		if self.country_text.text in self.countries:
 			for city in self.cities[self.country_text.text]:
@@ -63,6 +65,8 @@ class LocationForm(ModalView):
 	def country_dropdown_open(self, instance):
 		''' Open and populate the country dropdown '''
 		text = instance.text.capitalize()
+		self.country_text.text = self.country_text.text.capitalize()
+
 		for country in self.countries:
 			if country.startswith(text) and country != text:
 				btn = LocationButton(text=country)

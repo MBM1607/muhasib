@@ -13,11 +13,11 @@ class Database():
 		# Only create if record doesn't exists
 		if not self.get_prayer_record(date):
 			cursor = self.db.cursor()
+			# Check for ramazan
 			if islamic.from_gregorian(date.year, date.month, date.day)[1] == 9:
 				fast_required = True
 			else:
 				fast_required = False
-			print(fast_required)
 			cursor.execute("INSERT INTO prayer_record(date, fast_required) VALUES(?, ?)", (date, fast_required))
 			self.db.commit()
 	
