@@ -15,11 +15,13 @@ from scripts.calendar import Calendar
 from scripts.database import Database
 from scripts.dashboard import Dashboard
 from scripts.locations import LocationForm
+from scripts.settings import Settings
 
 
 Builder.load_file("scripts/dashboard.kv")
 Builder.load_file("scripts/prayer_widgets.kv")
 Builder.load_file("scripts/locations.kv")
+Builder.load_file("scripts/settings.kv")
 
 class MuhasibApp(App):
 	''' Muhasib app object '''
@@ -29,7 +31,7 @@ class MuhasibApp(App):
 	location = ListProperty()
 
 	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
+		super(MuhasibApp, self).__init__(**kwargs)
 
 		# get today's date
 		self.today = date.today()
@@ -47,6 +49,7 @@ class MuhasibApp(App):
 		# Initializing calendar and location form to be opened
 		self.calendar = Calendar()
 		self.location_form = LocationForm()
+		self.settings = Settings()
 
 		# Initializing the prayer times
 		self.prayer_times = PrayerTimes()
@@ -54,9 +57,12 @@ class MuhasibApp(App):
 
 		Clock.schedule_once(self.location_check)
 
+		# Functions for all settings (This is the only place i could think of to put them)
+		self.functions = {"Prayer Calculation Method": print, "Location": self.location_form.open, "Asr Factor": print, "Time Format": print}
+
 	def location_check(self, *args):
 		''' Check if location is present if not open the form to get location '''
-		with open("data/location.json", "r") as json_file:
+		with open("data/settings.json", "r") as json_file:
 			location = json.load(json_file)
 		if location["location"]:
 			self.location = location["location"]
@@ -146,6 +152,12 @@ class MuhasibApp(App):
 				}
 			]'''
 			)
+
+	def open_settings(self):
+		''' Overriding the kivy settings screen and changing it with a complete custom system.
+			This functon open the settings screen'''
+
+		self.settings.open()
 
 	def on_config_change(self, config, section, key, value):
 		''' React when configuration is changed in settings '''

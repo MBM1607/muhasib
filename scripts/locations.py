@@ -2,11 +2,10 @@
 
 import json
 
-from kivy.uix.modalview import ModalView
 from kivy.properties import ObjectProperty
 from kivy.app import App
 
-from custom_widgets import CustomButton, CustomDropDown
+from custom_widgets import CustomButton, CustomDropDown, CustomModalView
 
 class LocationDropDown(CustomDropDown):
 	''' Dropdown lists for countries and cities '''
@@ -20,13 +19,13 @@ class LocationDropDown(CustomDropDown):
 class LocationButton(CustomButton):
 	pass
 
-class LocationForm(ModalView):
+class LocationForm(CustomModalView):
 	''' Class for location form to get user's city and country '''
 	city_text = ObjectProperty()
 	country_text = ObjectProperty()
 	
 	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
+		super(LocationForm, self).__init__(**kwargs)
 		self.app = App.get_running_app()
 		
 		with open("data/cities.json") as cities:
@@ -44,9 +43,9 @@ class LocationForm(ModalView):
 
 	def city_dropdown_open(self, instance):
 		''' Open and populate the city dropdown '''
-		text = instance.text.capitalize()
-		self.city_text.text = self.city_text.text.capitalize()
-		self.country_text.text = self.country_text.text.capitalize()
+		text = instance.text.title()
+		self.city_text.text = self.city_text.text.title()
+		self.country_text.text = self.country_text.text.title()
 
 		if self.country_text.text in self.countries:
 			for city in self.cities[self.country_text.text]:
@@ -64,8 +63,8 @@ class LocationForm(ModalView):
 
 	def country_dropdown_open(self, instance):
 		''' Open and populate the country dropdown '''
-		text = instance.text.capitalize()
-		self.country_text.text = self.country_text.text.capitalize()
+		text = instance.text.title()
+		self.country_text.text = self.country_text.text.title()
 
 		for country in self.countries:
 			if country.startswith(text) and country != text:
@@ -85,9 +84,9 @@ class LocationForm(ModalView):
 			self.app.location = [self.city_text.text, self.country_text.text]
 			self.dismiss()
 
-			with open("data/location.json", "r") as json_file:
+			with open("data/settings.json", "r") as json_file:
 				location = json.load(json_file)
 		
 			location["location"] = self.app.location
-			with open("data/location.json", "w") as json_file:
+			with open("data/settings.json", "w") as json_file:
 				json.dump(location, json_file)

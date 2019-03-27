@@ -16,7 +16,7 @@
 
 	canvas.before:
 		Color:
-			rgba: 1, 1, 1, 1
+			rgba: 240/255, 240/255, 240/255, 1
 		Rectangle:
 			pos: self.pos
 			size: self.size
@@ -24,10 +24,12 @@
 	ActionBar:
 		background_image: ""
 		canvas:
+			Color:
+				rgba: 26/255, 102/255, 38/255, 1
+
 			Rectangle:
 				pos: self.pos
 				size: self.size
-				texture: Gradient.vertical((5, 55, 11, 230), (2, 40, 14, 255))
 
 		ActionView:
 			use_seperator: True
@@ -40,9 +42,6 @@
 			ActionButton:
 				text: "Calendar"
 				on_press: app.open_calendar()
-			ActionButton:
-				text: "Set Location"
-				on_press: app.location_form.open()
 
 	Carousel:
 		BoxLayout:

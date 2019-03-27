@@ -2,29 +2,34 @@
 
 <CustomButton>:
 	canvas.before:
+		Color:
+			rgba: root.background_color
 		Rectangle:
 			pos: self.pos
 			size: self.size
-			texture: Gradient.vertical(*root.background_colors)
-
-
 
 <BlackLabel>:
 	color: 0, 0, 0, 1
 
 <ItemsList>:
-	padding: dp(10)
 	scroll_type: ["content", "bars"]
 	bar_color: 0, 0, 0, 1
 
 	RecycleBoxLayout:
 		orientation: "vertical"
-		default_size: None, dp(40)
+		default_size: None, dp(48)
 		default_size_hint: 1, None
 		size_hint_y: None
 		height: self.minimum_height
 		spacing: dp(10)
 		padding: dp(10)
 
-<CustomPopup>:
+<CustomModalView>:
 	background: ""
+	BoxLayout:
+		canvas.before:
+			Color:
+				rgba: 240/255, 240/255, 240/255, 1
+			Rectangle:
+				pos: self.pos
+				size: self.size

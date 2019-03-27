@@ -22,7 +22,7 @@ class Dashboard(BoxLayout):
 
 
 	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
+		super(Dashboard, self).__init__(**kwargs)
 		
 		self.app = App.get_running_app()
 	

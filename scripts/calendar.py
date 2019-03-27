@@ -4,7 +4,6 @@ import calendar
 import datetime
 
 from kivy.uix.widget import Widget
-from kivy.uix.modalview import ModalView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, DictProperty, BooleanProperty
@@ -12,7 +11,7 @@ from kivy.uix.button import Button
 from kivy.app import App
 from kivy.lang.builder import Builder
 
-from custom_widgets import CustomButton, BlackLabel, CustomPopup, CustomDropDown
+from custom_widgets import CustomButton, BlackLabel, CustomModalView, CustomDropDown
 
 import convertdate.islamic as islamic
 
@@ -33,7 +32,7 @@ ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabo' ath-Thani ",
 			"Ramadan", "Shawwal", "Dhu al-Qa‘dah", "Dhu al-Hijjah")
 
 
-class DatePopup(CustomPopup):
+class DatePopup(CustomModalView):
 	''' Popup displaying prayer record for each date '''
 	salah_list = ObjectProperty()
 
@@ -49,7 +48,7 @@ class DateButton(CustomButton):
 	is_fast = BooleanProperty(False)
 
 	def __init__(self, date=None, editable=True, **kwargs):
-		super().__init__(**kwargs)
+		super(DateButton, self).__init__(**kwargs)
 		self.app = App.get_running_app()
 		self.date = date
 		self.editable = editable
@@ -68,9 +67,9 @@ class DateButton(CustomButton):
 		''' Color the button based on special conditions of the date '''
 
 		if self.get_date() == self.app.today:
-			self.background_colors = ((191, 69, 49, 220), (161, 39, 19, 255))
+			self.background_color = (161/255, 39/255, 19/255, 1)
 		elif self.get_date().weekday() == 4:
-			self.background_colors = ((14, 160, 31, 220), (0, 120, 0, 255))
+			self.background_color = (14/255, 160/255, 31/255, 1)
 
 	def on_press(self):
 		'''  Display the popup with prayer record of the date '''
@@ -104,7 +103,7 @@ class DateButton(CustomButton):
 			x.record = self.prayer_record[x.name.lower()]
 
 
-class Calendar(ModalView):
+class Calendar(CustomModalView):
 	''' Class to hold all the calendar functionality '''
 
 	year_menu = StringProperty("Year")
@@ -112,7 +111,7 @@ class Calendar(ModalView):
 	days = ObjectProperty()
 
 	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
+		super(Calendar, self).__init__(**kwargs)
 		d = datetime.datetime.today()
 		self.year, self.month, self.day = d.year, d.month, d.day
 

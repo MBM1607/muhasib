@@ -5,19 +5,16 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, BooleanProperty
 
-from custom_widgets import CustomPopup, CustomButton
+from custom_widgets import CustomModalView, CustomButton
 
 
-class PrayerOptions(CustomPopup):
+class PrayerOptions(CustomModalView):
 	''' Popup to be display when a prayer button is released '''
 	prayer = StringProperty()
 	base = ObjectProperty()
 
 class PrayerOptionsButton(CustomButton):
 	''' Button to be used on prayer options popup'''
-
-	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
 
 	def on_release(self):
 		popup = self.parent.parent
@@ -40,7 +37,7 @@ class SalahButton(ButtonBehavior, SalahLabel):
 	editable = BooleanProperty()
 
 	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
+		super(SalahButton, self).__init__(**kwargs)
 		self.prayer_options = PrayerOptions()
 
 	def on_release(self):
@@ -65,5 +62,5 @@ class SalahButton(ButtonBehavior, SalahLabel):
 
 class DashboardSalahButton(SalahButton):
 	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
+		super(DashboardSalahButton, self).__init__(**kwargs)
 		self.prayer_options.base = App.get_running_app()

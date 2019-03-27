@@ -1,0 +1,45 @@
+<Settings>:
+	settings_list: settings_list
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(10)
+		FloatLayout:
+			size_hint_y: None
+			height: dp(48)
+			canvas.before:
+				Color:
+					rgba: 26/255, 102/255, 38/255, 1
+				Rectangle:
+					pos: self.pos
+					size: self.size
+			CustomButton:
+				text: "Back"
+				on_press: root.dismiss()
+				size_hint_x: 0.1
+				pos_hint: {"top": 1}
+			Label:
+				text: "Settings"
+				pos_hint: {"center_x": 0.5, "top": 1}
+
+		ItemsList:
+			id: settings_list
+			size_hint_y: 0.9
+			viewclass: "SettingsButton"
+
+<SettingsButton>:
+	size_hint_y: None
+	height: dp(48)
+	background_color: 3/255, 61/255, 0/255 ,1
+
+<SettingsList@RecycleView>:
+	scroll_type: ["content", "bars"]
+	bar_color: 0, 0, 0, 1
+
+	RecycleBoxLayout:
+		orientation: "vertical"
+		default_size: None, dp(48)
+		default_size_hint: 1, None
+		size_hint_y: None
+		height: self.minimum_height
+		spacing: dp(10)
+		padding: 0, dp(20), 0, 0
