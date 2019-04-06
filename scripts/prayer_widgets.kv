@@ -10,30 +10,25 @@
 
 	Label:
 		text: root.name
+		font_name: "data/Saira-Regular.ttf"
 
 	Label:
 		text: root.time
+		font_name: "data/Saira-Regular.ttf"
 
 <PrayerOptions>:
-	size_hint: 0.5, 0.2
+	size_hint: 0.5, 0.5
+	title: "Prayer Options"
 	BoxLayout:
-		orientation: "horizontal"
+		orientation: "vertical"
 		spacing: dp(5)
 		padding: dp(5)
 		PrayerOptionsButton:
 			text: "Group"
-			size_hint_y: 0.5
-			pos_hint: {"center_y": 0.5}
 		PrayerOptionsButton:
 			text: "Alone"
-			size_hint_y: 0.5
-			pos_hint: {"center_y": 0.5}
 		PrayerOptionsButton:
 			text: "Delayed"
-			size_hint_y: 0.5
-			pos_hint: {"center_y": 0.5}
 		PrayerOptionsButton:
 			text: "Not prayed"
-			size_hint_y: 0.5
-			pos_hint: {"center_y": 0.5}
 

@@ -29,10 +29,10 @@ class Dashboard(BoxLayout):
 	def update_prayer_times(self):
 		''' Update the prayer times '''
 		
-		self.app.prayer_times.time_format = self.app.config.getdefault("Prayer Settings", "time_format", "24h")
-		calc_method = self.app.config.getdefault("Prayer Settings", "calc_method", "Muslim World League")
+		self.app.prayer_times.time_format = self.app.get_config("time_format", "24h")
+		calc_method = self.app.get_config("calc_method", "Muslim World League")
 		self.app.prayer_times.set_method(self.app.methods[calc_method])
-		self.app.prayer_times.set_asr(self.app.config.getdefault("Prayer Settings", "asr_factor", "Standard"))
+		self.app.prayer_times.set_asr(self.app.get_config("asr_factor", "Standard"))
 
 		times_data = self.app.prayer_times.get_times(self.app.today)
 		self.update_prayer_labels(times_data)

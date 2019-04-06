@@ -1,6 +1,7 @@
 #: import Gradient custom_widgets.Gradient
 
 <CustomButton>:
+	font_name: "data/Saira-Regular.ttf"
 	canvas.before:
 		Color:
 			rgba: root.background_color
@@ -10,6 +11,7 @@
 
 <BlackLabel>:
 	color: 0, 0, 0, 1
+	font_name: "data/Saira-Regular.ttf"
 
 <ItemsList>:
 	scroll_type: ["content", "bars"]
@@ -33,3 +35,15 @@
 			Rectangle:
 				pos: self.pos
 				size: self.size
+
+<CustomPopup>:
+	background: ""
+	title_color: 0, 0, 0, 1
+	title_font: "data/Saira-Regular.ttf"
+	separator_color: 26/255, 102/255, 38/255, 1
+	canvas.before:
+		Color:
+			rgba: 240/255, 240/255, 240/255, 1
+		Rectangle:
+			pos: self.pos
+			size: self.size

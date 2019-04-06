@@ -7,6 +7,7 @@ from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
 from kivy.uix.label import Label
 from kivy.uix.modalview import ModalView
+from kivy.uix.popup import Popup
 from kivy.graphics.texture import Texture
 from kivy.graphics import Rectangle
 from kivy.uix.recycleview import RecycleView
@@ -15,10 +16,12 @@ from kivy.properties import ListProperty
 
 
 class CustomButton(Button):
+	''' Custom appearance for all buttons  '''
 	background_color = ListProperty((26/255, 102/255, 38/255, 1))
 	background_normal = ''
 
 class CustomDropDown(DropDown):
+	''' Custom appearance for all dropdowns  '''
 	def __init__(self, **kwargs):
 		super(CustomDropDown, self).__init__(**kwargs)
 		self.container.spacing = 1
@@ -28,8 +31,11 @@ class BlackLabel(Label):
 	pass
 
 class CustomModalView(ModalView):
-	''' Base class for all the popups '''
+	''' Custom Appearance for all modalviews  '''
 	pass
+
+class CustomPopup(Popup):
+	''' Custom Appearance for all popups '''
 
 class ItemsList(RecycleView):
 	''' Class for various lists of items '''

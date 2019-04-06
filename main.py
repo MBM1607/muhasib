@@ -14,7 +14,6 @@ from scripts.prayer_times import PrayerTimes
 from scripts.calendar import Calendar
 from scripts.database import Database
 from scripts.dashboard import Dashboard
-from scripts.locations import LocationForm
 from scripts.settings import Settings
 
 
@@ -29,6 +28,7 @@ class MuhasibApp(App):
 	use_kivy_settings = False
 	prayer_record = DictProperty()
 	location = ListProperty()
+	icon = 'data/logo.png'
 
 	def __init__(self, **kwargs):
 		super(MuhasibApp, self).__init__(**kwargs)
@@ -48,7 +48,6 @@ class MuhasibApp(App):
 
 		# Initializing calendar and location form to be opened
 		self.calendar = Calendar()
-		self.location_form = LocationForm()
 		self.settings = Settings()
 
 		# Initializing the prayer times
@@ -57,17 +56,12 @@ class MuhasibApp(App):
 
 		Clock.schedule_once(self.location_check)
 
-		# Functions for all settings (This is the only place i could think of to put them)
-		self.functions = {"Prayer Calculation Method": print, "Location": self.location_form.open, "Asr Factor": print, "Time Format": print}
-
 	def location_check(self, *args):
 		''' Check if location is present if not open the form to get location '''
-		with open("data/settings.json", "r") as json_file:
-			location = json.load(json_file)
-		if location["location"]:
-			self.location = location["location"]
+		if self.settings.config["location"]:
+			self.location = self.settings.config["location"]
 		else:
-			self.location_form.open()
+			self.settings.location_form.open()
 
 	def on_location(self, instance, value):
 		''' Change the location text when location is changed '''
@@ -121,48 +115,18 @@ class MuhasibApp(App):
 
 		return timezone
 
-	def build_config(self, config):
-		''' Create configuration file '''
-		config.setdefaults("Prayer Settings", {"calc_method": "Karachi", "time_format": "24h", "asr_factor": "Standard"})
-
-	def build_settings(self, settings):
-		''' Build the settings's panel '''
-
-		settings.add_json_panel("Prayer Times Setting", self.config, data='''
-			[
-				{"type": "options",
-				"title": "Prayer time conventions",
-				"section": "Prayer Settings",
-				"key": "calc_method",
-				"options": ["Muslim World League", "Islamic Society of North America (ISNA)", "Egyptian General Authority of Survey",
-							"Umm Al-Qura University, Makkah", "University of Islamic Sciences, Karachi", "Institute of Geophysics, University of Tehran",
-							"Shia Ithna-Ashari, Leva Institute, Qum"]
-				},
-				{"type": "options",
-				"title": "Time format",
-				"section": "Prayer Settings",
-				"key": "time_format",
-				"options": ["24h", "12h"]
-				},
-				{"type": "options",
-				"title": "Asr calculation",
-				"section": "Prayer Settings",
-				"key": "asr_factor",
-				"options": ["Standard", "Hanafi"]
-				}
-			]'''
-			)
+	def get_config(self, key, defualt):
+		if key in self.settings.config.keys():
+			return self.settings.config[key]
+		else:
+			self.settings.config[key] = defualt
+			return defualt
 
 	def open_settings(self):
 		''' Overriding the kivy settings screen and changing it with a complete custom system.
 			This functon open the settings screen'''
 
 		self.settings.open()
-
-	def on_config_change(self, config, section, key, value):
-		''' React when configuration is changed in settings '''
-		if section == "Prayer Settings":
-			self.root.update_prayer_times()
 
 	def open_calendar(self):
 		''' Open the calendar modal view '''

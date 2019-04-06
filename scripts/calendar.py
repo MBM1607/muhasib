@@ -108,6 +108,7 @@ class Calendar(CustomModalView):
 
 	year_menu = StringProperty("Year")
 	month_menu = ObjectProperty()
+	dates = ObjectProperty()
 	days = ObjectProperty()
 
 	def __init__(self, **kwargs):

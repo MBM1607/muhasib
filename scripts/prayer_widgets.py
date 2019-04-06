@@ -5,10 +5,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, BooleanProperty
 
-from custom_widgets import CustomModalView, CustomButton
+from custom_widgets import CustomPopup, CustomButton
 
 
-class PrayerOptions(CustomModalView):
+class PrayerOptions(CustomPopup):
 	''' Popup to be display when a prayer button is released '''
 	prayer = StringProperty()
 	base = ObjectProperty()
@@ -17,7 +17,7 @@ class PrayerOptionsButton(CustomButton):
 	''' Button to be used on prayer options popup'''
 
 	def on_release(self):
-		popup = self.parent.parent
+		popup = self.parent.parent.parent.parent
 		popup.base.prayer_record[popup.prayer] = self.text
 		popup.dismiss()
 

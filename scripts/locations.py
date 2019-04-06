@@ -30,7 +30,7 @@ class LocationForm(CustomModalView):
 		
 		with open("data/cities.json") as cities:
 			self.cities = json.load(cities)
-			self.countries = set(self.cities.keys())
+			self.countries = sorted(set(self.cities.keys()))
 
 		self.city_dropdown = LocationDropDown()
 		self.country_dropdown = LocationDropDown()
@@ -83,10 +83,5 @@ class LocationForm(CustomModalView):
 		if self.country_text.text in self.countries and self.city_text.text in self.cities[self.country_text.text]:
 			self.app.location = [self.city_text.text, self.country_text.text]
 			self.dismiss()
-
-			with open("data/settings.json", "r") as json_file:
-				location = json.load(json_file)
 		
-			location["location"] = self.app.location
-			with open("data/settings.json", "w") as json_file:
-				json.dump(location, json_file)
+			self.app.settings.config["location"] = self.app.location

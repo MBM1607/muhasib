@@ -19,6 +19,7 @@
 				pos_hint: {"top": 1}
 			Label:
 				text: "Settings"
+				font_name: "data/Saira-Regular.ttf"
 				pos_hint: {"center_x": 0.5, "top": 1}
 
 		ItemsList:
@@ -31,15 +32,32 @@
 	height: dp(48)
 	background_color: 3/255, 61/255, 0/255 ,1
 
-<SettingsList@RecycleView>:
-	scroll_type: ["content", "bars"]
-	bar_color: 0, 0, 0, 1
+<SettingsPopup>:
+	size_hint: 0.5, 0.5
+	recycle_view: recycle_view
+	RecycleView:
+		id: recycle_view
+		scroll_type: ["content", "bars"]
+		bar_color: 0, 0, 0, 1
+		viewclass: "PrayerCalculationButton"
 
-	RecycleBoxLayout:
-		orientation: "vertical"
-		default_size: None, dp(48)
-		default_size_hint: 1, None
-		size_hint_y: None
-		height: self.minimum_height
-		spacing: dp(10)
-		padding: 0, dp(20), 0, 0
+		RecycleBoxLayout:
+			orientation: "vertical"
+			default_size: None, dp(48)
+			default_size_hint: 1, None
+			size_hint_y: None
+			height: self.minimum_height
+			spacing: dp(10)
+			padding: 0, dp(20), 0, 0
+
+<PrayerCalculationPopup>:
+	title: "Prayer Calculation Method"
+	config_name: "calc_method"
+
+<AsrFactorPopup>:
+	title: "Asr Factor"
+	config_name: "asr_factor"
+
+<TimeFormatPopup>:
+	title: "Time Format"
+	config_name: "time_format"
