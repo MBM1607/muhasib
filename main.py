@@ -54,15 +54,6 @@ class MuhasibApp(App):
 		self.prayer_times = PrayerTimes()
 		self.methods = {data["name"]: method for method, data in self.prayer_times.methods.items()}
 
-		Clock.schedule_once(self.location_check)
-
-	def location_check(self, *args):
-		''' Check if location is present if not open the form to get location '''
-		if self.settings.config["location"]:
-			self.location = self.settings.config["location"]
-		else:
-			self.settings.location_form.open()
-
 	def on_location(self, instance, value):
 		''' Change the location text when location is changed '''
 		self.root.location.text = value[0] + ", " + value[1]
@@ -116,7 +107,7 @@ class MuhasibApp(App):
 		return timezone
 
 	def get_config(self, key, defualt):
-		if key in self.settings.config.keys():
+		if key in self.settings.config.keys() and self.settings.config[key]:
 			return self.settings.config[key]
 		else:
 			self.settings.config[key] = defualt

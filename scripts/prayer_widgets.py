@@ -1,11 +1,10 @@
 ''' Module to hold all of the various widgets used for setting and getting information about prayers '''
 
 from kivy.uix.behaviors.button import ButtonBehavior
-from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, BooleanProperty
 
-from custom_widgets import CustomPopup, CustomButton
+from custom_widgets import CustomPopup, CustomButton, DoubleTextButton
 
 
 class PrayerOptions(CustomPopup):
@@ -22,14 +21,7 @@ class PrayerOptionsButton(CustomButton):
 		popup.dismiss()
 
 
-class SalahLabel(BoxLayout):
-	''' Class used to show salah name and time '''
-	name = StringProperty()
-	time = StringProperty("0:00")
-	background_colors = ListProperty(((5, 55, 11, 230), (2, 40, 14, 255)))
-
-
-class SalahButton(ButtonBehavior, SalahLabel):
+class SalahButton(DoubleTextButton):
 	''' Button used with salah button on home screen with popup functionality'''
 
 	record = StringProperty()
@@ -49,13 +41,13 @@ class SalahButton(ButtonBehavior, SalahLabel):
 	def on_record(self, instance, value):
 		''' React to prayer record changing '''
 		if value == "Not prayed":
-			self.background_colors = ((191, 69, 49, 220), (161, 39, 19, 255))
+			self.background_color = (161/255, 39/255, 19/255, 1)
 		elif value == "Alone":
-			self.background_colors = ((96, 170, 37, 220), (46, 130, 0, 255))
+			self.background_color = (46/255, 130/255, 0, 1)
 		elif value == "Delayed":
-			self.background_colors =  ((209, 168, 64, 220), (169, 128, 24, 255))
+			self.background_color =  (169/255, 128/255, 24/255, 1)
 		elif value == "Group":
-			self.background_colors = ((14, 160, 31, 220), (0, 120, 0, 255))
+			self.background_color = (26/255, 102/255, 38/255, 1)
 
 	def on_base(self, instance, value):
 		self.prayer_options.base = self.base

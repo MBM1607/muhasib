@@ -182,7 +182,7 @@ class Dates(GridLayout):
 
 	def populate(self, year, month):
 		''' Create the dates buttons according to year and month '''
-		cal = self.parent.parent
+		cal = self.parent.parent.parent
 		app = App.get_running_app()
 
 		self.clear_widgets()

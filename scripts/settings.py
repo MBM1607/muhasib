@@ -5,11 +5,11 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty, DictProperty, StringProperty
 from kivy.app import App
 
-from custom_widgets import CustomModalView, CustomButton, CustomPopup
+from custom_widgets import CustomModalView, CustomButton, CustomPopup, DoubleTextButton
 from locations import LocationForm
 
 
-class SettingsButton(CustomButton):
+class SettingsButton(DoubleTextButton):
 	''' Button for settings '''
 	function = ObjectProperty()
 
@@ -32,14 +32,39 @@ class Settings(CustomModalView):
 		self.asr_factor = AsrFactorPopup()
 		self.time_format = TimeFormatPopup()
 		
-		self.settings_list.data = [{"text": "Prayer Calculation Method", "function": self.calc_method.open}, {"text": "Asr Factor", "function": self.asr_factor.open},
-								   {"text":  "Time Format", "function": self.time_format.open}, {"text": "Location", "function": self.location_form.open}]
-
 		self.load_settings()
+
 	
+	def refresh(self):
+		self.settings_list.data = [{"name": "Prayer Calculation Method", "function": self.calc_method.open, "info": self.config["calc_method"]},
+								   {"name": "Asr Factor", "function": self.asr_factor.open, "info": self.config["asr_factor"]},
+								   {"name":  "Time Format", "function": self.time_format.open, "info": self.config["time_format"]},
+								   {"name": "Location", "function": self.location_form.open, "info": ', '.join(self.config["location"])}]
+
+	def open(self):
+		self.refresh()
+
+		super(Settings, self).open()
+
 	def load_settings(self):
-		with open("data/settings.json", "r") as json_file:
-			self.config = json.load(json_file)
+		try:
+			with open("data/settings.json", "r") as json_file:
+				self.config = json.load(json_file)
+				#self.location_check()
+		except FileNotFoundError:
+			self.config = {"location": [], "calc_method": "", "asr_factor": "", "time_format": ""}
+			#self.location_check()
+			self.save_settings()
+		
+		from kivy.clock import Clock
+		Clock.schedule_once(self.location_check)
+
+	def location_check(self, *args):
+		''' Check if location is present if not open the form to get location '''
+		if self.config["location"]:
+			App.get_running_app().location = self.config["location"]
+		else:
+			self.location_form.open()
 
 	def save_settings(self):
 		with open("data/settings.json", "w") as json_file:
@@ -50,6 +75,7 @@ class Settings(CustomModalView):
 		root = App.get_running_app().root
 		if root:
 			root.update_prayer_times()
+		self.refresh()
 		self.save_settings()
 
 class SettingsPopup(CustomPopup):

@@ -85,61 +85,83 @@
 
 	BoxLayout:
 		orientation: "vertical"
+		spacing: dp(10)
+
+		FloatLayout:
+			size_hint_y: None
+			height: dp(48)
+			canvas.before:
+				Color:
+					rgba: 26/255, 102/255, 38/255, 1
+				Rectangle:
+					pos: self.pos
+					size: self.size
+			CustomButton:
+				text: "Back"
+				on_press: root.dismiss()
+				size_hint_x: 0.1
+				pos_hint: {"top": 1}
+			CustomLabel:
+				text: "Calendar"
+				pos_hint: {"center_x": 0.5, "top": 1}
 
 		BoxLayout:
-			orientation: "horizontal"
-			size_hint_y: 0.1
-			spacing: dp(10)
-			TopButton:
-				text: "<"
-				on_press: root.previous_month()
-				size_hint_x: 0.1
+			orientation: "vertical"
+
 			BoxLayout:
 				orientation: "horizontal"
-				size_hint_x: 0.4
-				BlackLabel:
-					text: root.year_menu
-					font_size: sp(20)
-					size_hint_x: 0.8
+				size_hint_y: 0.1
+				spacing: dp(10)
+				CustomButton:
+					text: "<"
+					on_press: root.previous_month()
+					size_hint_x: 0.1
 				BoxLayout:
-					orientation: "vertical"
-					size_hint_x: 0.2
-					spacing: dp(5)
-					TopButton:
-						text: "+"
-						on_press: root.next_year()
+					orientation: "horizontal"
+					size_hint_x: 0.4
+					BlackLabel:
+						text: root.year_menu
+						font_size: sp(20)
 						size_hint_x: 0.8
-						pos_hint: {"center_x": 0.5}
-					TopButton:
-						text: "-"
-						on_press: root.previous_year()
-						size_hint_x: 0.8
-						pos_hint: {"center_x": 0.5}
-			TopButton:
-				id: month_menu
-				font_size: sp(20)
-				size_hint_x: 0.4
-			TopButton:
-				text: ">"
-				on_press: root.next_month()
-				size_hint_x: 0.1
-		Days:
-			id: days
-			size_hint_y: 0.1
-		Dates:
-			id: dates
-			size_hint_y: 0.7
-		BoxLayout:
-			padding: dp(5), 0, dp(5), dp(5)
-			spacing: dp(5)
-			orientation: "horizontal"
-			size_hint_y: 0.1
-			CustomButton:
-				text: "To Hijri"
-				on_press: root.convert_to_islamic()
-			CustomButton:
-				text: "To Gregorian"
-				on_press: root.convert_to_gregorian()
+					BoxLayout:
+						orientation: "vertical"
+						size_hint_x: 0.2
+						spacing: dp(5)
+						CustomButton:
+							text: "+"
+							on_press: root.next_year()
+							size_hint_x: 0.8
+							pos_hint: {"center_x": 0.5}
+						CustomButton:
+							text: "-"
+							on_press: root.previous_year()
+							size_hint_x: 0.8
+							pos_hint: {"center_x": 0.5}
+				CustomButton:
+					id: month_menu
+					font_size: sp(20)
+					size_hint_x: 0.4
+				CustomButton:
+					text: ">"
+					on_press: root.next_month()
+					size_hint_x: 0.1
+			Days:
+				id: days
+				size_hint_y: 0.1
+			Dates:
+				id: dates
+				size_hint_y: 0.7
+			BoxLayout:
+				padding: dp(5), 0, dp(5), dp(5)
+				spacing: dp(5)
+				orientation: "horizontal"
+				size_hint_y: 0.1
+				CustomButton:
+					text: "To Hijri"
+					on_press: root.convert_to_islamic()
+				CustomButton:
+					text: "To Gregorian"
+					on_press: root.convert_to_gregorian()
 <Days>:
 	orientation: "horizontal"
 	BlackLabel:

@@ -1,7 +1,4 @@
-#: import Gradient custom_widgets.Gradient
-
 <DashboardLabel@BlackLabel>:
-	font_size: sp(18)
 	halign: "left"
 
 <Dashboard>:
@@ -39,10 +36,12 @@
 			ActionButton:
 				text: "Settings"
 				font_name: "data/Saira-Regular.ttf"
+				font_size: sp(18)
 				on_press: app.open_settings()
 			ActionButton:
 				text: "Calendar"
 				font_name: "data/Saira-Regular.ttf"
+				font_size: sp(18)
 				on_press: app.open_calendar()
 
 	Carousel:
@@ -76,7 +75,7 @@
 
 			ItemsList:
 				id: salah_list
-				viewclass: "DashboardSalahButton"
+				viewclass: "SalahButton"
 				size_hint_y: .75
 
 		BoxLayout:
@@ -87,5 +86,5 @@
 				font_size: sp(20)
 			ItemsList:
 				id: times_list
-				viewclass: "SalahLabel"
+				viewclass: "DoubleTextButton"
 				size_hint_y: 0.9

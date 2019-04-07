@@ -7,7 +7,7 @@ from kivy.properties import ObjectProperty
 from kivy.app import App
 
 from custom_widgets import ItemsList
-from prayer_widgets import SalahLabel
+from prayer_widgets import SalahButton
 
 class Dashboard(BoxLayout):
 	''' Class for the main screen of the app '''
@@ -39,8 +39,8 @@ class Dashboard(BoxLayout):
 		self.set_qibla_direction()
 		
 		# Populate the lists on the dashboard
-		self.times_list.data = [{"name": n.capitalize(), "time": t} for n, t in times_data.items()]
-		self.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in times_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
+		self.times_list.data = [{"name": n.capitalize(), "info": t} for n, t in times_data.items()]
+		self.salah_list.data = [{"name": n.capitalize(), "info": t, "base": self.app} for n, t in times_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
 		for x in self.salah_list.data:
 			x["record"] = self.app.prayer_record[x["name"].lower()]
 

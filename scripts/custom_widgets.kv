@@ -1,7 +1,6 @@
-#: import Gradient custom_widgets.Gradient
-
 <CustomButton>:
 	font_name: "data/Saira-Regular.ttf"
+	font_size: sp(18)
 	canvas.before:
 		Color:
 			rgba: root.background_color
@@ -9,9 +8,27 @@
 			pos: self.pos
 			size: self.size
 
+<CustomLabel>:
+	font_name: "data/Saira-Regular.ttf"
+	font_size: sp(18)
+
+<DoubleTextButton>:
+	spacing: dp(10)
+	canvas.before:
+		Color:
+			rgba: root.background_color
+		Rectangle:
+			pos: self.pos
+			size: self.size
+
+	CustomLabel:
+		text: root.name
+
+	CustomLabel:
+		text: root.info
+
 <BlackLabel>:
 	color: 0, 0, 0, 1
-	font_name: "data/Saira-Regular.ttf"
 
 <ItemsList>:
 	scroll_type: ["content", "bars"]
@@ -40,6 +57,7 @@
 	background: ""
 	title_color: 0, 0, 0, 1
 	title_font: "data/Saira-Regular.ttf"
+	title_size: sp(18)
 	separator_color: 26/255, 102/255, 38/255, 1
 	canvas.before:
 		Color:
