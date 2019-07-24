@@ -77,7 +77,7 @@ class DateButton(CustomButton):
 			self.get_prayer_record()
 
 		times_data = self.app.prayer_times.get_times(self.get_date())
-		self.popup.salah_list.data = [{"name": n.capitalize(), "time": t} for n, t in times_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
+		self.popup.salah_list.data = [{"name": n.capitalize(), "info": t} for n, t in times_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
 		for x in self.popup.salah_list.data:
 			x["record"] = self.prayer_record[x["name"].lower()]
 			x["base"] = self
