@@ -1,3 +1,5 @@
+#:kivy 1.11
+
 <DatePopup>:
 	salah_list: salah_list
 	size_hint: 0.8, 0.6
@@ -87,8 +89,9 @@
 		orientation: "vertical"
 		spacing: dp(10)
 
-		FloatLayout:
+		BoxLayout:
 			size_hint_y: None
+			padding: dp(10)
 			height: dp(48)
 			canvas.before:
 				Color:
@@ -99,11 +102,10 @@
 			CustomButton:
 				text: "Back"
 				on_press: root.dismiss()
-				size_hint_x: 0.1
-				pos_hint: {"top": 1}
+				size_hint: None, 1
+				size: self.texture_size
 			CustomLabel:
 				text: "Calendar"
-				pos_hint: {"center_x": 0.5, "top": 1}
 
 		BoxLayout:
 			orientation: "vertical"

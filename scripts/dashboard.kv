@@ -1,8 +1,11 @@
+#:kivy 1.11
+
 <DashboardLabel@BlackLabel>:
 	halign: "left"
 
 <Dashboard>:
 	orientation: "vertical"
+	spacing: dp(10)
 	times_list: times_list
 	salah_list: salah_list
 	current_prayer: current_prayer
@@ -18,31 +21,28 @@
 			pos: self.pos
 			size: self.size
 
-	ActionBar:
-		background_image: ""
-		canvas:
+	BoxLayout:
+		size_hint_y: None
+		padding: dp(10)
+		spacing: dp(24)
+		height: dp(48)
+		canvas.before:
 			Color:
 				rgba: 26/255, 102/255, 38/255, 1
-
 			Rectangle:
 				pos: self.pos
 				size: self.size
-
-		ActionView:
-			use_seperator: True
-			ActionPrevious:
-				app_icon: "data/logo-2.png"
-				with_previous: False
-			ActionButton:
-				text: "Settings"
-				font_name: "data/Saira-Regular.ttf"
-				font_size: sp(18)
-				on_press: app.open_settings()
-			ActionButton:
-				text: "Calendar"
-				font_name: "data/Saira-Regular.ttf"
-				font_size: sp(18)
-				on_press: app.open_calendar()
+		Widget:
+		CustomButton:
+			text: "Settings"
+			size_hint: None, 1
+			size: self.texture_size
+			on_press: app.open_settings()
+		CustomButton:
+			text: "Calendar"
+			size_hint: None, 1
+			size: self.texture_size
+			on_press: app.open_calendar()
 
 	Carousel:
 		BoxLayout:

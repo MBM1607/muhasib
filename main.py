@@ -69,7 +69,7 @@ class MuhasibApp(App):
 		if self.root:
 			self.root.update_salah_buttons_record()
 		self.database.update_prayer_record(self.today, **self.prayer_record)
-		
+
 	def get_geolocation(self):
 		''' Get the longitude, latitude and elevation of a place '''
 		latitude, longitude, altitude = 0.0, 0.0, 0.0
