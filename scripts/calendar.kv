@@ -1,4 +1,4 @@
-#:kivy 1.11
+#:kivy 1.11.1
 
 <DatePopup>:
 	salah_list: salah_list
@@ -7,7 +7,6 @@
 		orientation: "vertical"
 		padding: dp(5)
 		BlackLabel:
-			font_size: sp(18)
 			text: "Prayer Record"
 			size_hint_y: 0.1
 		ItemsList:
@@ -100,10 +99,14 @@
 					pos: self.pos
 					size: self.size
 			CustomButton:
-				text: "Back"
-				on_press: root.dismiss()
 				size_hint: None, 1
-				size: self.texture_size
+				on_press: root.dismiss()
+				canvas:
+					Rectangle:
+						source: "data/back.png"
+						pos: self.pos
+						size: dp(32), dp(32)
+				size: dp(32), dp(32)
 			CustomLabel:
 				text: "Calendar"
 
@@ -123,7 +126,6 @@
 					size_hint_x: 0.4
 					BlackLabel:
 						text: root.year_menu
-						font_size: sp(20)
 						size_hint_x: 0.8
 					BoxLayout:
 						orientation: "vertical"
@@ -141,7 +143,6 @@
 							pos_hint: {"center_x": 0.5}
 				CustomButton:
 					id: month_menu
-					font_size: sp(20)
 					size_hint_x: 0.4
 				CustomButton:
 					text: ">"

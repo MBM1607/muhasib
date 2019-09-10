@@ -24,12 +24,11 @@ class PrayerOptionsButton(CustomButton):
 class SalahButton(DoubleTextButton):
 	''' Button used with salah button on home screen with popup functionality'''
 
-	record = StringProperty()
 	base = ObjectProperty()
 	editable = BooleanProperty()
 
 	def __init__(self, **kwargs):
-		super(SalahButton, self).__init__(**kwargs)
+		super().__init__(**kwargs)
 		self.prayer_options = PrayerOptions()
 
 	def on_release(self):
@@ -38,7 +37,7 @@ class SalahButton(DoubleTextButton):
 			self.prayer_options.prayer = self.name.lower()
 			self.prayer_options.open()
 
-	def on_record(self, instance, value):
+	def on_info(self, instance, value):
 		''' React to prayer record changing '''
 		if value == "Not prayed":
 			self.background_color = (161/255, 39/255, 19/255, 1)
@@ -54,5 +53,4 @@ class SalahButton(DoubleTextButton):
 
 class DashboardSalahButton(SalahButton):
 	def __init__(self, **kwargs):
-		super(DashboardSalahButton, self).__init__(**kwargs)
-		self.prayer_options.base = App.get_running_app()
+		super().__init__(**kwargs)

@@ -1,18 +1,12 @@
-#:kivy 1.11
+#:kivy 1.11.1
 
-<DashboardLabel@BlackLabel>:
-	halign: "left"
+#:import ItemsList custom_widgets.ItemsList
+#:import SalahButton prayer_widgets.SalahButton
 
 <Dashboard>:
 	orientation: "vertical"
 	spacing: dp(10)
-	times_list: times_list
 	salah_list: salah_list
-	current_prayer: current_prayer
-	next_prayer: next_prayer
-	prayer_time_left: prayer_time_left
-	location: location
-	qibla_direction: qibla_direction
 
 	canvas.before:
 		Color:
@@ -34,57 +28,46 @@
 				size: self.size
 		Widget:
 		CustomButton:
-			text: "Settings"
 			size_hint: None, 1
-			size: self.texture_size
 			on_press: app.open_settings()
+			canvas:
+        		Rectangle:
+					source: "data/settings.png"
+					pos: self.pos
+					size: dp(32), dp(32)
+			size: dp(32), dp(32)
+
 		CustomButton:
-			text: "Calendar"
 			size_hint: None, 1
-			size: self.texture_size
+			on_press: app.open_prayer_times_screen()
+			canvas:
+        		Rectangle:
+					source: "data/time.png"
+					pos: self.pos
+					size: dp(32), dp(32)
+			size: dp(32), dp(32)
+
+		CustomButton:
+			size_hint: None, 1
+			on_press: app.open_compass()
+			canvas:
+        		Rectangle:
+					source: "data/compass.png"
+					pos: self.pos
+					size: dp(32), dp(32)
+			size: dp(32), dp(32)
+
+		CustomButton:
+			size_hint: None, 1
 			on_press: app.open_calendar()
+			canvas:
+        		Rectangle:
+					source: "data/calendar.png"
+					pos: self.pos
+					size: dp(32), dp(32)
+			size: dp(32), dp(32)
 
-	Carousel:
-		BoxLayout:
-			orientation: "vertical"
-			BoxLayout:
-				orientation: "horizontal"
-				size_hint_y: .25
+	ItemsList:
+		id: salah_list
+		viewclass: "SalahButton"
 
-				BoxLayout:
-					orientation: "vertical"
-					padding: dp(10)
-					spacing: dp(5)
-
-					DashboardLabel:
-						id: current_prayer
-						text: "Current Prayer"
-					DashboardLabel:
-						id: next_prayer
-						text: "Next Prayer"
-					DashboardLabel:
-						id: prayer_time_left
-						text: "Time left"
-					DashboardLabel:
-						id: location
-						text: "Location"
-				BlackLabel:
-					id: qibla_direction
-					text: "Qibla Direction"
-					font_size: sp(18)
-
-			ItemsList:
-				id: salah_list
-				viewclass: "SalahButton"
-				size_hint_y: .75
-
-		BoxLayout:
-			orientation: "vertical"
-			BlackLabel:
-				size_hint_y: 0.1
-				text: "Prayer Times"
-				font_size: sp(20)
-			ItemsList:
-				id: times_list
-				viewclass: "DoubleTextButton"
-				size_hint_y: 0.9

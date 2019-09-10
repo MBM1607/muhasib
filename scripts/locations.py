@@ -25,7 +25,7 @@ class LocationForm(CustomModalView):
 	country_text = ObjectProperty()
 	
 	def __init__(self, **kwargs):
-		super(LocationForm, self).__init__(**kwargs)
+		super().__init__(**kwargs)
 		self.app = App.get_running_app()
 		
 		with open("data/cities.json") as cities:

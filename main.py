@@ -11,8 +11,10 @@ from kivy.clock import Clock
 from kivy.lang.builder import Builder
 
 from scripts.prayer_times import PrayerTimes
+from scripts.prayer_times_screen import PrayerTimesScreen
 from scripts.calendar import Calendar
 from scripts.database import Database
+from scripts.compass import Compass
 from scripts.dashboard import Dashboard
 from scripts.settings import Settings
 
@@ -21,54 +23,61 @@ Builder.load_file("scripts/dashboard.kv")
 Builder.load_file("scripts/prayer_widgets.kv")
 Builder.load_file("scripts/locations.kv")
 Builder.load_file("scripts/settings.kv")
+Builder.load_file("scripts/compass.kv")
+Builder.load_file("scripts/prayer_times_screen.kv")
+
 
 class MuhasibApp(App):
 	''' Muhasib app object '''
-
 	use_kivy_settings = False
-	prayer_record = DictProperty()
 	location = ListProperty()
 	icon = 'data/logo.png'
 
 	def __init__(self, **kwargs):
-		super(MuhasibApp, self).__init__(**kwargs)
-
-		# get today's date
-		self.today = date.today()
+		super().__init__(**kwargs)
 
 		# Initialize the database
 		self.database = Database()
-		self.database.create_prayer_record(self.today)
-
-		prayer_record = self.database.get_prayer_record(self.today)
-
-		# Initialize today's prayer's record
-		self.prayer_record = {"fajr": prayer_record[2], "dhuhr": prayer_record[3], "asr": prayer_record[4],
-							"maghrib": prayer_record[5], "isha": prayer_record[6]}
+		self.create_database_day()
 
 		# Initializing calendar and location form to be opened
 		self.calendar = Calendar()
 		self.settings = Settings()
+		self.compass = Compass()
+		self.prayer_times_screen = PrayerTimesScreen()
+		self.dashboard = Dashboard()
+
+		# Initialize today's prayer's record
+		self.dashboard.create_prayer_list()
 
 		# Initializing the prayer times
 		self.prayer_times = PrayerTimes()
 		self.methods = {data["name"]: method for method, data in self.prayer_times.methods.items()}
 
+		# Create interval events
+		Clock.schedule_interval(self.prayer_times_screen.update_prayer_labels, 60)
+		Clock.schedule_interval(self.day_pass_check, 3600)
+
 	def on_location(self, instance, value):
-		''' Change the location text when location is changed '''
-		self.root.location.text = value[0] + ", " + value[1]
+		''' Change the location text and the prayer times when location is changed '''
+		self.prayer_times_screen.location.text = value[0] + ", " + value[1]
 		coords = self.get_geolocation()
 		self.prayer_times.set_coords(coords)
 		self.prayer_times.timezone = self.get_timezone(coords[0], coords[1])
-		self.root.update_prayer_times()
-
-	def on_prayer_record(self, instance, value):
-		''' On change of prayer_record store it on the drive '''
-
-		# If their is a window then update the dashboard button's color
-		if self.root:
-			self.root.update_salah_buttons_record()
-		self.database.update_prayer_record(self.today, **self.prayer_record)
+		self.prayer_times_screen.update_prayer_times()
+	
+	def day_pass_check(self, time):
+		''' Check if a day has passed and upgrade the prayer times and records if it has '''
+		prayer = self.prayer_times_screen.next_prayer.text.split(":")[0]
+		if self.today != date.today() and prayer != "Midnight":
+			self.prayer_times_screen.update_prayer_times()
+			self.dashboard.create_prayer_list()
+			self.create_database_day()
+		
+	def create_database_day(self):
+		''' Create a row in the database for the day '''
+		self.today = date.today()
+		self.database.create_prayer_record(self.today)
 
 	def get_geolocation(self):
 		''' Get the longitude, latitude and elevation of a place '''
@@ -107,6 +116,7 @@ class MuhasibApp(App):
 		return timezone
 
 	def get_config(self, key, defualt):
+		''' Get the configuration for the specific key and return with defualt if not '''
 		if key in self.settings.config.keys() and self.settings.config[key]:
 			return self.settings.config[key]
 		else:
@@ -124,8 +134,17 @@ class MuhasibApp(App):
 		self.calendar.populate()
 		self.calendar.open()
 
+	def open_compass(self):
+		''' Open the compass model view '''
+		self.compass.set_qibla_direction()
+		self.compass.open()
+	
+	def open_prayer_times_screen(self):
+		''' Open the prayer times model view '''
+		self.prayer_times_screen.open()
+
 	def build(self):
-		return Dashboard()
+		return self.dashboard
 
 if __name__ == "__main__":
 	install_cache(cache_name="muhasib", backend="sqlite")

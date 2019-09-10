@@ -1,4 +1,4 @@
-#:kivy 1.11
+#:kivy 1.11.1
 
 <Settings>:
 	settings_list: settings_list
@@ -16,10 +16,14 @@
 					pos: self.pos
 					size: self.size
 			CustomButton:
-				text: "Back"
-				on_press: root.dismiss()
 				size_hint: None, 1
-				size: self.texture_size
+				on_press: root.dismiss()
+				canvas:
+					Rectangle:
+						source: "data/back.png"
+						pos: self.pos
+						size: dp(32), dp(32)
+				size: dp(32), dp(32)
 			CustomLabel:
 				text: "Settings"
 
@@ -34,13 +38,13 @@
 	background_color: 3/255, 61/255, 0/255 ,1
 
 <SettingsPopup>:
-	size_hint: 0.5, 0.5
+	size_hint: 0.8, 0.8
 	recycle_view: recycle_view
 	RecycleView:
 		id: recycle_view
 		scroll_type: ["content", "bars"]
 		bar_color: 0, 0, 0, 1
-		viewclass: "PrayerCalculationButton"
+		viewclass: "SettingsPopupButton"
 
 		RecycleBoxLayout:
 			orientation: "vertical"

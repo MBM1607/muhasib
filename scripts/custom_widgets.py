@@ -25,7 +25,7 @@ class CustomButton(Button):
 class CustomDropDown(DropDown):
 	''' Custom appearance for all dropdowns  '''
 	def __init__(self, **kwargs):
-		super(CustomDropDown, self).__init__(**kwargs)
+		super().__init__(**kwargs)
 		self.container.spacing = 1
 		self.container.padding = (0, 1, 0, 0)
 

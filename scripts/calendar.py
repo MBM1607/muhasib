@@ -21,7 +21,7 @@ Builder.load_file("scripts/calendar.kv")
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
 
-WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 ISLAMIC_WEEKDAYS = ("al-'ahad", "al-'ithnayn",
 					"ath-thalatha'", "al-'arb`a'",
@@ -48,7 +48,7 @@ class DateButton(CustomButton):
 	is_fast = BooleanProperty(False)
 
 	def __init__(self, date=None, editable=True, **kwargs):
-		super(DateButton, self).__init__(**kwargs)
+		super().__init__(**kwargs)
 		self.app = App.get_running_app()
 		self.date = date
 		self.editable = editable
@@ -66,7 +66,7 @@ class DateButton(CustomButton):
 	def color_button(self):
 		''' Color the button based on special conditions of the date '''
 
-		if self.get_date() == self.app.today:
+		if self.get_date() == datetime.date.today():
 			self.background_color = (161/255, 39/255, 19/255, 1)
 		elif self.get_date().weekday() == 4:
 			self.background_color = (14/255, 160/255, 31/255, 1)
@@ -76,10 +76,8 @@ class DateButton(CustomButton):
 		if not self.prayer_record:
 			self.get_prayer_record()
 
-		times_data = self.app.prayer_times.get_times(self.get_date())
-		self.popup.salah_list.data = [{"name": n.capitalize(), "info": t} for n, t in times_data.items() if n in ["fajr", "dhuhr", "asr", "maghrib", "isha"]]
+		self.popup.salah_list.data = [{"name": n.capitalize(), "info": r} for n, r in self.prayer_record.items()]
 		for x in self.popup.salah_list.data:
-			x["record"] = self.prayer_record[x["name"].lower()]
 			x["base"] = self
 			x["editable"] = self.editable
 		self.popup.open()
@@ -100,7 +98,7 @@ class DateButton(CustomButton):
 	def update_salah_buttons_record(self):
 		''' Change the record on individual labels '''
 		for x in self.popup.salah_list.children[0].children:
-			x.record = self.prayer_record[x.name.lower()]
+			x.info = self.prayer_record[x.name.lower()]
 
 
 class Calendar(CustomModalView):
@@ -112,8 +110,8 @@ class Calendar(CustomModalView):
 	days = ObjectProperty()
 
 	def __init__(self, **kwargs):
-		super(Calendar, self).__init__(**kwargs)
-		d = datetime.datetime.today()
+		super().__init__(**kwargs)
+		d = datetime.date.today()
 		self.year, self.month, self.day = d.year, d.month, d.day
 
 		# Create the dropdown and bind the functionality
@@ -122,6 +120,11 @@ class Calendar(CustomModalView):
 		self.month_dropdown.bind(on_select=self.change_month)
 
 		self.islamic = False
+
+	def dismiss(self):
+		''' Preparing the dashboard for any changes before closing calendar '''
+		App.get_running_app().dashboard.create_prayer_list()
+		super().dismiss()
 
 	def populate(self):
 		''' Create the current month and year's calendar '''
@@ -183,7 +186,6 @@ class Dates(GridLayout):
 	def populate(self, year, month):
 		''' Create the dates buttons according to year and month '''
 		cal = self.parent.parent.parent
-		app = App.get_running_app()
 
 		self.clear_widgets()
 		if cal.islamic:
@@ -198,7 +200,7 @@ class Dates(GridLayout):
 					day = int(f"{j}")
 					date = datetime.date(cal.year, cal.month, day)
 					# If date is of the future make the popup uneditable
-					if date > app.today:
+					if date > datetime.date.today():
 						editable = False
 					else:
 						editable = True

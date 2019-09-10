@@ -1,0 +1,30 @@
+#:kivy 1.11.1
+
+<Compass>:
+    BoxLayout:
+		orientation: "vertical"
+		spacing: dp(10)
+        BoxLayout:
+            size_hint_y: None
+            padding: dp(10)
+            height: dp(48)
+            canvas.before:
+                Color:
+                    rgba: 26/255, 102/255, 38/255, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            CustomButton:
+				size_hint: None, 1
+				on_press: root.dismiss()
+				canvas:
+					Rectangle:
+						source: "data/back.png"
+						pos: self.pos
+						size: dp(32), dp(32)
+				size: dp(32), dp(32)
+            CustomLabel:
+                text: "Compass"
+        BoxLayout:
+            BlackLabel:
+                text: root.qibla_direction
