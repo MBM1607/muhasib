@@ -11,16 +11,7 @@
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
-        BoxLayout:
-            size_hint_y: None
-            padding: dp(10)
-            height: dp(48)
-            canvas.before:
-                Color:
-                    rgba: 26/255, 102/255, 38/255, 1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
+        CustomActionBar:
             CustomButton:
 				size_hint: None, 1
 				on_press: root.dismiss()

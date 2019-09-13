@@ -13,14 +13,20 @@ from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.graphics.texture import Texture
 from kivy.graphics import Rectangle
 from kivy.uix.recycleview import RecycleView
-from kivy.lang.builder import Builder
 from kivy.properties import ListProperty, StringProperty
+
+import constants
+
+
+class CustomActionBar(BoxLayout):
+	pass
 
 
 class CustomButton(Button):
 	''' Custom appearance for all buttons  '''
-	background_color = ListProperty((26/255, 102/255, 38/255, 1))
+	background_color = ListProperty(constants.MAIN_COLOR)
 	background_normal = ''
+
 
 class CustomDropDown(DropDown):
 	''' Custom appearance for all dropdowns  '''
@@ -29,27 +35,31 @@ class CustomDropDown(DropDown):
 		self.container.spacing = 1
 		self.container.padding = (0, 1, 0, 0)
 
+
 class CustomLabel(Label):
 	pass
+
 
 class DoubleTextButton(ButtonBehavior, BoxLayout):
 	''' Class used to show name and some other info '''
 	name = StringProperty()
 	info = StringProperty()
-	background_color = ListProperty((26/255, 102/255, 38/255, 1))
+	background_color = ListProperty(constants.MAIN_COLOR)
+
 
 class BlackLabel(CustomLabel):
 	pass
+
 
 class CustomModalView(ModalView):
 	''' Custom Appearance for all modalviews  '''
 	pass
 
+
 class CustomPopup(Popup):
 	''' Custom Appearance for all popups '''
+
 
 class ItemsList(RecycleView):
 	''' Class for various lists of items '''
 	pass
-
-Builder.load_file("scripts/custom_widgets.kv")

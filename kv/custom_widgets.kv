@@ -1,5 +1,7 @@
 #:kivy 1.11.1
 
+#:import MAIN_COLOR constants.MAIN_COLOR
+
 <CustomButton>:
 	font_name: "data/Saira-Regular.ttf"
 	font_size: sp(15)
@@ -13,6 +15,18 @@
 <CustomLabel>:
 	font_name: "data/Saira-Regular.ttf"
 	font_size: sp(15)
+
+<CustomActionBar>:
+	size_hint_y: None
+	padding: dp(10)
+	spacing: dp(24)
+	height: dp(48)
+	canvas.before:
+		Color:
+			rgba: MAIN_COLOR
+		Rectangle:
+			pos: self.pos
+			size: self.size
 
 <DoubleTextButton>:
 	spacing: dp(10)
@@ -60,7 +74,7 @@
 	title_color: 0, 0, 0, 1
 	title_font: "data/Saira-Regular.ttf"
 	title_size: sp(18)
-	separator_color: 26/255, 102/255, 38/255, 1
+	separator_color: MAIN_COLOR
 	canvas.before:
 		Color:
 			rgba: 240/255, 240/255, 240/255, 1

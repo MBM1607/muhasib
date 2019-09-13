@@ -1,5 +1,7 @@
 #:kivy 1.11.1
 
+#:import SECONDRY_COLOR constants.SECONDRY_COLOR
+
 <DatePopup>:
 	salah_list: salah_list
 	size_hint: 0.8, 0.6
@@ -77,7 +79,7 @@
 		size_hint_y: None
 
 <TopButton@CustomButton>:
-	background_color: 3/255, 61/255, 0/255 ,1
+	background_color: SECONDRY_COLOR
 
 <Calendar>:
 	dates: dates
@@ -88,16 +90,7 @@
 		orientation: "vertical"
 		spacing: dp(10)
 
-		BoxLayout:
-			size_hint_y: None
-			padding: dp(10)
-			height: dp(48)
-			canvas.before:
-				Color:
-					rgba: 26/255, 102/255, 38/255, 1
-				Rectangle:
-					pos: self.pos
-					size: self.size
+		CustomActionBar:
 			CustomButton:
 				size_hint: None, 1
 				on_press: root.dismiss()

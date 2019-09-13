@@ -19,12 +19,14 @@ from scripts.dashboard import Dashboard
 from scripts.settings import Settings
 
 
-Builder.load_file("scripts/dashboard.kv")
-Builder.load_file("scripts/prayer_widgets.kv")
-Builder.load_file("scripts/locations.kv")
-Builder.load_file("scripts/settings.kv")
-Builder.load_file("scripts/compass.kv")
-Builder.load_file("scripts/prayer_times_screen.kv")
+Builder.load_file("kv/custom_widgets.kv")
+Builder.load_file("kv/dashboard.kv")
+Builder.load_file("kv/prayer_widgets.kv")
+Builder.load_file("kv/locations.kv")
+Builder.load_file("kv/settings.kv")
+Builder.load_file("kv/compass.kv")
+Builder.load_file("kv/prayer_times_screen.kv")
+Builder.load_file("kv/calendar.kv")
 
 
 class MuhasibApp(App):

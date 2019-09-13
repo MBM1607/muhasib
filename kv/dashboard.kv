@@ -2,6 +2,7 @@
 
 #:import ItemsList custom_widgets.ItemsList
 #:import SalahButton prayer_widgets.SalahButton
+#:import MAIN_COLOR constants.MAIN_COLOR
 
 <Dashboard>:
 	orientation: "vertical"
@@ -15,17 +16,7 @@
 			pos: self.pos
 			size: self.size
 
-	BoxLayout:
-		size_hint_y: None
-		padding: dp(10)
-		spacing: dp(24)
-		height: dp(48)
-		canvas.before:
-			Color:
-				rgba: 26/255, 102/255, 38/255, 1
-			Rectangle:
-				pos: self.pos
-				size: self.size
+	CustomActionBar:
 		Widget:
 		CustomButton:
 			size_hint: None, 1

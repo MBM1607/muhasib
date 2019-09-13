@@ -5,16 +5,7 @@
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
-		BoxLayout:
-			size_hint_y: None
-			padding: dp(10)
-			height: dp(48)
-			canvas.before:
-				Color:
-					rgba: 26/255, 102/255, 38/255, 1
-				Rectangle:
-					pos: self.pos
-					size: self.size
+		CustomActionBar:
 			CustomButton:
 				size_hint: None, 1
 				on_press: root.dismiss()
@@ -35,25 +26,13 @@
 <SettingsButton>:
 	size_hint_y: None
 	height: dp(48)
-	background_color: 3/255, 61/255, 0/255 ,1
 
 <SettingsPopup>:
 	size_hint: 0.8, 0.8
 	recycle_view: recycle_view
-	RecycleView:
+	ItemsList:
 		id: recycle_view
-		scroll_type: ["content", "bars"]
-		bar_color: 0, 0, 0, 1
 		viewclass: "SettingsPopupButton"
-
-		RecycleBoxLayout:
-			orientation: "vertical"
-			default_size: None, dp(48)
-			default_size_hint: 1, None
-			size_hint_y: None
-			height: self.minimum_height
-			spacing: dp(10)
-			padding: 0, dp(20), 0, 0
 
 <PrayerCalculationPopup>:
 	title: "Prayer Calculation Method"

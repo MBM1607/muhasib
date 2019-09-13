@@ -9,23 +9,17 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, DictProperty, BooleanProperty
 from kivy.uix.button import Button
 from kivy.app import App
-from kivy.lang.builder import Builder
 
 from custom_widgets import CustomButton, BlackLabel, CustomModalView, CustomDropDown
 
 import convertdate.islamic as islamic
+import constants
 
 
-Builder.load_file("scripts/calendar.kv")
 
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
 
-WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-
-ISLAMIC_WEEKDAYS = ("al-'ahad", "al-'ithnayn",
-					"ath-thalatha'", "al-'arb`a'",
-					"al-khamis", "al-jum`a", "as-sabt")
 
 ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabo' ath-Thani ",
 			"Jumada al-Ula", "Jumada al-Akhirah", "Rajab", "Sha'ban",
@@ -67,9 +61,9 @@ class DateButton(CustomButton):
 		''' Color the button based on special conditions of the date '''
 
 		if self.get_date() == datetime.date.today():
-			self.background_color = (161/255, 39/255, 19/255, 1)
+			self.background_color = constants.WARNING_COLOR
 		elif self.get_date().weekday() == 4:
-			self.background_color = (14/255, 160/255, 31/255, 1)
+			self.background_color = constants.CAUTION_COLOR
 
 	def on_press(self):
 		'''  Display the popup with prayer record of the date '''
@@ -161,7 +155,6 @@ class Calendar(CustomModalView):
 		''' Converts the gregorian calendar to islamic calendar using current date '''
 		if not self.islamic:
 			self.month_dropdown.months = ISLAMIC_MONTHS
-			self.days.weekdays = ISLAMIC_WEEKDAYS
 			self.year, self.month, self.day = islamic.from_gregorian(self.year, self.month, self.day)
 			self.islamic = True
 			self.populate()
@@ -170,7 +163,6 @@ class Calendar(CustomModalView):
 		''' Converts the islamic calendar to gregorian calendar using current date '''
 		if self.islamic:
 			self.month_dropdown.months = MONTHS
-			self.days.weekdays = WEEKDAYS
 			self.year, self.month, self.day = islamic.to_gregorian(self.year, self.month, self.day)
 			self.islamic = False
 			self.populate()
@@ -178,7 +170,7 @@ class Calendar(CustomModalView):
 
 class Days(BoxLayout):
 	''' Class to layout the day's labels in a month '''
-	weekdays = ListProperty(WEEKDAYS)
+	weekdays = ListProperty(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
 
 class Dates(GridLayout):
 	''' Class to layout the day of a month '''

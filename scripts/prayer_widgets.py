@@ -5,6 +5,7 @@ from kivy.app import App
 from kivy.properties import StringProperty, ListProperty, ObjectProperty, BooleanProperty
 
 from custom_widgets import CustomPopup, CustomButton, DoubleTextButton
+import constants
 
 
 class PrayerOptions(CustomPopup):
@@ -40,13 +41,13 @@ class SalahButton(DoubleTextButton):
 	def on_info(self, instance, value):
 		''' React to prayer record changing '''
 		if value == "Not prayed":
-			self.background_color = (161/255, 39/255, 19/255, 1)
+			self.background_color = constants.WARNING_COLOR
 		elif value == "Alone":
-			self.background_color = (46/255, 130/255, 0, 1)
+			self.background_color = constants.TERNARY_COLOR
 		elif value == "Delayed":
-			self.background_color =  (169/255, 128/255, 24/255, 1)
+			self.background_color =  constants.CAUTION_COLOR
 		elif value == "Group":
-			self.background_color = (26/255, 102/255, 38/255, 1)
+			self.background_color = constants.SECONDRY_COLOR
 
 	def on_base(self, instance, value):
 		self.prayer_options.base = self.base
