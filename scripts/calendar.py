@@ -77,8 +77,8 @@ class DateButton(CustomButton):
 
 	def get_prayer_record(self):
 		''' Get the prayer_record of the date from the database '''
-		self.app.database.create_prayer_record(self.get_date())
-		prayer_record = self.app.database.get_prayer_record(self.get_date())
+		self.app.database.create_record(self.get_date())
+		prayer_record = self.app.database.get_record(self.get_date())
 		self.prayer_record = {"fajr": prayer_record[0], "dhuhr": prayer_record[1], "asr": prayer_record[2],
 							"maghrib": prayer_record[3], "isha": prayer_record[4]}
 		self.is_fasting = prayer_record[6]
@@ -86,7 +86,7 @@ class DateButton(CustomButton):
 	def on_prayer_record(self, instance, value):
 		''' Refresh the prayer_records when changed '''
 		self.update_salah_buttons_record()
-		self.app.database.update_prayer_record(self.get_date(), **self.prayer_record)
+		self.app.database.update_record(self.get_date(), **self.prayer_record)
 
 	def update_salah_buttons_record(self):
 		''' Change the record on individual labels '''

@@ -21,7 +21,7 @@ class Dashboard(BoxLayout):
 	def create_prayer_list(self):
 		''' Create the list for prayer records '''
 
-		record = self.app.database.get_prayer_record(date.today())
+		record = self.app.database.get_record(date.today())
 		self.prayer_record = {"fajr": record[0], "dhuhr": record[1], "asr": record[2],
 							"maghrib": record[3], "isha": record[4]}
 
@@ -32,4 +32,4 @@ class Dashboard(BoxLayout):
 		for x in self.salah_list.children[0].children:
 			x.info = self.prayer_record[x.name.lower()]
 		
-		self.app.database.update_prayer_record(date.today(), **self.prayer_record)
+		self.app.database.update_record(date.today(), **self.prayer_record)

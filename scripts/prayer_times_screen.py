@@ -6,6 +6,7 @@ from kivy.app import App
 from kivy.properties import ObjectProperty
 
 from custom_widgets import CustomModalView
+from constants import MAIN_COLOR, SECONDRY_COLOR
 
 
 class PrayerTimesScreen(CustomModalView):
@@ -27,12 +28,21 @@ class PrayerTimesScreen(CustomModalView):
 		self.app.prayer_times.set_asr(self.app.get_config("asr_factor", "Standard"))
 
 		self.times_data = self.app.prayer_times.get_times(date.today())
-		self.update_prayer_labels()
 
 		# Populate the lists on the dashboard
 		self.times_list.data = [{"name": n.capitalize(), "info": t} for n, t in self.times_data.items()]
 
-	def update_prayer_labels(self, time="time"):
+		self.update_prayer_labels()
+
+	def focus_next_prayer(self, next_prayer):
+		''' Put focus on the next prayer so it can be highlighted'''
+		for x in self.times_list.data:
+			if x["name"] == next_prayer:
+				x["background_color"] = SECONDRY_COLOR
+			elif "background_color" in x.keys():
+				x["background_color"] = MAIN_COLOR
+
+	def update_prayer_labels(self, wait=0.0):
 		''' Change the labels reporting information about prayers '''
 		current_time = datetime.strptime(datetime.strftime(datetime.now(), "%H:%M"), "%H:%M")
 		time_left = timedelta(24)
@@ -63,3 +73,5 @@ class PrayerTimesScreen(CustomModalView):
 		else:
 			self.prayer_time_left.text = time.strftime("%H hours & %M minutes remaining")
 		self.next_prayer.text = next_prayer.capitalize()
+
+		self.focus_next_prayer(next_prayer.split(":")[0].capitalize())

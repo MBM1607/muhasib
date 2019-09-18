@@ -1,5 +1,7 @@
 #:kivy 1.11.1
 
+#:import constants constants
+
 <PrayerOptions>:
 	size_hint: 0.8, 0.6
 	title: "Prayer Options"
@@ -9,10 +11,14 @@
 		padding: dp(5)
 		PrayerOptionsButton:
 			text: "Group"
+			background_color: constants.SECONDRY_COLOR
 		PrayerOptionsButton:
 			text: "Alone"
+			background_color: constants.TERNARY_COLOR
 		PrayerOptionsButton:
 			text: "Delayed"
+			background_color: constants.CAUTION_COLOR
 		PrayerOptionsButton:
 			text: "Not prayed"
+			background_color: constants.WARNING_COLOR
 

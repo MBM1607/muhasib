@@ -76,7 +76,7 @@ class MuhasibApp(App):
 	def create_database_day(self):
 		''' Create a row in the database for the day '''
 		self.today = date.today()
-		self.database.create_prayer_record(self.today)
+		self.database.create_record(self.today)
 
 	def get_geolocation(self):
 		''' Get the longitude, latitude and elevation of a place '''
