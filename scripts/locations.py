@@ -2,10 +2,11 @@
 
 import json
 
-from kivy.properties import ObjectProperty
 from kivy.app import App
+from kivy.properties import ObjectProperty
 
 from custom_widgets import CustomButton, CustomDropDown, CustomModalView
+
 
 class LocationDropDown(CustomDropDown):
 	''' Dropdown lists for countries and cities '''
@@ -18,6 +19,7 @@ class LocationDropDown(CustomDropDown):
 
 class LocationButton(CustomButton):
 	pass
+
 
 class LocationForm(CustomModalView):
 	''' Class for location form to get user's city and country '''

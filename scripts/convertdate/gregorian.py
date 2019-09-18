@@ -5,7 +5,8 @@
 # http://opensource.org/licenses/MIT
 # Copyright (c) 2016, fitnr <fitnr@fakeisthenewreal>
 from calendar import isleap, monthrange
-from utils import floor, monthcalendarhelper, jwday
+
+from utils import floor, jwday, monthcalendarhelper
 
 EPOCH = 1721425.5
 

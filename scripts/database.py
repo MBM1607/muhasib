@@ -1,11 +1,13 @@
 import sqlite3
+
 import convertdate.islamic as islamic
+
 
 class Database():
 	''' Class to handle all the database related functionality '''
 
 	def __init__(self):
-		self.db = sqlite3.connect("data/muhasib.db", detect_types=sqlite3.PARSE_DECLTYPES)
+		self.db = sqlite3.connect("data/muhasib.sqlite", detect_types=sqlite3.PARSE_DECLTYPES)
 
 	def create_prayer_record(self, date):
 		''' Create a prayer record of this date '''
@@ -36,4 +38,7 @@ class Database():
 
 		cursor = self.db.cursor()
 		cursor.execute("SELECT * FROM prayer_record WHERE date = ?", (date,))
-		return cursor.fetchone()
+		record = cursor.fetchone()
+		if record:
+			return record[2:]
+		return False

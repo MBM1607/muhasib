@@ -1,9 +1,10 @@
 ''' Module for all code relating to the determining the qibla direction '''
 
-from kivy.properties import StringProperty
 from kivy.app import App
+from kivy.properties import StringProperty
 
 from custom_widgets import CustomModalView
+
 
 class Compass(CustomModalView):
 	''' Class for the screen containing compass '''

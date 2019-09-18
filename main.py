@@ -1,23 +1,21 @@
 ''' Main python file for running and defining the app object. '''
 
-from datetime import date
-import requests
-from requests_cache import install_cache
 import json
+from datetime import date
 
+import requests
 from kivy.app import App
-from kivy.properties import DictProperty, ListProperty
 from kivy.clock import Clock
 from kivy.lang.builder import Builder
-
-from scripts.prayer_times import PrayerTimes
-from scripts.prayer_times_screen import PrayerTimesScreen
+from kivy.properties import DictProperty, ListProperty
+from requests_cache import install_cache
 from scripts.calendar import Calendar
-from scripts.database import Database
 from scripts.compass import Compass
 from scripts.dashboard import Dashboard
+from scripts.database import Database
+from scripts.prayer_times import PrayerTimes
+from scripts.prayer_times_screen import PrayerTimesScreen
 from scripts.settings import Settings
-
 
 Builder.load_file("kv/custom_widgets.kv")
 Builder.load_file("kv/dashboard.kv")
@@ -54,7 +52,6 @@ class MuhasibApp(App):
 
 		# Initializing the prayer times
 		self.prayer_times = PrayerTimes()
-		self.methods = {data["name"]: method for method, data in self.prayer_times.methods.items()}
 
 		# Create interval events
 		Clock.schedule_interval(self.prayer_times_screen.update_prayer_labels, 60)
@@ -149,5 +146,5 @@ class MuhasibApp(App):
 		return self.dashboard
 
 if __name__ == "__main__":
-	install_cache(cache_name="muhasib", backend="sqlite")
+	install_cache(cache_name="data/muhasib", backend="sqlite")
 	MuhasibApp().run()

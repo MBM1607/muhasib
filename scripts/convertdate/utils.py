@@ -7,8 +7,9 @@
 # Licensed under the MIT license:
 # http://opensource.org/licenses/MIT
 # Copyright (c) 2016, fitnr <fitnr@fakeisthenewreal>
-import math
+
 import calendar
+import math
 
 TROPICALYEAR = 365.24219878  # Mean solar tropical year
 

@@ -1,9 +1,10 @@
 ''' Module to hold the class for the dashboard '''
 
 from datetime import date
+
 from kivy.app import App
+from kivy.properties import DictProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import ObjectProperty, DictProperty
 
 
 class Dashboard(BoxLayout):
@@ -21,8 +22,8 @@ class Dashboard(BoxLayout):
 		''' Create the list for prayer records '''
 
 		record = self.app.database.get_prayer_record(date.today())
-		self.prayer_record = {"fajr": record[2], "dhuhr": record[3], "asr": record[4],
-							"maghrib": record[5], "isha": record[6]}
+		self.prayer_record = {"fajr": record[0], "dhuhr": record[1], "asr": record[2],
+							"maghrib": record[3], "isha": record[4]}
 
 		self.salah_list.data = [{"name": n.capitalize(), "info": r, "base": self} for n, r in self.prayer_record.items()]
 
@@ -32,4 +33,3 @@ class Dashboard(BoxLayout):
 			x.info = self.prayer_record[x.name.lower()]
 		
 		self.app.database.update_prayer_record(date.today(), **self.prayer_record)
-

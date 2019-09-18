@@ -3,19 +3,18 @@
 import calendar
 import datetime
 
-from kivy.uix.widget import Widget
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import StringProperty, ListProperty, ObjectProperty, DictProperty, BooleanProperty
-from kivy.uix.button import Button
 from kivy.app import App
+from kivy.properties import (BooleanProperty, DictProperty, ListProperty,
+                             ObjectProperty, StringProperty)
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.widget import Widget
 
-from custom_widgets import CustomButton, BlackLabel, CustomModalView, CustomDropDown
-
-import convertdate.islamic as islamic
 import constants
-
-
+import convertdate.islamic as islamic
+from custom_widgets import (BlackLabel, CustomButton, CustomDropDown,
+                            CustomModalView)
 
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
@@ -39,7 +38,7 @@ class MonthDropDown(CustomDropDown):
 class DateButton(CustomButton):
 	''' Button for a day in a month '''
 	prayer_record = DictProperty()
-	is_fast = BooleanProperty(False)
+	is_fasting = BooleanProperty(False)
 
 	def __init__(self, date=None, editable=True, **kwargs):
 		super().__init__(**kwargs)
@@ -62,27 +61,27 @@ class DateButton(CustomButton):
 
 		if self.get_date() == datetime.date.today():
 			self.background_color = constants.WARNING_COLOR
-		elif self.get_date().weekday() == 4:
-			self.background_color = constants.CAUTION_COLOR
+		elif islamic.from_gregorian(self.get_date().year, self.get_date().month, self.get_date().day)[1] == 9:
+			self.background_color = constants.SECONDRY_COLOR
 
 	def on_press(self):
 		'''  Display the popup with prayer record of the date '''
-		if not self.prayer_record:
-			self.get_prayer_record()
+		if self.editable:
+			if not self.prayer_record:
+				self.get_prayer_record()
 
-		self.popup.salah_list.data = [{"name": n.capitalize(), "info": r} for n, r in self.prayer_record.items()]
-		for x in self.popup.salah_list.data:
-			x["base"] = self
-			x["editable"] = self.editable
-		self.popup.open()
+			self.popup.salah_list.data = [{"name": n.capitalize(), "info": r} for n, r in self.prayer_record.items()]
+			for x in self.popup.salah_list.data:
+				x["base"] = self
+			self.popup.open()
 
 	def get_prayer_record(self):
 		''' Get the prayer_record of the date from the database '''
 		self.app.database.create_prayer_record(self.get_date())
 		prayer_record = self.app.database.get_prayer_record(self.get_date())
-		self.prayer_record = {"fajr": prayer_record[2], "dhuhr": prayer_record[3], "asr": prayer_record[4],
-							"maghrib": prayer_record[5], "isha": prayer_record[6]}
-		self.is_fast = prayer_record[7]
+		self.prayer_record = {"fajr": prayer_record[0], "dhuhr": prayer_record[1], "asr": prayer_record[2],
+							"maghrib": prayer_record[3], "isha": prayer_record[4]}
+		self.is_fasting = prayer_record[6]
 
 	def on_prayer_record(self, instance, value):
 		''' Refresh the prayer_records when changed '''
@@ -172,16 +171,20 @@ class Days(BoxLayout):
 	''' Class to layout the day's labels in a month '''
 	weekdays = ListProperty(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
 
+
 class Dates(GridLayout):
 	''' Class to layout the day of a month '''
 
 	def populate(self, year, month):
 		''' Create the dates buttons according to year and month '''
 		cal = self.parent.parent.parent
-
+		today = datetime.date.today()
+	
 		self.clear_widgets()
 		if cal.islamic:
 			dates = islamic.monthcalendar(year, month)
+			today = islamic.from_gregorian(today.year, today.month, today.day)
+			today = datetime.date(today[0], today[1], today[2])
 		else:
 			dates = calendar.monthcalendar(year, month)
 		for i in dates:
@@ -189,10 +192,9 @@ class Dates(GridLayout):
 				if not j:
 					self.add_widget(Widget())
 				else:
-					day = int(f"{j}")
-					date = datetime.date(cal.year, cal.month, day)
+					date = datetime.date(cal.year, cal.month, j)
 					# If date is of the future make the popup uneditable
-					if date > datetime.date.today():
+					if date > today:
 						editable = False
 					else:
 						editable = True

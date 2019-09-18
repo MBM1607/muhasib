@@ -36,7 +36,7 @@ import math
 class PrayerTimes():
 	''' A class to hold all the prayer times calculation capabilities '''
 
-	def __init__(self, method="MWL", time_format="24h", timezone=0, coords=(34.1687502, 73.2214982, 1214)) :
+	def __init__(self, method="Muslim World League", time_format="24h", timezone=0, coords=(34.1687502, 73.2214982, 1214)) :
 		
 		self.time_format = time_format
 		self.timezone = timezone
@@ -59,27 +59,34 @@ class PrayerTimes():
 
 		# Calculation Methods
 		self.methods = {
-			'MWL': {
-				'name': 'Muslim World League',
-				'params': {**{'fajr': 18, 'isha': 17}, **self.default_params}},
-			'ISNA': {
-				'name': 'Islamic Society of North America (ISNA)',
-				'params': {**{'fajr': 15, 'isha': 15}, **self.default_params}},
-			'Egypt': {
-				'name': 'Egyptian General Authority of Survey',
-				'params': {**{'fajr': 19.5, 'isha': 17.5}, **self.default_params}},
-			'Makkah': {
-				'name': 'Umm Al-Qura University, Makkah',
-				'params': {**{'fajr': 18.5, 'isha': '90 min'}, **self.default_params}},  # fajr was 19 degrees before 1430 hijri
-			'Karachi': {
-				'name': 'University of Islamic Sciences, Karachi',
-				'params': {**{'fajr': 18, 'isha': 18}, **self.default_params}},
-			'Tehran': {
-				'name': 'Institute of Geophysics, University of Tehran',
-				'params': {'fajr': 17.7, 'isha': 14, 'maghrib': 4.5, 'midnight': 'Jafari'}},  # isha is not explicitly specified in this method
-			'Jafari': {
-				'name': 'Shia Ithna-Ashari, Leva Institute, Qum',
-				'params': {'fajr': 16, 'isha': 14, 'maghrib': 4, 'midnight': 'Jafari'}}
+			'Muslim World League':
+				{**{'fajr': 18, 'isha': 17}, **self.default_params},
+			'Islamic Society of North America (ISNA)':
+				{**{'fajr': 15, 'isha': 15}, **self.default_params},
+			'Egyptian General Authority of Survey':
+				{**{'fajr': 19.5, 'isha': 17.5}, **self.default_params},
+			'Umm Al-Qura University, Makkah':
+				{**{'fajr': 18.5, 'isha': '90 min'}, **self.default_params},  # fajr was 19 degrees before 1430 hijri
+			'University of Islamic Sciences, Karachi':
+				{**{'fajr': 18, 'isha': 18}, **self.default_params},
+			'Gulf Region':
+				{**{'fajr': 19.5, 'isha': '90 min'}, **self.default_params},
+			'Kuwait':
+				{**{'fajr': 18, 'isha': 17.5}, **self.default_params},
+			'Qatar':
+				{**{'fajr': 18, 'isha': '90 min'}, **self.default_params},
+			'Majlis Ugama Islam Singapura, Singapore':
+				{**{'fajr': 20, 'isha': 18}, **self.default_params},
+			'Union Organization Islamic de France':
+				{**{'fajr': 12, 'isha': 12}, **self.default_params},
+			'Diyanet İşleri Başkanlığı, Turkey':
+				{**{'fajr': 18, 'isha': 17}, **self.default_params},
+			'Spiritual Administration of Muslims of Russia':
+				{**{'fajr': 16, 'isha': 15}, **self.default_params},
+			'Institute of Geophysics, University of Tehran': 
+				{'fajr': 17.7, 'isha': 14, 'maghrib': 4.5, 'midnight': 'Jafari'},  # isha is not explicitly specified in this method
+			'Shia Ithna-Ashari, Leva Institute, Qum':
+				{'fajr': 16, 'isha': 14, 'maghrib': 4, 'midnight': 'Jafari'}
 		}
 
 		
@@ -95,7 +102,7 @@ class PrayerTimes():
 
 	def set_method(self, method):
 		''' Set the method of measuring prayer time '''
-		self.settings.update(self.methods[method]["params"])
+		self.settings.update(self.methods[method])
 		self.calc_method = method
 
 	def set_coords(self, coords):

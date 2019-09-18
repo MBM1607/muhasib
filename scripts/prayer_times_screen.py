@@ -1,11 +1,12 @@
 ''' Module to hold the class PrayerTimesScreen '''
 
-from datetime import datetime, timedelta, date
+from datetime import date, datetime, timedelta
 
 from kivy.app import App
 from kivy.properties import ObjectProperty
 
 from custom_widgets import CustomModalView
+
 
 class PrayerTimesScreen(CustomModalView):
 	''' Class for the screen to show the prayer times '''
@@ -22,7 +23,7 @@ class PrayerTimesScreen(CustomModalView):
 		''' Update the prayer times '''
 		self.app.prayer_times.time_format = self.app.get_config("time_format", "24h")
 		calc_method = self.app.get_config("calc_method", "Muslim World League")
-		self.app.prayer_times.set_method(self.app.methods[calc_method])
+		self.app.prayer_times.set_method(calc_method)
 		self.app.prayer_times.set_asr(self.app.get_config("asr_factor", "Standard"))
 
 		self.times_data = self.app.prayer_times.get_times(date.today())

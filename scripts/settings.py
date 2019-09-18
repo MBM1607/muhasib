@@ -92,7 +92,7 @@ class PrayerCalculationPopup(SettingsPopup):
 	''' Popup to select the prayer calculation method '''
 	def open(self):
 		''' open the popup and fill it with options '''
-		methods = App.get_running_app().methods
+		methods = App.get_running_app().prayer_times.methods
 		self.recycle_view.data = [{"text": method} for method in methods.keys()]
 		super().open()
 

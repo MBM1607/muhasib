@@ -6,8 +6,9 @@
 # Copyright (c) 2016, fitnr <fitnr@fakeisthenewreal>
 
 from math import trunc
-from utils import ceil, jwday, monthcalendarhelper
+
 import gregorian
+from utils import ceil, jwday, monthcalendarhelper
 
 EPOCH = 1948439.5
 
