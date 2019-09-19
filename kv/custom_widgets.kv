@@ -35,6 +35,26 @@
 
 	CustomLabel:
 		text: root.info
+	
+<LabelCheckBox>:
+	spacing: dp(10)
+	canvas.before:
+		Color:
+			rgba: root.background_color
+		Rectangle:
+			pos: self.pos
+			size: self.size
+
+	CustomLabel:
+		text: root.name
+
+	CustomCheckBox:
+		active: root.active
+		on_active: root.active = self.active
+
+<CustomCheckBox@CheckBox>:
+	background_checkbox_normal: "data/checkbox_off.png"
+	background_checkbox_down: "data/checkbox_on.png"
 
 <BlackLabel>:
 	color: 0, 0, 0, 1
@@ -42,7 +62,6 @@
 <ItemsList>:
 	scroll_type: ["content", "bars"]
 	bar_color: 0, 0, 0, 1
-
 	RecycleBoxLayout:
 		orientation: "vertical"
 		default_size: None, dp(48)

@@ -23,19 +23,21 @@ class Database():
 			cursor.execute("INSERT INTO record(date, fast_required) VALUES(?, ?)", (date, fast_required))
 			self.db.commit()
 	
-	def update_record(self, date, fajr="not_prayed", dhuhr="not_prayed", asr="not_prayed", maghrib="not_prayed", isha="not_prayed", fast=False):
+	def update_record(self, date, fajr="Not prayed", dhuhr="Not prayed", asr="Not prayed", maghrib="Not prayed",
+							isha="Not prayed", fast=0, quran=0, hadees=0):
 		''' Update the prayer record of the date in record table '''
 
 		# Upgrade only if the record exists in database
 		if self.get_record(date):
 			cursor = self.db.cursor()
-			cursor.execute("UPDATE record SET fajr = ?, dhuhr = ? , asr = ?, maghrib = ?, isha = ?, fast = ? WHERE date = ?",
-						(fajr, dhuhr, asr, maghrib, isha, fast, date))
+			cursor.execute('''UPDATE record SET fajr = ?, dhuhr = ? , asr = ?,
+							maghrib = ?, isha = ?, fast = ?, quran_study = ?,
+							hadees_study = ? WHERE date = ?''',
+						(fajr, dhuhr, asr, maghrib, isha, fast, quran, hadees, date))
 			self.db.commit()
 
 	def get_record(self, date):
 		''' Get the prayer record of the date from the record table '''
-
 		cursor = self.db.cursor()
 		cursor.execute("SELECT * FROM record WHERE date = ?", (date,))
 		record = cursor.fetchone()

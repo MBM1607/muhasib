@@ -19,7 +19,7 @@ class PrayerOptionsButton(CustomButton):
 	def on_release(self):
 		''' Change the prayer record according to the button pressed '''
 		popup = self.parent.parent.parent.parent
-		popup.base.prayer_record[popup.prayer] = self.text
+		popup.base.change_prayer_record(popup.prayer, self.text)
 		popup.dismiss()
 
 

@@ -47,9 +47,6 @@ class MuhasibApp(App):
 		self.prayer_times_screen = PrayerTimesScreen()
 		self.dashboard = Dashboard()
 
-		# Initialize today's prayer's record
-		self.dashboard.create_prayer_list()
-
 		# Initializing the prayer times
 		self.prayer_times = PrayerTimes()
 

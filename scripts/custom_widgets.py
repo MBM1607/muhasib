@@ -2,9 +2,11 @@
 
 from itertools import chain
 
+import constants
 from kivy.graphics import Rectangle
 from kivy.graphics.texture import Texture
-from kivy.properties import ListProperty, StringProperty
+from kivy.properties import (BooleanProperty, ListProperty, ObjectProperty,
+                             StringProperty)
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -13,8 +15,6 @@ from kivy.uix.label import Label
 from kivy.uix.modalview import ModalView
 from kivy.uix.popup import Popup
 from kivy.uix.recycleview import RecycleView
-
-import constants
 
 
 class CustomActionBar(BoxLayout):
@@ -41,13 +41,31 @@ class CustomLabel(Label):
 
 
 class DoubleTextButton(ButtonBehavior, BoxLayout):
-	''' Class used to show name and some other info '''
+	''' A double labeled button to show name and some other info '''
 	name = StringProperty()
 	info = StringProperty()
 	background_color = ListProperty(constants.MAIN_COLOR)
 
+class LabelCheckBox(BoxLayout):
+	''' Checkbox with its very own label in a colored layout ''' 
+	name = StringProperty()
+	active = BooleanProperty(False)
+	base = ObjectProperty()
+	background_color = ListProperty(constants.WARNING_COLOR)
+
+	def on_active(self, instance, value):
+		''' When check box is clicked change the value in the record and the color '''
+
+		if value:
+			self.background_color = constants.SECONDRY_COLOR
+		else:
+			self.background_color = constants.WARNING_COLOR
+		# Ensure that this is not the first loading	
+		if self.base:
+			self.base.change_extra_record(self.name.lower(), value)
 
 class BlackLabel(CustomLabel):
+	''' Yeah this is exactly what you think it is.'''
 	pass
 
 
