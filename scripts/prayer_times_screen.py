@@ -4,12 +4,12 @@ from datetime import date, datetime, timedelta
 
 from kivy.app import App
 from kivy.properties import ObjectProperty
+from kivy.uix.screenmanager import Screen
 
-from custom_widgets import CustomModalView
 from constants import MAIN_COLOR, SECONDRY_COLOR
 
 
-class PrayerTimesScreen(CustomModalView):
+class PrayerTimesScreen(Screen):
 	''' Class for the screen to show the prayer times '''
 	times_list = ObjectProperty()
 	prayer_time_left = ObjectProperty()
@@ -38,8 +38,9 @@ class PrayerTimesScreen(CustomModalView):
 		''' Put focus on the next prayer so it can be highlighted'''
 		for x in self.times_list.data:
 			if x["name"] == next_prayer:
+				print(x["name"])
 				x["background_color"] = SECONDRY_COLOR
-			elif "background_color" in x.keys():
+			else:
 				x["background_color"] = MAIN_COLOR
 
 	def update_prayer_labels(self, wait=0.0):

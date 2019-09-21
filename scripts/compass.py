@@ -2,11 +2,10 @@
 
 from kivy.app import App
 from kivy.properties import StringProperty
+from kivy.uix.screenmanager import Screen
 
-from custom_widgets import CustomModalView
 
-
-class Compass(CustomModalView):
+class Compass(Screen):
 	''' Class for the screen containing compass '''
 	qibla_direction = StringProperty()
 

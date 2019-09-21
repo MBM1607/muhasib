@@ -3,6 +3,7 @@
 import json
 
 from kivy.app import App
+from kivy.uix.modalview import ModalView
 from kivy.properties import ObjectProperty
 
 from custom_widgets import CustomButton, CustomDropDown, CustomModalView

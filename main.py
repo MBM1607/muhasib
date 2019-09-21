@@ -6,24 +6,30 @@ from datetime import date
 import requests
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.garden.navigationdrawer import NavigationDrawer
 from kivy.lang.builder import Builder
 from kivy.properties import DictProperty, ListProperty
+from kivy.uix.screenmanager import ScreenManager
 from requests_cache import install_cache
+
 from scripts.calendar import Calendar
 from scripts.compass import Compass
 from scripts.dashboard import Dashboard
+from scripts.custom_widgets import NavigationWidget
 from scripts.database import Database
+from scripts.prayer_records_screen import PrayerRecordsScreen
 from scripts.prayer_times import PrayerTimes
 from scripts.prayer_times_screen import PrayerTimesScreen
 from scripts.settings import Settings
 
 Builder.load_file("kv/custom_widgets.kv")
-Builder.load_file("kv/dashboard.kv")
 Builder.load_file("kv/prayer_widgets.kv")
+Builder.load_file("kv/dashboard.kv")
 Builder.load_file("kv/locations.kv")
 Builder.load_file("kv/settings.kv")
 Builder.load_file("kv/compass.kv")
 Builder.load_file("kv/prayer_times_screen.kv")
+Builder.load_file("kv/prayer_records_screen.kv")
 Builder.load_file("kv/calendar.kv")
 
 
@@ -41,11 +47,29 @@ class MuhasibApp(App):
 		self.create_database_day()
 
 		# Initializing calendar and location form to be opened
+		self.screen_manager = ScreenManager()
+		self.navigationdrawer = NavigationDrawer()
+		self.dashboard = Dashboard()
 		self.calendar = Calendar()
 		self.settings = Settings()
 		self.compass = Compass()
 		self.prayer_times_screen = PrayerTimesScreen()
-		self.dashboard = Dashboard()
+		self.prayer_records_screen = PrayerRecordsScreen()
+
+		# Add all the screens onto the screen manager
+		self.screen_manager.add_widget(self.dashboard)
+		self.screen_manager.add_widget(self.calendar)
+		self.screen_manager.add_widget(self.settings)
+		self.screen_manager.add_widget(self.compass)
+		self.screen_manager.add_widget(self.prayer_times_screen)
+		self.screen_manager.add_widget(self.prayer_records_screen)
+
+		# Set up the navigation drawer
+		self.navigationdrawer.anim_type = "slide_above_anim"
+		self.navigationdrawer.opening_transition = "out_sine"
+		self.navigationdrawer.opening_transition = "out_sine"
+		self.navigationdrawer.set_side_panel(NavigationWidget())
+		self.navigationdrawer.set_main_panel(self.screen_manager)
 
 		# Initializing the prayer times
 		self.prayer_times = PrayerTimes()
@@ -123,24 +147,32 @@ class MuhasibApp(App):
 		''' Overriding the kivy settings screen and changing it with a complete custom system.
 			This functon open the settings screen'''
 
-		self.settings.open()
+		self.screen_manager.current = "settings"
 
 	def open_calendar(self):
-		''' Open the calendar modal view '''
+		''' Open the calendar screen '''
 		self.calendar.populate()
-		self.calendar.open()
+		self.screen_manager.current = "calendar"
 
 	def open_compass(self):
-		''' Open the compass model view '''
+		''' Open the compass screen '''
 		self.compass.set_qibla_direction()
-		self.compass.open()
+		self.screen_manager.current = "compass"
 	
-	def open_prayer_times_screen(self):
-		''' Open the prayer times model view '''
-		self.prayer_times_screen.open()
+	def open_prayer_times(self):
+		''' Open the prayer times screen '''
+		self.screen_manager.current = "prayer_times"
+	
+	def open_prayer_records(self):
+		''' Open the prayer records screen '''
+		self.screen_manager.current = "prayer_records"
+
+	def open_dashboard(self):
+		'''Returns the app to the dashboard'''
+		self.screen_manager.current = "dashboard"
 
 	def build(self):
-		return self.dashboard
+		return self.navigationdrawer
 
 if __name__ == "__main__":
 	install_cache(cache_name="data/muhasib", backend="sqlite")

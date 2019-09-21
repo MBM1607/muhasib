@@ -2,62 +2,85 @@
 
 #:import MAIN_COLOR constants.MAIN_COLOR
 
-<CustomButton>:
+<Label>:
 	font_name: "data/Saira-Regular.ttf"
-	font_size: sp(15)
+	font_size: sp(12)
 
-<CustomLabel>:
-	font_name: "data/Saira-Regular.ttf"
-	font_size: sp(15)
+<Screen>:
+	ColorBoxLayout:
+
+<ColorBoxLayout>:
+	canvas.before:
+		Color:
+			rgba: self.background_color
+		Rectangle:
+			pos: self.pos
+			size: self.size
+
+<IconButton>:
+	size_hint: None, 1
+	Image:
+		source: root.icon
+		pos: root.pos
+		size: root.size
+
+<HorizontalIconTextButton>:
+	orientation: "horizontal"
+	size_hint_y: None
+	padding: dp(10)
+	spacing: dp(2)
+	height: dp(48)
+	Image:
+		source: root.icon
+		size_hint: None, None
+		size: dp(32), dp(32)
+	Label:
+		text: root.text
+		halign: "left"
+
+<VerticalIconTextButton>:
+	orientation: "vertical"
+	padding: dp(5)
+	Image:
+		source: root.icon
+	Label:
+		text: root.text
+		size_hint: 1, None
+		size: self.texture_size
+		font_size: sp(15)
+	
+	
+
+<CustomModalView>:
+	background: ""
+	ColorBoxLayout:
 
 <CustomActionBar>:
 	size_hint_y: None
 	padding: dp(10)
 	height: dp(48)
-	canvas.before:
-		Color:
-			rgba: MAIN_COLOR
-		Rectangle:
-			pos: self.pos
-			size: self.size
 
 <DoubleTextButton>:
 	spacing: dp(10)
-	canvas.before:
-		Color:
-			rgba: root.background_color
-		Rectangle:
-			pos: self.pos
-			size: self.size
-
-	CustomLabel:
+	Label:
 		text: root.name
 
-	CustomLabel:
+	Label:
 		text: root.info
-	
+
+<CustomCheckBox@CheckBox>:
+	background_checkbox_normal: "data/checkbox_off.png"
+	background_checkbox_down: "data/checkbox_on.png"
+
 <LabelCheckBox>:
 	spacing: dp(10)
-	canvas.before:
-		Color:
-			rgba: root.background_color
-		Rectangle:
-			pos: self.pos
-			size: self.size
-
-	CustomLabel:
+	Label:
 		text: root.name
 
 	CustomCheckBox:
 		active: root.active
 		on_active: root.active = self.active
 
-<CustomCheckBox@CheckBox>:
-	background_checkbox_normal: "data/checkbox_off.png"
-	background_checkbox_down: "data/checkbox_on.png"
-
-<BlackLabel>:
-	color: 0, 0, 0, 1
 
 <ItemsList>:
 	scroll_type: ["content", "bars"]
@@ -71,25 +94,51 @@
 		spacing: dp(10)
 		padding: dp(10)
 
-<CustomModalView>:
-	background: ""
-	BoxLayout:
-		canvas.before:
-			Color:
-				rgba: 240/255, 240/255, 240/255, 1
-			Rectangle:
-				pos: self.pos
-				size: self.size
-
 <CustomPopup>:
 	background: ""
 	title_color: 0, 0, 0, 1
 	title_font: "data/Saira-Regular.ttf"
 	title_size: sp(15)
 	separator_color: MAIN_COLOR
-	canvas.before:
-		Color:
-			rgba: 240/255, 240/255, 240/255, 1
-		Rectangle:
-			pos: self.pos
-			size: self.size
+
+<NavigationButton>:
+	on_press: app.navigationdrawer.toggle_state()
+	size: dp(32), dp(32)
+	icon: "data/menu.png"
+
+<NavigationWidget>:
+	orientation: "vertical"
+    spacing: dp(10)
+    padding: 0, dp(5), 0, dp(10)
+	background_color: MAIN_COLOR
+	HorizontalIconTextButton:
+		text: "Main Screen"
+		icon: "data/back.png"
+		on_press: app.open_dashboard()
+		on_release: app.navigationdrawer.toggle_state()
+	HorizontalIconTextButton:
+		text: "Settings"
+		icon: "data/settings.png"
+		on_press: app.open_settings()
+		on_release: app.navigationdrawer.toggle_state()
+	HorizontalIconTextButton:
+		text: "Calendar"
+		icon: "data/calendar.png"
+		on_press: app.open_calendar()
+		on_release: app.navigationdrawer.toggle_state()
+	HorizontalIconTextButton:
+		text: "Prayer Times"
+		icon: "data/time.png"
+		on_press: app.open_prayer_times()
+		on_release: app.navigationdrawer.toggle_state()
+	HorizontalIconTextButton:
+		text: "Prayer Records"
+		icon: "data/record.png"
+		on_press: app.open_prayer_records()
+		on_release: app.navigationdrawer.toggle_state()
+	HorizontalIconTextButton:
+		text: "Qibla"
+		icon: "data/compass.png"
+		on_press: app.open_compass()
+		on_release: app.navigationdrawer.toggle_state()
+	Widget:

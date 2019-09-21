@@ -3,16 +3,17 @@
 import calendar
 import datetime
 
-import constants
-import convertdate.islamic as islamic
-from custom_widgets import (BlackLabel, CustomButton, CustomDropDown,
-                            CustomModalView, CustomPopup)
 from kivy.app import App
 from kivy.properties import ListProperty, ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.widget import Widget
+from kivy.uix.screenmanager import Screen
+
+import constants
+import convertdate.islamic as islamic
+from custom_widgets import CustomButton, CustomDropDown, CustomPopup
 
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
@@ -102,7 +103,7 @@ class DateButton(CustomButton):
 			x.info = self.prayer_record[x.name.lower()]
 
 
-class Calendar(CustomModalView):
+class Calendar(Screen):
 	''' Class to hold all the calendar functionality '''
 
 	year_menu = StringProperty("Year")

@@ -1,11 +1,14 @@
 ''' Module for all code related to the settings screen and storage '''
 
 import json
+
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import Screen
 from kivy.properties import ObjectProperty, DictProperty, StringProperty
+from kivy.clock import Clock
 from kivy.app import App
 
-from custom_widgets import CustomModalView, CustomButton, CustomPopup, DoubleTextButton
+from custom_widgets import CustomButton, CustomPopup, DoubleTextButton
 from locations import LocationForm
 
 
@@ -19,7 +22,7 @@ class SettingsButton(DoubleTextButton):
 	def on_press(self):
 		self.function()
 
-class Settings(CustomModalView):
+class Settings(Screen):
 	''' Class for a settings screen to change settings '''
 	settings_list = ObjectProperty()
 	config = DictProperty()
@@ -56,7 +59,6 @@ class Settings(CustomModalView):
 			#self.location_check()
 			self.save_settings()
 
-		from kivy.clock import Clock
 		Clock.schedule_once(self.location_check)
 
 	def location_check(self, *args):

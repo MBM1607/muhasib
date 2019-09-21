@@ -2,6 +2,8 @@
 
 #:import SECONDRY_COLOR constants.SECONDRY_COLOR
 
+<BlackLabel@Label>:
+	color: 0, 0, 0, 1
 <DatePopup>:
 	salah_list: salah_list
 	extra_record_list: extra_record_list
@@ -84,6 +86,7 @@
 	background_color: SECONDRY_COLOR
 
 <Calendar>:
+	name: "calendar"
 	dates: dates
 	days: days
 	month_menu: month_menu
@@ -93,16 +96,8 @@
 		spacing: dp(10)
 
 		CustomActionBar:
-			CustomButton:
-				size_hint: None, 1
-				on_press: root.dismiss()
-				canvas:
-					Rectangle:
-						source: "data/back.png"
-						pos: self.pos
-						size: dp(32), dp(32)
-				size: dp(32), dp(32)
-			CustomLabel:
+			NavigationButton:
+			Label:
 				text: "Calendar"
 
 		BoxLayout:

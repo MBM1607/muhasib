@@ -2,22 +2,14 @@
 
 <Settings>:
 	settings_list: settings_list
+	name: "settings"
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
 		CustomActionBar:
-			CustomButton:
-				size_hint: None, 1
-				on_press: root.dismiss()
-				canvas:
-					Rectangle:
-						source: "data/back.png"
-						pos: self.pos
-						size: dp(32), dp(32)
-				size: dp(32), dp(32)
-			CustomLabel:
+			NavigationButton:
+			Label:
 				text: "Settings"
-
 		ItemsList:
 			id: settings_list
 			size_hint_y: 0.9

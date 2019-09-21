@@ -1,21 +1,15 @@
 #:kivy 1.11.1
 
 <Compass>:
+	name: "compass"
     BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
         CustomActionBar:
-            CustomButton:
-				size_hint: None, 1
-				on_press: root.dismiss()
-				canvas:
-					Rectangle:
-						source: "data/back.png"
-						pos: self.pos
-						size: dp(32), dp(32)
-				size: dp(32), dp(32)
-            CustomLabel:
+			NavigationButton:
+            Label:
                 text: "Compass"
         BoxLayout:
-            BlackLabel:
+            Label:
+                color: 0, 0, 0, 1
                 text: root.qibla_direction

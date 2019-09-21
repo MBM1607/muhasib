@@ -1,74 +1,35 @@
 #:kivy 1.11.1
 
-#:import ItemsList custom_widgets.ItemsList
-#:import SalahButton prayer_widgets.SalahButton
 #:import MAIN_COLOR constants.MAIN_COLOR
-
 <Dashboard>:
-	orientation: "vertical"
-	spacing: dp(10)
-	salah_list: salah_list
-	extra_record_list: extra_record_list
-
-	canvas.before:
-		Color:
-			rgba: 240/255, 240/255, 240/255, 1
-		Rectangle:
-			pos: self.pos
-			size: self.size
-
-	CustomActionBar:
-		spacing: dp(16)
-		Widget:
-		CustomButton:
-			size_hint: None, 1
-			on_press: app.open_settings()
-			canvas:
-        		Rectangle:
-					source: "data/settings.png"
-					pos: self.pos
-					size: dp(32), dp(32)
-			size: dp(32), dp(32)
-
-		CustomButton:
-			size_hint: None, 1
-			on_press: app.open_prayer_times_screen()
-			canvas:
-        		Rectangle:
-					source: "data/time.png"
-					pos: self.pos
-					size: dp(32), dp(32)
-			size: dp(32), dp(32)
-
-		CustomButton:
-			size_hint: None, 1
-			on_press: app.open_compass()
-			canvas:
-        		Rectangle:
-					source: "data/compass.png"
-					pos: self.pos
-					size: dp(32), dp(32)
-			size: dp(32), dp(32)
-
-		CustomButton:
-			size_hint: None, 1
-			on_press: app.open_calendar()
-			canvas:
-        		Rectangle:
-					source: "data/calendar.png"
-					pos: self.pos
-					size: dp(32), dp(32)
-			size: dp(32), dp(32)
-
+	name: "dashboard"
 	BoxLayout:
 		orientation: "vertical"
+		spacing: dp(10)
+		CustomActionBar:
+			spacing: dp(16)
 
-		ItemsList:
-			id: salah_list
-			size_hint_y: 0.65
-			viewclass: "SalahButton"
-		
-		ItemsList:
-			id: extra_record_list
-			size_hint_y: 0.35
-			viewclass: "LabelCheckBox"
+		GridLayout:
+			cols: 2
+			padding: dp(5)
+			spacing: dp(5)
+			VerticalIconTextButton:
+				icon: "data/record.png"
+				text: "Prayer Record"
+				on_press: app.open_prayer_records()
+			VerticalIconTextButton:
+				icon: "data/time.png"
+				text: "Prayer Times"
+				on_press: app.open_prayer_times()
+			VerticalIconTextButton:
+				icon: "data/calendar.png"
+				text: "Calendar"
+				on_press: app.open_calendar()
+			VerticalIconTextButton:
+				icon: "data/compass.png"
+				text: "Compass"
+				on_press: app.open_compass()
+			VerticalIconTextButton:
+				icon: "data/settings.png"
+				text: "Settings"
+				on_press: app.open_settings()

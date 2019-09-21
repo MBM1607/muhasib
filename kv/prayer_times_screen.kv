@@ -1,9 +1,11 @@
 #:kivy 1.11.1
 
-<LeftAlignLabel@BlackLabel>:
+<LeftAlignLabel@Label>:
 	halign: "left"
+	color: 0, 0, 0, 1
 
 <PrayerTimesScreen>:
+	name: "prayer_times"
 	times_list: times_list
 	next_prayer: next_prayer
 	prayer_time_left: prayer_time_left
@@ -12,16 +14,8 @@
 		orientation: "vertical"
 		spacing: dp(10)
         CustomActionBar:
-            CustomButton:
-				size_hint: None, 1
-				on_press: root.dismiss()
-				canvas:
-					Rectangle:
-						source: "data/back.png"
-						pos: self.pos
-						size: dp(32), dp(32)
-				size: dp(32), dp(32)
-            CustomLabel:
+			NavigationButton:
+            Label:
                 text: "Prayer Times"
 
 		BoxLayout:

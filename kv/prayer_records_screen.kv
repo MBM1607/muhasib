@@ -1,0 +1,37 @@
+#:kivy 1.11.1
+
+#:import SalahButton prayer_widgets.SalahButton
+
+<PrayerRecordsScreen>:
+    name: "prayer_records"
+    salah_list: salah_list
+	extra_record_list: extra_record_list
+
+    BoxLayout:
+		orientation: "vertical"
+		spacing: dp(10)
+
+		canvas.before:
+			Color:
+				rgba: 240/255, 240/255, 240/255, 1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+
+		CustomActionBar:
+			NavigationButton:
+			Label:
+				text: "Prayer Records"
+
+		BoxLayout:
+			orientation: "vertical"
+
+			ItemsList:
+				id: salah_list
+				size_hint_y: 0.65
+				viewclass: "SalahButton"
+			
+			ItemsList:
+				id: extra_record_list
+				size_hint_y: 0.35
+				viewclass: "LabelCheckBox"
