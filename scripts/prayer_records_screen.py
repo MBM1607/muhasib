@@ -46,4 +46,3 @@ class PrayerRecordsScreen(Screen):
 			child.info = self.prayer_record[child.name.lower()]
 		self.database.update_record(date.today(), **self.prayer_record, **self.extra_record)	
 
-

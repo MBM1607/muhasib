@@ -38,7 +38,6 @@ class PrayerTimesScreen(Screen):
 		''' Put focus on the next prayer so it can be highlighted'''
 		for x in self.times_list.data:
 			if x["name"] == next_prayer:
-				print(x["name"])
 				x["background_color"] = SECONDRY_COLOR
 			else:
 				x["background_color"] = MAIN_COLOR

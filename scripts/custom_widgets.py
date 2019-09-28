@@ -13,7 +13,7 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.dropdown import DropDown
 from kivy.uix.label import Label
-from kivy.uix.widget import Widget
+from kivy.uix.image import Image
 from kivy.uix.modalview import ModalView
 from kivy.uix.popup import Popup
 from kivy.uix.recycleview import RecycleView
@@ -23,31 +23,35 @@ class ColorBoxLayout(BoxLayout):
 	''' Layout with a background color '''
 	background_color = ListProperty(constants.GREY_COLOR)
 
+class BaseButton(ButtonBehavior, ColorBoxLayout):
+	''' A base class for other types of custom buttons '''
+	background_color = ListProperty(constants.MAIN_COLOR)
+	background_normal = ''
+	background_down = "data/button.png"
+	border = ListProperty([16, 16, 16, 16])
+
+class CustomButton(BaseButton):
+	''' A custom Button which is identical to the normal kivy button '''
+	text = StringProperty()
+
 class CustomActionBar(ColorBoxLayout):
 	''' Class for a custom action bar '''
 	background_color = ListProperty(constants.MAIN_COLOR)
 
 
-class CustomButton(Button):
-	''' Custom appearance for all buttons  '''
-	background_color = ListProperty(constants.MAIN_COLOR)
-	background_normal = ''
-	background_down = "data/button.png"
-
-
-class IconButton(ButtonBehavior, Widget):
+class IconButton(ButtonBehavior, Image):
 	''' Button with an icon instead of text '''
 	icon = StringProperty()
 
 
-class HorizontalIconTextButton(ButtonBehavior, ColorBoxLayout):
+class HorizontalIconTextButton(BaseButton):
 	''' Button with an icon and text horizontally arranged '''
 	icon = StringProperty()
 	text = StringProperty()
 	background_color = ListProperty(constants.MAIN_COLOR)
 
 
-class VerticalIconTextButton(ButtonBehavior, ColorBoxLayout):
+class VerticalIconTextButton(BaseButton):
 	''' Buttton with an icon and text vertically arranged '''
 	icon = StringProperty()
 	text = StringProperty()
@@ -62,7 +66,7 @@ class CustomDropDown(DropDown):
 		self.container.padding = (0, dp(1), 0, 0)
 
 
-class DoubleTextButton(ButtonBehavior, ColorBoxLayout):
+class DoubleTextButton(BaseButton):
 	''' A double labeled button to show name and some other info '''
 	name = StringProperty()
 	info = StringProperty()
@@ -82,7 +86,7 @@ class LabelCheckBox(ColorBoxLayout):
 			self.background_color = constants.SECONDRY_COLOR
 		else:
 			self.background_color = constants.WARNING_COLOR
-		# Ensure that this is not the first loading	
+		# Ensure that this is not the first loading before saving change to the database
 		if self.base:
 			self.base.change_extra_record(self.name.lower(), value)
 
