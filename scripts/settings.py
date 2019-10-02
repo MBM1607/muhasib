@@ -29,6 +29,7 @@ class Settings(Screen):
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
+		self.app = App.get_running_app()
 		self.calc_method = PrayerCalculationPopup()
 		self.location_form = LocationForm()
 		self.asr_factor = AsrFactorPopup()
@@ -41,7 +42,7 @@ class Settings(Screen):
 		self.settings_list.data = [{"name": "Prayer Calculation Method", "function": self.calc_method.open, "info": self.config["calc_method"]},
 								   {"name": "Asr Factor", "function": self.asr_factor.open, "info": self.config["asr_factor"]},
 								   {"name":  "Time Format", "function": self.time_format.open, "info": self.config["time_format"]},
-								   {"name": "Location", "function": self.location_form.open, "info": ', '.join(self.config["location"])}]
+								   {"name": "Location", "function": self.location_form.open, "info": self.config["location"]}]
 
 	def open(self):
 		''' Refresh and open the popup '''
@@ -53,19 +54,31 @@ class Settings(Screen):
 		try:
 			with open("data/settings.json", "r") as json_file:
 				self.config = json.load(json_file)
-				#self.location_check()
 		except FileNotFoundError:
-			self.config = {"location": [], "calc_method": "", "asr_factor": "", "time_format": ""}
-			#self.location_check()
+			self.config = {
+							"latitude": 0, "longitude": 0, "altitude": 0,
+							"location": "", "calc_method": "",
+							"asr_factor": "", "time_format": ""
+							}
 			self.save_settings()
 
 		Clock.schedule_once(self.location_check)
 
-	def location_check(self, *args):
-		''' Check if location is present if not open the form to get location '''
+	def location_data_present(self):
+		''' Check if the location data is in the configuration '''
+		if self.config["location"] and self.config["latitude"] and self.config["longitude"] and self.config["timezone"]:
+			return True
+		else:
+			return False
 
-		if self.config["location"]:
-			App.get_running_app().location = self.config["location"]
+	def location_check(self, *args):
+		''' Check if location is present, if not open the form to get location '''
+
+		if self.location_data_present():
+			App.get_running_app().change_location(self.config["location"],
+												self.config["latitude"], self.config["longitude"],
+												self.config["altitude"], self.config["timezone"],
+												update_config=False)
 		else:
 			self.location_form.open()
 
@@ -74,11 +87,19 @@ class Settings(Screen):
 		with open("data/settings.json", "w") as json_file:
 			json.dump(self.config, json_file)
 
+	def get_config(self, key, defualt):
+		''' Get the configuration for the specific key and return with defualt if not '''
+		if key in self.config.keys() and self.config[key]:
+			return self.config[key]
+		else:
+			self.config[key] = defualt
+			return defualt
 
 	def on_config(self, instance, value):
 		''' When config changes then upgrade prayer times and save the settings '''
 		app = App.get_running_app()
 		if hasattr(app, "prayer_times_screen"):
+			app.set_prayer_times_settings()
 			app.prayer_times_screen.update_prayer_times()
 		self.refresh()
 		self.save_settings()

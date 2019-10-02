@@ -10,7 +10,7 @@ from custom_widgets import CustomButton, CustomDropDown, CustomModalView
 
 
 class LocationDropDown(CustomDropDown):
-	''' Dropdown lists for countries and cities '''
+	''' Dropdown for the location suggestions '''
 
 	def dismiss(self):
 		''' Clear children when dismissed '''
@@ -23,68 +23,56 @@ class LocationButton(CustomButton):
 
 
 class LocationForm(CustomModalView):
-	''' Class for location form to get user's city and country '''
-	city_text = ObjectProperty()
-	country_text = ObjectProperty()
+	''' Class for location form to get user's location '''
+	location_text = ObjectProperty()
 	
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 		self.app = App.get_running_app()
 		
-		with open("data/cities.json") as cities:
-			self.cities = json.load(cities)
-			self.countries = sorted(set(self.cities.keys()))
+		with open("data/cities.json") as locations_data:
+			self.locations_data = json.load(locations_data)
 
-		self.city_dropdown = LocationDropDown()
-		self.country_dropdown = LocationDropDown()
+		# Extract the city, region and country from the data and make a locations set with it
+		self.locations = set()
+		for location in self.locations_data:
+			if not location[2]:
+				self.locations.add(", ".join((location[0], location[1])))
+			else:
+				self.locations.add(", ".join((location[0], location[2], location[1])))
+			
 
-		self.city_text.bind(on_text_validate=self.city_dropdown_open)
-		self.city_dropdown.bind(on_select=self.change_city)
-		self.country_text.bind(on_text_validate=self.country_dropdown_open)
-		self.country_dropdown.bind(on_select=self.change_country)
+		self.suggestion_dropdown = LocationDropDown()
 
+		self.location_text.bind(on_text_validate=self.check_input_location)
+		self.suggestion_dropdown.bind(on_select=self.change_location)
 
-	def city_dropdown_open(self, instance):
-		''' Open and populate the city dropdown '''
-		text = instance.text.title()
-		self.city_text.text = self.city_text.text.title()
-		self.country_text.text = self.country_text.text.title()
+	def check_input_location(self, _=None):
+		''' Check if the input location is a valid location if not then open the suggestions '''
+		text = self.location_text.text.title()
+		self.location_text.text = self.location_text.text.title()
 
-		if self.country_text.text in self.countries:
-			for city in self.cities[self.country_text.text]:
-				if city.startswith(text) and city != text:
-					btn = LocationButton(text=city)
-					btn.bind(on_release=lambda btn: self.city_dropdown.select(btn.text))
-					self.city_dropdown.add_widget(btn)
+		# Change the location to input text if it is a valid location
+		if text in self.locations:
+			self.change_location(self, text)
+		elif text:
+			self.suggestion_dropdown_open(text)
 
-			self.city_dropdown.open(instance)
+	def suggestion_dropdown_open(self, text):
+		''' Open and populate the location dropdown with suggestions '''
+		# Very Basic Auto complete suggestions
+		for location in self.locations:
+			if location.startswith(text) and location != text:
+				btn = LocationButton(text=location)
+				btn.bind(on_release=lambda btn: self.suggestion_dropdown.select(btn.text))
+				self.suggestion_dropdown.add_widget(btn)
 
-	def change_city(self, instance, value):
-		''' Change the city based on the value chosen on dropdown '''
-		self.city_text.text = value
-		self.set_location()
+		self.suggestion_dropdown.open(self.location_text)
 
-	def country_dropdown_open(self, instance):
-		''' Open and populate the country dropdown '''
-		text = instance.text.title()
-		self.country_text.text = self.country_text.text.title()
-
-		for country in self.countries:
-			if country.startswith(text) and country != text:
-				btn = LocationButton(text=country)
-				btn.bind(on_release=lambda btn: self.country_dropdown.select(btn.text))
-				self.country_dropdown.add_widget(btn)
-		
-		self.country_dropdown.open(instance)
-
-	def change_country(self, instance, value):
-		''' Change the country based on the value chosen on dropdown '''
-		self.country_text.text = value
-
-	def set_location(self):
-		''' Set the location according to city and country specified and close location form '''
-		if self.country_text.text in self.countries and self.city_text.text in self.cities[self.country_text.text]:
-			self.app.location = [self.city_text.text, self.country_text.text]
-			self.dismiss()
-		
-			self.app.settings.config["location"] = self.app.location
+	def change_location(self, instance, value):
+		''' Change the location to the selected value and change app's location data and close the form '''
+		self.location_text.text = value
+		for data in self.locations_data:
+			if value.split(", ")[0] == data[0]:
+				self.app.change_location(value, data[3], data[4], data[5], data[6])
+				self.dismiss()

@@ -22,11 +22,8 @@ class PrayerTimesScreen(Screen):
 
 	def update_prayer_times(self):
 		''' Update the prayer times '''
-		self.app.prayer_times.time_format = self.app.get_config("time_format", "24h")
-		calc_method = self.app.get_config("calc_method", "Muslim World League")
-		self.app.prayer_times.set_method(calc_method)
-		self.app.prayer_times.set_asr(self.app.get_config("asr_factor", "Standard"))
 
+		# Calculate today's prayer times
 		self.times_data = self.app.prayer_times.get_times(date.today())
 
 		# Populate the lists on the dashboard
@@ -74,4 +71,5 @@ class PrayerTimesScreen(Screen):
 			self.prayer_time_left.text = time.strftime("%H hours & %M minutes remaining")
 		self.next_prayer.text = next_prayer.capitalize()
 
+		# Put colored focus on the next prayer time
 		self.focus_next_prayer(next_prayer.split(":")[0].capitalize())

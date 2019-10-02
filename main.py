@@ -1,16 +1,14 @@
 ''' Main python file for running and defining the app object. '''
 
 import json
-from datetime import date
+from datetime import date, datetime
 
-import requests
+import pytz
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.garden.navigationdrawer import NavigationDrawer
 from kivy.lang.builder import Builder
-from kivy.properties import DictProperty, ListProperty
 from kivy.uix.screenmanager import ScreenManager
-from requests_cache import install_cache
 
 from scripts.calendar import Calendar
 from scripts.compass import Compass
@@ -36,12 +34,14 @@ Builder.load_file("kv/calendar.kv")
 class MuhasibApp(App):
 	''' Muhasib app object '''
 	use_kivy_settings = False
-	location = ListProperty()
 	icon = 'data/logo.png'
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 
+		self.location = ""
+		self.tz_name = ""
+	
 		# Initialize the database
 		self.database = Database()
 		self.create_database_day()
@@ -71,25 +71,52 @@ class MuhasibApp(App):
 		self.navigationdrawer.set_side_panel(NavigationWidget())
 		self.navigationdrawer.set_main_panel(self.screen_manager)
 
-		# Initializing the prayer times
+		# Initializing the prayer times and setting its parameters
 		self.prayer_times = PrayerTimes()
+		self.set_prayer_times_settings()
 
 		# Create interval events
 		Clock.schedule_interval(self.prayer_times_screen.update_prayer_labels, 60)
 		Clock.schedule_interval(self.day_pass_check, 3600)
+	
+	@staticmethod
+	def utcoffset(tz):
+		''' Take the timezone name and return its UTC offset '''
+		now = datetime.now(tz=pytz.timezone(tz))
+		utc_offset = (now.utcoffset().days * 24) + (now.utcoffset().seconds / 3600)
+		return utc_offset
+	
+	def set_prayer_times_settings(self):
+		''' Change the prayer times calculation settings according to app's settings '''
+		self.prayer_times.time_format = self.settings.get_config("time_format", "24h")
+		self.prayer_times.asr_param = self.settings.get_config("asr_factor", "Standard")
+		self.prayer_times.set_method(self.settings.get_config("calc_method", "Muslim World League"))
 
-	def on_location(self, instance, value):
-		''' Change the location text and the prayer times when location is changed '''
-		self.prayer_times_screen.location.text = value[0] + ", " + value[1]
-		coords = self.get_geolocation()
-		self.prayer_times.set_coords(coords)
-		self.prayer_times.timezone = self.get_timezone(coords[0], coords[1])
+	def change_location(self, location, lat, lng, alt, tz, update_config=True):
+		''' Change all the location data and modify prayer times appropriately '''
+		self.location = location
+		self.tz_name = tz
+
+		# Update the configuration dictionary of settings with new location data
+		if update_config:
+			self.settings.config.update({
+											"location": location, "latitude": lat,
+											"longitude": lng, "altitude": alt, "timezone": tz
+										})
+		
+		# Modify prayer times calculation variables with new data and update the times
+		self.prayer_times.lat = lat
+		self.prayer_times.lng = lng
+		self.prayer_times.alt = alt
+		self.prayer_times.timezone = self.utcoffset(tz)
+		self.prayer_times_screen.location.text = location
 		self.prayer_times_screen.update_prayer_times()
 	
 	def day_pass_check(self, time):
 		''' Check if a day has passed and upgrade the prayer times and records if it has '''
 		prayer = self.prayer_times_screen.next_prayer.text.split(":")[0]
 		if self.today != date.today() and prayer != "Midnight":
+			self.prayer_times.timezone = self.utcoffset(self.tz_name)
 			self.prayer_times_screen.update_prayer_times()
 			self.dashboard.create_prayer_list()
 			self.create_database_day()
@@ -98,50 +125,6 @@ class MuhasibApp(App):
 		''' Create a row in the database for the day '''
 		self.today = date.today()
 		self.database.create_record(self.today)
-
-	def get_geolocation(self):
-		''' Get the longitude, latitude and elevation of a place '''
-		latitude, longitude, altitude = 0.0, 0.0, 0.0
-
-		# Use the locationiq api for geocode
-		try:
-			url = f"https://us1.locationiq.com/v1/search.php?city={self.location[1]}&country={self.location[0]}&key=f2b114be03b247&format=json"
-			response = requests.get(url).json()[0]
-			latitude, longitude = response["lat"], response["lon"]
-
-		except Exception as e:
-			print("Geocode api get request failed", e)
-
-		# Use the jawg-labs api for altitude
-		try:
-			url = f"https://api.jawg.io/elevations?locations={latitude},{longitude}&access-token=qKEjwRnew0P72dTdvugpdyEiz77iu9WRyB4tFlhxLHAqOZChB5nTfufUnqhZtYJh"
-			altitude = requests.get(url).json()[0]["elevation"]
-
-		except Exception as e:
-			print("Altitude api get request failed", e)
-
-		return float(latitude), float(longitude), float(altitude)
-
-	def get_timezone(self, lat, lon):
-		''' Get the timezone from longitude and latitude '''
-		timezone = 0
-		try:
-			url = f"https://us1.unwiredlabs.com/v2/timezone.php?token=f2b114be03b247&lat={lat}&lon={lon}"
-			timezone = requests.get(url).json()["timezone"]
-			timezone = timezone["offset_sec"] // 3600
-
-		except Exception as e:
-			print("Timezone api get request failed", e)
-
-		return timezone
-
-	def get_config(self, key, defualt):
-		''' Get the configuration for the specific key and return with defualt if not '''
-		if key in self.settings.config.keys() and self.settings.config[key]:
-			return self.settings.config[key]
-		else:
-			self.settings.config[key] = defualt
-			return defualt
 
 	def open_settings(self):
 		''' Overriding the kivy settings screen and changing it with a complete custom system.
@@ -175,5 +158,4 @@ class MuhasibApp(App):
 		return self.navigationdrawer
 
 if __name__ == "__main__":
-	install_cache(cache_name="data/muhasib", backend="sqlite")
 	MuhasibApp().run()

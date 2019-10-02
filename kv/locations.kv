@@ -1,36 +1,31 @@
 #:kivy 1.11.1
+#:import MAIN_COLOR constants.MAIN_COLOR
 
 <LocationForm>:
-	city_text: city_text
-	country_text: country_text
-	size_hint: 0.8, 0.8
+	location_text: location_text
 
 	BoxLayout:
 		orientation: "horizontal"
 
-		LocationText:
-			id: country_text
-			hint_text: "Country"
+		TextInput:
+			id: location_text
+			multiline: False
+			hint_text_color: MAIN_COLOR
+			selection_color: (*MAIN_COLOR[:3], 0.5)
+			foreground_color: MAIN_COLOR
+			pos_hint: {'top': 1}
+			size_hint: 1, 0
+			height: dp(48)
+			hint_text: "City, Region, Country"
 			focus: True
-		LocationText:
-			id: city_text
-			hint_text: "City"
-			on_text_validate: root.set_location()
+	BoxLayout:
+		orientation: "horizontal"
 		LocationButton:
 			text: "Submit"
-			on_press: root.set_location()
-			pos_hint: {"top": 1}
-			size_hint_x: 0.2
-
-<LocationText@TextInput>:
-	multiline: False
-	hint_text_color: 5/255, 55/255, 11/255, 1
-	selection_color: 5/255, 55/255, 11/255, .5
-	foreground_color: 5/255, 55/255, 11/255, 1
-	pos_hint: {'top': 1}
-	size_hint: 0.4, 0
-	height: dp(50)
+			on_press: root.check_input_location()
+			pos_hint: {'bottom': 1}
+			size_hint_x: 1
 
 <LocationButton>:
 	size_hint_y: None
-	height: dp(50)
+	height: dp(48)
