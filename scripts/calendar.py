@@ -24,7 +24,7 @@ ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabo' ath-Thani ",
 			"Ramadan", "Shawwal", "Dhu al-Qa‘dah", "Dhu al-Hijjah")
 
 
-class DatePopup(CustomPopup):
+class PrayerPopup(CustomPopup):
 	''' Popup displaying prayer record for each date '''
 	salah_list = ObjectProperty()
 	extra_record_list = ObjectProperty()
@@ -43,7 +43,7 @@ class DateButton(CustomButton):
 		self.app = App.get_running_app()
 		self.date = date
 		self.editable = editable
-		self.popup = DatePopup()
+		self.popup = PrayerPopup()
 		self.prayer_record = {}
 		self.extra_record = {}
 
@@ -122,11 +122,6 @@ class Calendar(Screen):
 		self.month_dropdown.bind(on_select=self.change_month)
 
 		self.islamic = False
-
-	def dismiss(self):
-		''' Preparing the dashboard for any changes before closing calendar '''
-		App.get_running_app().dashboard.create_prayer_list()
-		super().dismiss()
 
 	def populate(self):
 		''' Create the current month and year's calendar '''

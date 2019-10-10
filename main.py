@@ -148,6 +148,7 @@ class MuhasibApp(App):
 	
 	def open_prayer_records(self):
 		''' Open the prayer records screen '''
+		self.prayer_records_screen.create_prayer_list()
 		self.screen_manager.current = "prayer_records"
 
 	def open_dashboard(self):

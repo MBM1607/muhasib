@@ -50,8 +50,3 @@ class SalahButton(DoubleTextButton):
 
 	def on_base(self, instance, value):
 		self.prayer_options.base = self.base
-
-
-class DashboardSalahButton(SalahButton):
-	def __init__(self, **kwargs):
-		super().__init__(**kwargs)
