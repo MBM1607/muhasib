@@ -117,8 +117,6 @@ class MuhasibApp(App):
 		prayer = self.prayer_times_screen.next_prayer.text.split(":")[0]
 		if self.today != date.today() and prayer != "Midnight":
 			self.prayer_times.timezone = self.utcoffset(self.tz_name)
-			self.prayer_times_screen.update_prayer_times()
-			self.dashboard.create_prayer_list()
 			self.create_database_day()
 		
 	def create_database_day(self):
@@ -144,11 +142,12 @@ class MuhasibApp(App):
 	
 	def open_prayer_times(self):
 		''' Open the prayer times screen '''
+		self.prayer_times_screen.update_prayer_times()
 		self.screen_manager.current = "prayer_times"
 	
 	def open_prayer_records(self):
 		''' Open the prayer records screen '''
-		self.prayer_records_screen.create_prayer_list()
+		self.prayer_records_screen.create_lists()
 		self.screen_manager.current = "prayer_records"
 
 	def open_dashboard(self):

@@ -14,7 +14,6 @@ from kivy.uix.screenmanager import Screen
 import constants
 import convertdate.islamic as islamic
 from custom_widgets import CustomButton, CustomDropDown, CustomPopup
-from prayer_widgets import PrayerOptions
 
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
@@ -44,8 +43,7 @@ class DateButton(CustomButton):
 		self.date = date
 		self.editable = editable
 		self.popup = RecordsPopup()
-		self.prayer_record = {}
-		self.extra_record = {}
+		self.popup.record_lists.date = self.get_date()
 
 		self.color_button()
 
@@ -67,35 +65,8 @@ class DateButton(CustomButton):
 	def on_press(self):
 		'''  Display the popup with prayer record of the date '''
 		if self.editable:
-			if not self.prayer_record or not self.extra_record:
-				self.get_record()
-
-			self.popup.record_lists.create_lists(self, self.prayer_record, self.extra_record)
+			self.popup.record_lists.create_lists()
 			self.popup.open()
-
-	def get_record(self):
-		''' Get the prayer_record of the date from the database '''
-		self.app.database.create_record(self.get_date())
-		record = self.app.database.get_record(self.get_date())
-		self.prayer_record = {"fajr": record[0], "dhuhr": record[1], "asr": record[2],
-							"maghrib": record[3], "isha": record[4]}
-		self.extra_record = {"fast": record[6], "quran": record[7], "hadees": record[8]}
-	
-	def change_extra_record(self, name, value):
-		''' Update the extra records of fast, quran and hadees and save to database. '''
-		self.extra_record[name] = int(value)
-		self.app.database.update_record(self.get_date(), **self.prayer_record, **self.extra_record)
-
-	def update_prayer_record(self, name, value):
-		''' Change the prayer records and save to database '''
-		self.prayer_record[name] = value
-		self.popup.record_lists.update_prayer_record(name, value)
-		self.app.database.update_record(self.get_date(), **self.prayer_record, **self.extra_record)
-
-	def open_prayer_options(self, prayer):
-		''' Open the prayer options popup '''
-		PrayerOptions(prayer=prayer, base=self).open()
-
 
 
 class Calendar(Screen):

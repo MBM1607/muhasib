@@ -1,5 +1,8 @@
 ''' Module to hold all of the various widgets used for setting and getting information about prayers '''
 
+from datetime import date
+
+from kivy.app import App
 from kivy.properties import ListProperty, ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors.button import ButtonBehavior
@@ -50,17 +53,50 @@ class SalahButton(DoubleTextButton):
 
 
 class RecordLists(BoxLayout):
-	''' Class for the layout of Record Items List '''
+	''' Class to dispaly a day's prayer and extra records and to provide and interface to change these records '''
 	salah_record_list = ObjectProperty()
 	extra_record_list = ObjectProperty()
 
-	def create_lists(self, base, prayer_record, extra_record):
-		''' Create and populate the record lists from the record provided '''
-		self.salah_record_list.data = [{"name": n.capitalize(), "info": r, "base": base} for n, r in prayer_record.items()]
-		self.extra_record_list.data = [{"name": n.capitalize(), "active": r, "base": base} for n, r in extra_record.items()]
+	def __init__(self, date=date.today(), **kwargs):
+		super().__init__(**kwargs)
+		self.database = App.get_running_app().database
+		self.date = date
+		self.prayer_record = {}
+		self.extra_record = {}
 
-	def update_prayer_record(self, prayer, record):
+	def create_lists(self):
+		''' Create and populate the record lists from the record extracted from the database '''
+		self.database.create_record(self.date)
+		record = self.database.get_record(self.date)
+
+		self.prayer_record = {"fajr": record[0], "dhuhr": record[1], "asr": record[2],
+							"maghrib": record[3], "isha": record[4]}
+
+		# If fast is required then display fast record button
+		if record[5]:
+			self.extra_record["fast"] = record[6]
+		self.extra_record = {"quran": record[7], "hadees": record[8]}
+
+		self.salah_record_list.data = [{"name": n.capitalize(), "info": r, "base": self} for n, r in self.prayer_record.items()]
+		self.extra_record_list.data = [{"name": n.capitalize(), "active": r, "base": self} for n, r in self.extra_record.items()]
+
+	def change_extra_record(self, name, value):
+		''' Update the extra records and save to database. '''
+		self.extra_record[name] = int(value)
+		self.database.update_record(self.date, **self.prayer_record, **self.extra_record)
+
+	def update_prayer_record(self, name, value):
+		''' Update the prayer records and save it to database. '''
+		self.prayer_record[name] = value
+		self.update_prayer_list(name, value)
+		self.database.update_record(self.date, **self.prayer_record, **self.extra_record)	
+
+	def update_prayer_list(self, prayer, record):
 		''' Change the prayer record for the provided prayer '''
 		for child in self.salah_record_list.children[0].children:
 			if child.name.lower() == prayer:
 				child.info = record
+
+	def open_prayer_options(self, prayer):
+		''' Open the prayer options popup '''
+		PrayerOptions(prayer=prayer, base=self).open()
