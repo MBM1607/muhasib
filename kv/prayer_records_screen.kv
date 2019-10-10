@@ -4,9 +4,7 @@
 
 <PrayerRecordsScreen>:
     name: "prayer_records"
-    salah_list: salah_list
-	extra_record_list: extra_record_list
-
+    record_lists: record_lists
     BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
@@ -23,15 +21,5 @@
 			Label:
 				text: "Prayer Records"
 
-		BoxLayout:
-			orientation: "vertical"
-
-			ItemsList:
-				id: salah_list
-				size_hint_y: 0.65
-				viewclass: "SalahButton"
-			
-			ItemsList:
-				id: extra_record_list
-				size_hint_y: 0.35
-				viewclass: "LabelCheckBox"
+		RecordLists:
+			id: record_lists

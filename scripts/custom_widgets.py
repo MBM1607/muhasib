@@ -86,6 +86,7 @@ class LabelCheckBox(ColorBoxLayout):
 			self.background_color = constants.SECONDRY_COLOR
 		else:
 			self.background_color = constants.WARNING_COLOR
+
 		# Ensure that this is not the first loading before saving change to the database
 		if self.base:
 			self.base.change_extra_record(self.name.lower(), value)

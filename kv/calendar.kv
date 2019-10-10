@@ -4,21 +4,12 @@
 
 <BlackLabel@Label>:
 	color: 0, 0, 0, 1
-<PrayerPopup>:
-	salah_list: salah_list
-	extra_record_list: extra_record_list
+<RecordsPopup>:
+	record_lists: record_lists
 	title: "Day Records"
 	size_hint: 0.9, 0.9
-	BoxLayout:
-		orientation: "vertical"
-		ItemsList:
-			id: salah_list
-			viewclass: "SalahButton"
-			size_hint_y: 0.65
-		ItemsList:
-			id: extra_record_list
-			viewclass: "LabelCheckBox"
-			size_hint_y: 0.35
+	RecordLists:
+		id: record_lists
 
 <MonthDropDown>:
 	TopButton:

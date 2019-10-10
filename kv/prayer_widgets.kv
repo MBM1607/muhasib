@@ -21,3 +21,17 @@
 		PrayerOptionsButton:
 			text: "Not prayed"
 			background_color: constants.WARNING_COLOR
+
+<RecordLists>:
+	orientation: "vertical"
+	salah_record_list: salah_record_list
+	extra_record_list: extra_record_list
+	ItemsList:
+		id: salah_record_list
+		viewclass: "SalahButton"
+		size_hint_y: 0.65
+	ItemsList:
+		id: extra_record_list
+		viewclass: "LabelCheckBox"
+		size_hint_y: 0.35
+

@@ -46,7 +46,7 @@ class MuhasibApp(App):
 		self.database = Database()
 		self.create_database_day()
 
-		# Initializing calendar and location form to be opened
+		# Initializing all the screens and the screen manager
 		self.screen_manager = ScreenManager()
 		self.navigationdrawer = NavigationDrawer()
 		self.dashboard = Dashboard()

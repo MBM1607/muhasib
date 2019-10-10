@@ -14,6 +14,7 @@ from kivy.uix.screenmanager import Screen
 import constants
 import convertdate.islamic as islamic
 from custom_widgets import CustomButton, CustomDropDown, CustomPopup
+from prayer_widgets import PrayerOptions
 
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
@@ -24,10 +25,9 @@ ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabo' ath-Thani ",
 			"Ramadan", "Shawwal", "Dhu al-Qa‘dah", "Dhu al-Hijjah")
 
 
-class PrayerPopup(CustomPopup):
-	''' Popup displaying prayer record for each date '''
-	salah_list = ObjectProperty()
-	extra_record_list = ObjectProperty()
+class RecordsPopup(CustomPopup):
+	''' Popup displaying prayer and other records for each date '''
+	record_lists = ObjectProperty()
 
 
 class MonthDropDown(CustomDropDown):
@@ -43,7 +43,7 @@ class DateButton(CustomButton):
 		self.app = App.get_running_app()
 		self.date = date
 		self.editable = editable
-		self.popup = PrayerPopup()
+		self.popup = RecordsPopup()
 		self.prayer_record = {}
 		self.extra_record = {}
 
@@ -70,13 +70,8 @@ class DateButton(CustomButton):
 			if not self.prayer_record or not self.extra_record:
 				self.get_record()
 
-			self.create_prayer_list()
+			self.popup.record_lists.create_lists(self, self.prayer_record, self.extra_record)
 			self.popup.open()
-
-	def create_prayer_list(self):
-		''' Populate the prayer records and extra records lists on the popup '''
-		self.popup.salah_list.data = [{"name": n.capitalize(), "info": r, "base": self} for n, r in self.prayer_record.items()]
-		self.popup.extra_record_list.data = [{"name": n.capitalize(), "active": r, "base": self} for n, r in self.extra_record.items()]
 
 	def get_record(self):
 		''' Get the prayer_record of the date from the database '''
@@ -91,16 +86,16 @@ class DateButton(CustomButton):
 		self.extra_record[name] = int(value)
 		self.app.database.update_record(self.get_date(), **self.prayer_record, **self.extra_record)
 
-	def change_prayer_record(self, name, value):
+	def update_prayer_record(self, name, value):
 		''' Change the prayer records and save to database '''
 		self.prayer_record[name] = value
-		self.update_salah_buttons_record()
+		self.popup.record_lists.update_prayer_record(name, value)
 		self.app.database.update_record(self.get_date(), **self.prayer_record, **self.extra_record)
 
-	def update_salah_buttons_record(self):
-		''' Change the record on individual labels '''
-		for x in self.popup.salah_list.children[0].children:
-			x.info = self.prayer_record[x.name.lower()]
+	def open_prayer_options(self, prayer):
+		''' Open the prayer options popup '''
+		PrayerOptions(prayer=prayer, base=self).open()
+
 
 
 class Calendar(Screen):
