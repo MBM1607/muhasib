@@ -10,10 +10,12 @@
 			NavigationButton:
 			Label:
 				text: "Settings"
-		WidgetList:
+		CustomRecycleView:
 			id: settings_list
 			size_hint_y: 0.9
 			viewclass: "SettingsButton"
+			VerticalListLayout:
+
 
 <SettingsButton>:
 	size_hint_y: None
@@ -22,9 +24,10 @@
 <SettingsPopup>:
 	size_hint: 0.8, 0.8
 	recycle_view: recycle_view
-	WidgetList:
+	CustomRecycleView:
 		id: recycle_view
 		viewclass: "SettingsPopupButton"
+		VerticalListLayout:
 
 <PrayerCalculationPopup>:
 	title: "Prayer Calculation Method"

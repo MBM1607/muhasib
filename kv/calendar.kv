@@ -43,29 +43,14 @@
 					size: dp(32), dp(32)
 					color: MAIN_COLOR
 					on_press: root.next_month()
-			Weekdays:
+			CustomRecycleView:
 				id: weekdays
 				size_hint_y: 0.1
+				viewclass: "BlackLabel"
+				HorizontalListLayout:
 			Dates:
 				id: dates
-				size_hint_y: 0.7
-
-<Weekdays>:
-	orientation: "horizontal"
-	BlackLabel:
-		text: "Mon"
-	BlackLabel:
-		text: "Tue"
-	BlackLabel:
-		text: "Wed"
-	BlackLabel:
-		text: "Thu"
-	BlackLabel:
-		text: "Fri"
-	BlackLabel:
-		text: "Sat"
-	BlackLabel:
-		text: "Sun"
+				size_hint_y: 0.8
 
 <Dates>:
 	cols: 7

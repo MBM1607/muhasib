@@ -112,15 +112,19 @@
 		spacing: dp(5)
 		padding: dp(5)
 
-<WidgetList>:
-	RecycleBoxLayout:
-		orientation: "vertical"
-		default_size: None, dp(48)
-		default_size_hint: 1, None
-		size_hint_y: None
-		height: self.minimum_height
-		spacing: dp(10)
-		padding: dp(10)
+<HorizontalListLayout@RecycleBoxLayout>:
+	orientation: "horizontal"
+	default_size: dp(48), dp(48)
+	default_size_hint: 1, 1
+
+<VerticalListLayout@RecycleBoxLayout>:
+	orientation: "vertical"
+	default_size: None, dp(48)
+	default_size_hint: 1, None
+	size_hint_y: None
+	height: self.minimum_height
+	spacing: dp(10)
+	padding: dp(10)
 
 <NavigationButton>:
 	on_press: app.navigationdrawer.toggle_state()

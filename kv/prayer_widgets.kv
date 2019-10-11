@@ -26,12 +26,14 @@
 	orientation: "vertical"
 	salah_record_list: salah_record_list
 	extra_record_list: extra_record_list
-	WidgetList:
+	CustomRecycleView:
 		id: salah_record_list
 		viewclass: "SalahButton"
 		size_hint_y: 0.65
-	WidgetList:
+		VerticalListLayout:
+	CustomRecycleView:
 		id: extra_record_list
 		viewclass: "LabelCheckBox"
 		size_hint_y: 0.35
+		VerticalListLayout:
 

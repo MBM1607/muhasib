@@ -41,6 +41,7 @@ class Calendar(Screen):
 	def on_pre_enter(self):
 		''' Ready the screen for display '''
 		self.month_popup = MonthPopup()
+		self.weekdays.data = [{"text": day} for day in ("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")]
 		self.populate()
 
 	def on_pre_leave(self):

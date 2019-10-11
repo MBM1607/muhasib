@@ -117,11 +117,6 @@ class WidgetGrid(CustomRecycleView):
 	cols = NumericProperty(0)
 
 
-class WidgetList(CustomRecycleView):
-	''' Class for various lists of items '''
-	pass
-
-
 class NavigationButton(IconButton):
 	''' Button to open the navigation drawer.
 			This button is used on all the screens, so it needs its own class'''
