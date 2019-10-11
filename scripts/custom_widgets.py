@@ -6,7 +6,7 @@ import constants
 from kivy.graphics import Rectangle
 from kivy.graphics.texture import Texture
 from kivy.properties import (BooleanProperty, ListProperty, ObjectProperty,
-                             StringProperty)
+                             StringProperty, NumericProperty)
 from kivy.metrics import dp
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.button import Button
@@ -23,6 +23,7 @@ class ColorBoxLayout(BoxLayout):
 	''' Layout with a background color '''
 	background_color = ListProperty(constants.GREY_COLOR)
 
+
 class BaseButton(ButtonBehavior, ColorBoxLayout):
 	''' A base class for other types of custom buttons '''
 	background_color = ListProperty(constants.MAIN_COLOR)
@@ -30,9 +31,12 @@ class BaseButton(ButtonBehavior, ColorBoxLayout):
 	background_down = "data/button.png"
 	border = ListProperty([16, 16, 16, 16])
 
+
 class CustomButton(BaseButton):
 	''' A custom Button which is identical to the normal kivy button '''
 	text = StringProperty()
+	font_size = NumericProperty('12sp')
+
 
 class CustomActionBar(ColorBoxLayout):
 	''' Class for a custom action bar '''
@@ -72,6 +76,7 @@ class DoubleTextButton(BaseButton):
 	info = StringProperty()
 	background_color = ListProperty(constants.MAIN_COLOR)
 
+
 class LabelCheckBox(ColorBoxLayout):
 	''' Checkbox with its very own label in a colored layout ''' 
 	name = StringProperty()
@@ -99,11 +104,23 @@ class CustomModalView(ModalView):
 
 class CustomPopup(Popup):
 	''' Custom Appearance for all popups '''
+	pass
 
 
-class ItemsList(RecycleView):
+class CustomRecycleView(RecycleView):
+	''' Custom Appearance settings for all recycle views '''
+	pass
+
+
+class WidgetGrid(CustomRecycleView):
+	''' Class for various tables of widgets '''
+	cols = NumericProperty(0)
+
+
+class WidgetList(CustomRecycleView):
 	''' Class for various lists of items '''
 	pass
+
 
 class NavigationButton(IconButton):
 	''' Button to open the navigation drawer.

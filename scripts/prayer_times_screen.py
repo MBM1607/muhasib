@@ -3,6 +3,7 @@
 from datetime import date, datetime, timedelta
 
 from kivy.app import App
+from kivy.clock import Clock
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import Screen
 
@@ -19,6 +20,11 @@ class PrayerTimesScreen(Screen):
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 		self.app = App.get_running_app()
+
+	def on_pre_enter(self):
+		''' Ready the screen for display '''
+		Clock.schedule_interval(self.update_prayer_labels, 60)
+		self.update_prayer_times()
 
 	def update_prayer_times(self):
 		''' Update the prayer times '''

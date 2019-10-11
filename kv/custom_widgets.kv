@@ -62,6 +62,7 @@
 <CustomButton>:
 	Label:
 		text: root.text
+		font_size: root.font_size
 		
 <CustomModalView>:
 	background: ""
@@ -99,9 +100,19 @@
 	Label:
 		text: root.info
 
-<ItemsList>:
+<CustomRecycleView>:
 	scroll_type: ["content", "bars"]
 	bar_color: 0, 0, 0, 1
+
+<WidgetGrid>:
+	RecycleGridLayout:
+		cols: root.cols
+		default_size: dp(48), dp(48)
+		default_size_hint: 1, 1
+		spacing: dp(5)
+		padding: dp(5)
+
+<WidgetList>:
 	RecycleBoxLayout:
 		orientation: "vertical"
 		default_size: None, dp(48)

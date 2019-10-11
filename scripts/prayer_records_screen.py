@@ -9,6 +9,6 @@ class PrayerRecordsScreen(Screen):
 
 	record_lists = ObjectProperty()
 
-	def create_lists(self):
-		''' Dummy method to transfer the call to RecordLists to create record lists'''
+	def on_pre_enter(self):
+		''' Ready the screen for display '''
 		self.record_lists.create_lists()

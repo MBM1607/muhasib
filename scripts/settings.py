@@ -100,7 +100,6 @@ class Settings(Screen):
 		app = App.get_running_app()
 		if hasattr(app, "prayer_times_screen"):
 			app.set_prayer_times_settings()
-			app.prayer_times_screen.update_prayer_times()
 		self.refresh()
 		self.save_settings()
 

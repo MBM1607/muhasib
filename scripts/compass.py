@@ -13,6 +13,10 @@ class Compass(Screen):
 		super().__init__(**kwargs)
 		self.app = App.get_running_app()
 
+	def on_pre_enter(self):
+		''' Ready the screen for display '''
+		self.set_qibla_direction()
+
 	def set_qibla_direction(self):
 		''' Set the qibla direction from current position '''
 

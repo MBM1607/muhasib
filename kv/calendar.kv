@@ -1,86 +1,16 @@
 #:kivy 1.11.1
 
 #:import SECONDRY_COLOR constants.SECONDRY_COLOR
+#:import MAIN_COLOR constants.MAIN_COLOR
 
 <BlackLabel@Label>:
 	color: 0, 0, 0, 1
-<RecordsPopup>:
-	record_lists: record_lists
-	title: "Day Records"
-	size_hint: 0.9, 0.9
-	RecordLists:
-		id: record_lists
-
-<MonthDropDown>:
-	TopButton:
-		text: root.months[0]
-		on_release: root.select(1)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[1]
-		on_release: root.select(2)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[2]
-		on_release: root.select(3)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[3]
-		on_release: root.select(4)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[4]
-		on_release: root.select(5)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[5]
-		on_release: root.select(6)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[6]
-		on_release: root.select(7)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[7]
-		on_release: root.select(8)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[8]
-		on_release: root.select(9)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[9]
-		on_release: root.select(10)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[10]
-		on_release: root.select(11)
-		height: dp(40)
-		size_hint_y: None
-	TopButton:
-		text: root.months[11]
-		on_release: root.select(12)
-		height: dp(40)
-		size_hint_y: None
-
-<TopButton@CustomButton>:
-	background_color: SECONDRY_COLOR
 
 <Calendar>:
 	name: "calendar"
 	dates: dates
-	days: days
-	month_menu: month_menu
+	weekdays: weekdays
+	month_year_button: month_year_button
 
 	BoxLayout:
 		orientation: "vertical"
@@ -98,72 +28,114 @@
 				orientation: "horizontal"
 				size_hint_y: 0.1
 				spacing: dp(10)
-				CustomButton:
-					text: "<"
+				padding: dp(5)
+				IconButton:
+					icon: "data/down.png"
+					size: dp(32), dp(32)
+					color: MAIN_COLOR
 					on_press: root.previous_month()
-					size_hint_x: 0.1
-				BoxLayout:
-					orientation: "horizontal"
-					size_hint_x: 0.4
-					BlackLabel:
-						text: root.year_menu
-						size_hint_x: 0.8
-					BoxLayout:
-						orientation: "vertical"
-						size_hint_x: 0.2
-						spacing: dp(5)
-						CustomButton:
-							text: "+"
-							on_press: root.next_year()
-							size_hint_x: 0.8
-							pos_hint: {"center_x": 0.5}
-						CustomButton:
-							text: "-"
-							on_press: root.previous_year()
-							size_hint_x: 0.8
-							pos_hint: {"center_x": 0.5}
 				CustomButton:
-					id: month_menu
-					size_hint_x: 0.4
-				CustomButton:
-					text: ">"
+					id: month_year_button
+					size_hint_x: 0.7
+					on_press: root.open_month_popup()
+				IconButton:
+					icon: "data/up.png"
+					size: dp(32), dp(32)
+					color: MAIN_COLOR
 					on_press: root.next_month()
-					size_hint_x: 0.1
-			Days:
-				id: days
+			Weekdays:
+				id: weekdays
 				size_hint_y: 0.1
 			Dates:
 				id: dates
 				size_hint_y: 0.7
-			BoxLayout:
-				padding: dp(5), 0, dp(5), dp(5)
-				spacing: dp(5)
-				orientation: "horizontal"
-				size_hint_y: 0.1
-				CustomButton:
-					text: "To Hijri"
-					on_press: root.convert_to_islamic()
-				CustomButton:
-					text: "To Gregorian"
-					on_press: root.convert_to_gregorian()
-<Days>:
+
+<Weekdays>:
 	orientation: "horizontal"
 	BlackLabel:
-		text: root.weekdays[0]
+		text: "Mon"
 	BlackLabel:
-		text: root.weekdays[1]
+		text: "Tue"
 	BlackLabel:
-		text: root.weekdays[2]
+		text: "Wed"
 	BlackLabel:
-		text: root.weekdays[3]
+		text: "Thu"
 	BlackLabel:
-		text: root.weekdays[4]
+		text: "Fri"
 	BlackLabel:
-		text: root.weekdays[5]
+		text: "Sat"
 	BlackLabel:
-		text: root.weekdays[6]
+		text: "Sun"
 
 <Dates>:
 	cols: 7
 	spacing: dp(5)
 	padding: dp(5)
+
+<RecordsPopup>:
+	record_lists: record_lists
+	title: "Day Records"
+	size_hint: 0.9, 0.9
+	RecordLists:
+		id: record_lists
+
+<YearPopup>:
+	year_grid: year_grid
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(10)
+		CustomActionBar:
+			spacing: dp(5)
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+				size: dp(32), dp(32)
+			Label:
+				text: root.year_range
+				font_size: sp(20)
+			IconButton:
+				icon: "data/up.png"
+				size: dp(32), dp(32)
+				on_press: root.next_year_range()
+			IconButton:
+				icon: "data/down.png"
+				size: dp(32), dp(32)
+				on_press: root.previous_year_range()
+		WidgetGrid:
+			id: year_grid
+			viewclass: "YearButton"
+			cols: 3
+
+<MonthPopup>:
+	month_grid: month_grid
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(10)
+		CustomActionBar:
+			spacing: dp(5)
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+				size: dp(32), dp(32)
+			CustomButton:
+				text: root.year
+				on_press: root.open_year_popup()
+				font_size: sp(20)
+			IconButton:
+				icon: "data/up.png"
+				size: dp(32), dp(32)
+				on_press: app.calendar.next_year()
+			IconButton:
+				icon: "data/down.png"
+				size: dp(32), dp(32)
+				on_press: app.calendar.previous_year()
+		WidgetGrid:
+			id: month_grid
+			viewclass: "MonthButton"
+			cols: 3
+
+<YearButton>:
+	font_size: sp(15)
+
+<MonthButton>:
+	font_size: sp(15)

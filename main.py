@@ -76,7 +76,6 @@ class MuhasibApp(App):
 		self.set_prayer_times_settings()
 
 		# Create interval events
-		Clock.schedule_interval(self.prayer_times_screen.update_prayer_labels, 60)
 		Clock.schedule_interval(self.day_pass_check, 3600)
 	
 	@staticmethod
@@ -110,7 +109,6 @@ class MuhasibApp(App):
 		self.prayer_times.alt = alt
 		self.prayer_times.timezone = self.utcoffset(tz)
 		self.prayer_times_screen.location.text = location
-		self.prayer_times_screen.update_prayer_times()
 	
 	def day_pass_check(self, time):
 		''' Check if a day has passed and upgrade the prayer times and records if it has '''
@@ -127,27 +125,22 @@ class MuhasibApp(App):
 	def open_settings(self):
 		''' Overriding the kivy settings screen and changing it with a complete custom system.
 			This functon open the settings screen'''
-
 		self.screen_manager.current = "settings"
 
 	def open_calendar(self):
 		''' Open the calendar screen '''
-		self.calendar.populate()
 		self.screen_manager.current = "calendar"
 
 	def open_compass(self):
 		''' Open the compass screen '''
-		self.compass.set_qibla_direction()
 		self.screen_manager.current = "compass"
 	
 	def open_prayer_times(self):
 		''' Open the prayer times screen '''
-		self.prayer_times_screen.update_prayer_times()
 		self.screen_manager.current = "prayer_times"
 	
 	def open_prayer_records(self):
 		''' Open the prayer records screen '''
-		self.prayer_records_screen.create_lists()
 		self.screen_manager.current = "prayer_records"
 
 	def open_dashboard(self):
