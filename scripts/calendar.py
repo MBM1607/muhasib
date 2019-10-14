@@ -59,13 +59,13 @@ class Calendar(Screen):
 		self.dates.data = []
 
 		if self.is_islamic:
-			dates = islamic.monthcalendar(self.year, self.month)
+			month = islamic.monthcalendar(self.year, self.month)
 		else:
-			dates = calendar.monthcalendar(self.year, self.month)
+			month = calendar.monthcalendar(self.year, self.month)
 		
 		# Flatten the dates list
-		dates = [day for week in dates for day in week]
-		for day in dates:
+		month = [day for week in month for day in week]
+		for day in month:
 			if not day:
 				# Make an empty widget if the date doesn't exist
 				self.dates.data.append({"text": "", "background_color": constants.GREY_COLOR, "editable": False})
@@ -144,6 +144,7 @@ class DateButton(CustomButton):
 		self.editable = editable
 
 	def get_date(self):
+		''' Get the date of the button in gregorian calendar '''
 		if self.calendar.is_islamic:
 			date = islamic.to_gregorian(self.date.year, self.date.month, self.date.day)
 			return datetime.date(*date)

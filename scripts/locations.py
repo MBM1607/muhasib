@@ -7,7 +7,8 @@ from kivy.uix.modalview import ModalView
 from kivy.properties import ObjectProperty
 
 from custom_widgets import CustomButton, CustomDropDown, CustomModalView
-
+from helpers import jaro_winkler, is_even
+import constants
 
 class LocationDropDown(CustomDropDown):
 	''' Dropdown for the location suggestions '''
@@ -60,14 +61,28 @@ class LocationForm(CustomModalView):
 
 	def suggestion_dropdown_open(self, text):
 		''' Open and populate the location dropdown with suggestions '''
-		# Very Basic Auto complete suggestions
-		for location in self.locations:
-			if location.startswith(text) and location != text:
-				btn = LocationButton(text=location)
-				btn.bind(on_release=lambda btn: self.suggestion_dropdown.select(btn.text))
-				self.suggestion_dropdown.add_widget(btn)
+		suggestions = self.give_location_suggestions(text)
+		for i, key in enumerate(suggestions.keys()):
+			if is_even(i):
+				bg_color = constants.MAIN_COLOR
+			else:
+				bg_color = constants.SECONDRY_COLOR
 
+			btn = LocationButton(text=suggestions[key], background_color=bg_color)
+			btn.bind(on_release=lambda btn: self.suggestion_dropdown.select(btn.text))
+			self.suggestion_dropdown.add_widget(btn)
 		self.suggestion_dropdown.open(self.location_text)
+
+	def give_location_suggestions(self, text):
+		''' Use jaro-winkler algorithm to give location suggestions for the the input text '''
+		suggestions = {}
+		for location in self.locations:
+			score = jaro_winkler(location, text)
+			if score > 0.7:
+				suggestions[score] = location
+		keys = sorted(suggestions.keys(), reverse=True)
+
+		return {key: suggestions[key] for key in keys}
 
 	def change_location(self, instance, value):
 		''' Change the location to the selected value and change app's location data and close the form '''

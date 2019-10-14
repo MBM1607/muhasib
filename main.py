@@ -1,9 +1,8 @@
 ''' Main python file for running and defining the app object. '''
 
 import json
-from datetime import date, datetime
+from datetime import date
 
-import pytz
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.garden.navigationdrawer import NavigationDrawer
@@ -19,6 +18,7 @@ from scripts.prayer_records_screen import PrayerRecordsScreen
 from scripts.prayer_times import PrayerTimes
 from scripts.prayer_times_screen import PrayerTimesScreen
 from scripts.settings import Settings
+from scripts.helpers import utcoffset 
 
 Builder.load_file("kv/custom_widgets.kv")
 Builder.load_file("kv/prayer_widgets.kv")
@@ -78,13 +78,6 @@ class MuhasibApp(App):
 		# Create interval events
 		Clock.schedule_interval(self.day_pass_check, 3600)
 	
-	@staticmethod
-	def utcoffset(tz):
-		''' Take the timezone name and return its UTC offset '''
-		now = datetime.now(tz=pytz.timezone(tz))
-		utc_offset = (now.utcoffset().days * 24) + (now.utcoffset().seconds / 3600)
-		return utc_offset
-	
 	def set_prayer_times_settings(self):
 		''' Change the prayer times calculation settings according to app's settings '''
 		self.prayer_times.time_format = self.settings.get_config("time_format", "24h")
@@ -107,14 +100,14 @@ class MuhasibApp(App):
 		self.prayer_times.lat = lat
 		self.prayer_times.lng = lng
 		self.prayer_times.alt = alt
-		self.prayer_times.timezone = self.utcoffset(tz)
+		self.prayer_times.timezone = utcoffset(tz)
 		self.prayer_times_screen.location.text = location
 	
 	def day_pass_check(self, time):
 		''' Check if a day has passed and upgrade the prayer times and records if it has '''
 		prayer = self.prayer_times_screen.next_prayer.text.split(":")[0]
 		if self.today != date.today() and prayer != "Midnight":
-			self.prayer_times.timezone = self.utcoffset(self.tz_name)
+			self.prayer_times.timezone = utcoffset(self.tz_name)
 			self.create_database_day()
 		
 	def create_database_day(self):

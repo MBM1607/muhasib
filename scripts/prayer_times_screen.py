@@ -22,9 +22,15 @@ class PrayerTimesScreen(Screen):
 		self.app = App.get_running_app()
 
 	def on_pre_enter(self):
-		''' Ready the screen for display '''
-		Clock.schedule_interval(self.update_prayer_labels, 60)
+		''' Ready the screen for display and schedule upgrade event'''
 		self.update_prayer_times()
+		self.update_clock_event = Clock.schedule_interval(self.update_prayer_labels, 1)
+
+	def on_pre_leave(self):
+		''' Remove all data from the prayer times screen and remove the clock event '''
+		self.update_clock_event.cancel()
+		self.times_data = {}
+		self.times_list.data = []
 
 	def update_prayer_times(self):
 		''' Update the prayer times '''
@@ -39,11 +45,11 @@ class PrayerTimesScreen(Screen):
 
 	def focus_next_prayer(self, next_prayer):
 		''' Put focus on the next prayer so it can be highlighted'''
-		for x in self.times_list.data:
-			if x["name"] == next_prayer:
-				x["background_color"] = SECONDRY_COLOR
+		for prayer in self.times_list.data:
+			if prayer["name"] == next_prayer:
+				prayer["background_color"] = SECONDRY_COLOR
 			else:
-				x["background_color"] = MAIN_COLOR
+				prayer["background_color"] = MAIN_COLOR
 
 	def update_prayer_labels(self, wait=0.0):
 		''' Change the labels reporting information about prayers '''
