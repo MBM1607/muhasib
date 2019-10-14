@@ -48,9 +48,16 @@
 				size_hint_y: 0.1
 				viewclass: "BlackLabel"
 				HorizontalListLayout:
-			Dates:
+			WidgetGrid:
 				id: dates
 				size_hint_y: 0.8
+				cols: 7
+				spacing: dp(5)
+				padding: dp(5)
+				viewclass: "DateButton"
+			# Dates:
+			# 	id: dates
+			# 	size_hint_y: 0.8
 
 <Dates>:
 	cols: 7

@@ -36,34 +36,66 @@ class Calendar(Screen):
 		d = datetime.date.today()
 		self.year, self.month, self.day = d.year, d.month, d.day
 
-		self.islamic = False
+		self.is_islamic = False
 
 	def on_pre_enter(self):
 		''' Ready the screen for display '''
 		self.month_popup = MonthPopup()
+		self.records_popup = RecordsPopup()
 		self.weekdays.data = [{"text": day} for day in ("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")]
-		self.populate()
+		self.populate_dates()
 
 	def on_pre_leave(self):
 		''' Delete all widgets from the screen '''
 		self.month_popup = None
-		self.dates.clear_widgets()
+		self.dates.data = []
 
-	def populate(self):
-		''' Create the current month and year's calendar '''
-		print(islamic.from_gregorian(self.year, self.month, self.day))
+	def populate_dates(self):
+		''' Create the current month and year's calendar by creating and putting the month data into the widget grid'''
+		
 		self.month_year_button.text = MONTHS[self.month - 1] + ' ' + str(self.year)
-		self.dates.populate(self.year, self.month)
+		
+		# initialize the dates data so conflict does not happen
+		self.dates.data = []
+
+		if self.is_islamic:
+			dates = islamic.monthcalendar(self.year, self.month)
+		else:
+			dates = calendar.monthcalendar(self.year, self.month)
+		
+		# Flatten the dates list
+		dates = [day for week in dates for day in week]
+		for day in dates:
+			if not day:
+				# Make an empty widget if the date doesn't exist
+				self.dates.data.append({"text": "", "background_color": constants.GREY_COLOR, "editable": False})
+			else:
+				date = datetime.date(self.year, self.month, day)
+
+				# If date is of the future make the popup uneditable
+				if day > self.day:
+					editable = False
+				else:
+					editable = True
+
+				# Color the button based on the date
+				bg_color = constants.MAIN_COLOR
+				if date == datetime.date.today():
+					bg_color = constants.WARNING_COLOR
+				elif islamic.from_gregorian(date.year, date.month, date.day)[1] == 9:
+					bg_color = constants.SECONDRY_COLOR
+
+				self.dates.data.append({"text": str(day), "editable": editable, "date": date, "background_color": bg_color})
 	
 	def previous_month(self):
 		''' Move back one month '''
 		self.year, self.month = calendar.prevmonth(self.year, self.month)
-		self.populate()
+		self.populate_dates()
 
 	def next_month(self):
 		''' Move one month forward '''
 		self.year, self.month = calendar.nextmonth(self.year, self.month)
-		self.populate()
+		self.populate_dates()
 
 	def change_month(self, value):
 		''' Change the month to chosen month '''
@@ -89,51 +121,17 @@ class Calendar(Screen):
 
 	def convert_to_islamic(self):
 		''' Converts the gregorian calendar to islamic calendar using current date '''
-		if not self.islamic:
+		if not self.is_islamic:
 			self.year, self.month, self.day = islamic.from_gregorian(self.year, self.month, self.day)
-			self.islamic = True
-			self.populate()
+			self.is_islamic = True
+			self.populate_dates()
 
 	def convert_to_gregorian(self):
 		''' Converts the islamic calendar to gregorian calendar using current date '''
-		if self.islamic:
+		if self.is_islamic:
 			self.year, self.month, self.day = islamic.to_gregorian(self.year, self.month, self.day)
-			self.islamic = False
-			self.populate()
-
-
-class Weekdays(BoxLayout):
-	''' Class to layout the day's labels in a month '''
-	pass
-
-
-class Dates(GridLayout):
-	''' Class to layout the day of a month '''
-
-	def populate(self, year, month):
-		''' Create the dates buttons according to year and month '''
-		cal = self.parent.parent.parent
-		today = datetime.date.today()
-	
-		self.clear_widgets()
-		if cal.islamic:
-			dates = islamic.monthcalendar(year, month)
-			today = islamic.from_gregorian(today.year, today.month, today.day)
-			today = datetime.date(today[0], today[1], today[2])
-		else:
-			dates = calendar.monthcalendar(year, month)
-		for i in dates:
-			for j in i:
-				if not j:
-					self.add_widget(Widget())
-				else:
-					date = datetime.date(cal.year, cal.month, j)
-					# If date is of the future make the popup uneditable
-					if date > today:
-						editable = False
-					else:
-						editable = True
-					self.add_widget(DateButton(text=f"{j}", date=date, editable=editable))
+			self.is_islamic = False
+			self.populate_dates()
 
 
 class DateButton(CustomButton):
@@ -141,34 +139,26 @@ class DateButton(CustomButton):
 
 	def __init__(self, date=None, editable=True, **kwargs):
 		super().__init__(**kwargs)
-		self.app = App.get_running_app()
+		self.calendar = App.get_running_app().calendar
 		self.date = date
 		self.editable = editable
-		self.popup = RecordsPopup()
-		self.popup.record_lists.date = self.get_date()
-
-		self.color_button()
 
 	def get_date(self):
-		if self.app.calendar.islamic:
+		if self.calendar.is_islamic:
 			date = islamic.to_gregorian(self.date.year, self.date.month, self.date.day)
 			return datetime.date(*date)
 		else:
 			return self.date
 
-	def color_button(self):
-		''' Color the button based on special conditions of the date '''
-
-		if self.get_date() == datetime.date.today():
-			self.background_color = constants.WARNING_COLOR
-		elif islamic.from_gregorian(self.get_date().year, self.get_date().month, self.get_date().day)[1] == 9:
-			self.background_color = constants.SECONDRY_COLOR
-
 	def on_press(self):
 		'''  Display the popup with prayer record of the date '''
 		if self.editable:
-			self.popup.record_lists.create_lists()
-			self.popup.open()
+			popup = self.calendar.records_popup
+			popup.record_lists.date = self.get_date()
+			popup.record_lists.create_lists()
+			popup.open()
+		else:
+			self.state = "normal"
 
 
 class RecordsPopup(CustomPopup):
@@ -244,7 +234,7 @@ class MonthPopup(CustomModalView):
 		self.month_grid.data = {}
 		self.year_popup = None
 		self.year = ""
-		App.get_running_app().calendar.populate()
+		App.get_running_app().calendar.populate_dates()
 
 
 class YearButton(CustomButton):
