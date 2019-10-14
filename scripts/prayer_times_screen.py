@@ -15,6 +15,7 @@ class PrayerTimesScreen(Screen):
 	times_list = ObjectProperty()
 	prayer_time_left = ObjectProperty()
 	next_prayer = ObjectProperty()
+	current_time = ObjectProperty()
 	location = ObjectProperty()
 
 	def __init__(self, **kwargs):
@@ -24,7 +25,8 @@ class PrayerTimesScreen(Screen):
 	def on_pre_enter(self):
 		''' Ready the screen for display and schedule upgrade event'''
 		self.update_prayer_times()
-		self.update_clock_event = Clock.schedule_interval(self.update_prayer_labels, 1)
+		self.current_time.text = self.app.get_formatted_time(self.app.get_current_time())
+		self.update_clock_event = Clock.schedule_interval(self.update_prayer_labels, 60)
 
 	def on_pre_leave(self):
 		''' Remove all data from the prayer times screen and remove the clock event '''
@@ -53,34 +55,34 @@ class PrayerTimesScreen(Screen):
 
 	def update_prayer_labels(self, wait=0.0):
 		''' Change the labels reporting information about prayers '''
-		current_time = datetime.strptime(datetime.strftime(datetime.now(), "%H:%M"), "%H:%M")
-		time_left = timedelta(24)
-		next_prayer = ""
 
-		for n, t in self.times_data.items():
+		# Get just the current hour and minutes
+		current_time = datetime.strptime(datetime.strftime(self.app.get_current_time(), "%H:%M"), "%H:%M")
+
+		# Measure the time remaining in all prayers
+		times_remaining = []
+		for name, prayer_time in self.times_data.items():
 			if self.app.prayer_times.time_format == "12h":
-				t = datetime.strptime(t, "%I:%M %p")
+				prayer_time = datetime.strptime(prayer_time, "%I:%M %p")
 			else:
-				t = datetime.strptime(t, "%H:%M ")
+				prayer_time = datetime.strptime(prayer_time, "%H:%M ")
 
-			if t < current_time:
-				t += timedelta(1)
+			# If the prayer time is less than the current time then add a day to the answer so that the result is always positive
+			if prayer_time < current_time:
+				prayer_time += timedelta(1)
 
-			dt = t - current_time
-			if dt < time_left:
-				time_left = dt
-				if self.app.prayer_times.time_format == "12h":
-					t = t.strftime("%I:%M %p")
-				else:
-					t = t.strftime("%H:%M")
-				next_prayer = n + ": " + t
+			dt = prayer_time - current_time
+			times_remaining.append((dt, name, prayer_time))
 
-
+		time_left, next_prayer, prayer_time = min(times_remaining, key=lambda times_remaining: times_remaining[0])
 		time = (datetime.min + time_left).time()
 		if time.hour == 0:
 			self.prayer_time_left.text = time.strftime("%M minutes remaining")
 		else:
 			self.prayer_time_left.text = time.strftime("%H hours & %M minutes remaining")
+
+		# Set the next prayer text
+		next_prayer = next_prayer + ": " + self.app.get_formatted_time(prayer_time)
 		self.next_prayer.text = next_prayer.capitalize()
 
 		# Put colored focus on the next prayer time

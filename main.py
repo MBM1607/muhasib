@@ -1,7 +1,7 @@
 ''' Main python file for running and defining the app object. '''
 
 import json
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -78,6 +78,20 @@ class MuhasibApp(App):
 		# Create interval events
 		Clock.schedule_interval(self.day_pass_check, 3600)
 	
+	def get_current_time(self):
+		''' Get the UTC time of the timezone currently set in settings '''
+		time = datetime.utcnow()
+		tz = self.settings.get_config("timezone", None)
+		utc = timedelta(seconds=utcoffset(tz) * 3600)
+		return utc + time
+
+	def get_formatted_time(self, time):
+		''' Take a time and return it in the string format of the configuration '''
+		if self.settings.get_config("time_format", "24h") == "24h":
+			return time.strftime("%H:%M")
+		else:
+			return time.strftime("%I:%M %p")
+
 	def set_prayer_times_settings(self):
 		''' Change the prayer times calculation settings according to app's settings '''
 		self.prayer_times.time_format = self.settings.get_config("time_format", "24h")

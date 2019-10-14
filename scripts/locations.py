@@ -30,23 +30,34 @@ class LocationForm(CustomModalView):
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 		self.app = App.get_running_app()
-		
-		with open("data/cities.json") as locations_data:
-			self.locations_data = json.load(locations_data)
-
-		# Extract the city, region and country from the data and make a locations set with it
+		self.locations_data = {}
 		self.locations = set()
-		for location in self.locations_data:
-			if not location[2]:
-				self.locations.add(", ".join((location[0], location[1])))
-			else:
-				self.locations.add(", ".join((location[0], location[2], location[1])))
-			
+
+	def on_pre_open(self):
+		''' Load the data required for function of the popup '''
+
+		# Extract the city, region and country from the data and make a locations set and a dictionary with it
+		with open("data/cities.json") as locations_data:
+			for data in json.load(locations_data):
+				# Case if region is not specified
+				if not data[2]:
+					location = ", ".join((data[0], data[1]))
+					self.locations_data[location] = data
+					self.locations.add(location)
+				else:
+					location = ", ".join((data[0], data[2], data[1]))
+					self.locations_data[location] = data
+					self.locations.add(location)
 
 		self.suggestion_dropdown = LocationDropDown()
-
-		self.location_text.bind(on_text_validate=self.check_input_location)
 		self.suggestion_dropdown.bind(on_select=self.change_location)
+
+	def on_pre_dismiss(self):
+		''' Remove the data from the class'''
+		self.location_text.text = ""
+		self.locations_data = {}
+		self.locations = set()
+		self.suggestion_dropdown = None
 
 	def check_input_location(self, _=None):
 		''' Check if the input location is a valid location if not then open the suggestions '''
@@ -85,9 +96,7 @@ class LocationForm(CustomModalView):
 		return {key: suggestions[key] for key in keys}
 
 	def change_location(self, instance, value):
-		''' Change the location to the selected value and change app's location data and close the form '''
-		self.location_text.text = value
-		for data in self.locations_data:
-			if value.split(", ")[0] == data[0]:
-				self.app.change_location(value, data[3], data[4], data[5], data[6])
-				self.dismiss()
+		''' Change the location to the selected value and close the form '''
+
+		self.app.change_location(value, *self.locations_data[value][3:])
+		self.dismiss()

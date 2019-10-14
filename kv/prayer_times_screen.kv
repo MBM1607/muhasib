@@ -9,6 +9,7 @@
 	times_list: times_list
 	next_prayer: next_prayer
 	prayer_time_left: prayer_time_left
+	current_time: current_time
 	location: location
 	BoxLayout:
 		orientation: "vertical"
@@ -29,9 +30,14 @@
 				LeftAlignLabel:
 					id: location
 					text: "Location"
-				LeftAlignLabel:
-					id: next_prayer
-					text: "Next Prayer"
+				BoxLayout:
+					orientation: "horizontal"
+					LeftAlignLabel:
+						id: current_time
+						text: "Current Time"
+					LeftAlignLabel:
+						id: next_prayer
+						text: "Next Prayer"
 				LeftAlignLabel:
 					id: prayer_time_left
 					text: "Time left"
