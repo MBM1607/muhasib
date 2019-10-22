@@ -17,6 +17,7 @@ from scripts.database import Database
 from scripts.prayer_records_screen import PrayerRecordsScreen
 from scripts.prayer_times import PrayerTimes
 from scripts.prayer_times_screen import PrayerTimesScreen
+from scripts.graphs_screen import RecordGraphsScreen
 from scripts.settings import Settings
 from scripts.helpers import utcoffset 
 
@@ -28,6 +29,7 @@ Builder.load_file("kv/settings.kv")
 Builder.load_file("kv/compass.kv")
 Builder.load_file("kv/prayer_times_screen.kv")
 Builder.load_file("kv/prayer_records_screen.kv")
+Builder.load_file("kv/graphs_screen.kv")
 Builder.load_file("kv/calendar.kv")
 
 
@@ -55,6 +57,7 @@ class MuhasibApp(App):
 		self.compass = Compass()
 		self.prayer_times_screen = PrayerTimesScreen()
 		self.prayer_records_screen = PrayerRecordsScreen()
+		self.record_graph_screen = RecordGraphsScreen()
 
 		# Add all the screens onto the screen manager
 		self.screen_manager.add_widget(self.dashboard)
@@ -63,6 +66,7 @@ class MuhasibApp(App):
 		self.screen_manager.add_widget(self.compass)
 		self.screen_manager.add_widget(self.prayer_times_screen)
 		self.screen_manager.add_widget(self.prayer_records_screen)
+		self.screen_manager.add_widget(self.record_graph_screen)
 
 		# Set up the navigation drawer
 		self.navigationdrawer.anim_type = "slide_above_anim"
@@ -115,12 +119,10 @@ class MuhasibApp(App):
 		self.prayer_times.lng = lng
 		self.prayer_times.alt = alt
 		self.prayer_times.timezone = utcoffset(tz)
-		self.prayer_times_screen.location.text = location
 	
 	def day_pass_check(self, time):
 		''' Check if a day has passed and upgrade the prayer times and records if it has '''
-		prayer = self.prayer_times_screen.next_prayer.text.split(":")[0]
-		if self.today != date.today() and prayer != "Midnight":
+		if self.today != date.today():
 			self.prayer_times.timezone = utcoffset(self.tz_name)
 			self.create_database_day()
 		
@@ -149,6 +151,10 @@ class MuhasibApp(App):
 	def open_prayer_records(self):
 		''' Open the prayer records screen '''
 		self.screen_manager.current = "prayer_records"
+
+	def open_record_graphs(self):
+		''' Open the prayer records graph screen '''
+		self.screen_manager.current = "record_graphs"
 
 	def open_dashboard(self):
 		'''Returns the app to the dashboard'''

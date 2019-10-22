@@ -12,3 +12,7 @@ class PrayerRecordsScreen(Screen):
 	def on_pre_enter(self):
 		''' Ready the screen for display '''
 		self.record_lists.create_lists()
+	
+	def on_pre_leave(self):
+		''' Destory all data before upon leaving the screen '''
+		self.record_lists.destroy_lists()

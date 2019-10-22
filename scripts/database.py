@@ -23,8 +23,8 @@ class Database():
 			cursor.execute("INSERT INTO record(date, fast_required) VALUES(?, ?)", (date, fast_required))
 			self.db.commit()
 	
-	def update_record(self, date, fajr="Not prayed", dhuhr="Not prayed", asr="Not prayed", maghrib="Not prayed",
-							isha="Not prayed", fast=0, quran=0, hadees=0):
+	def update_record(self, date, fajr="Not Prayed", dhuhr="Not Prayed", asr="Not Prayed", maghrib="Not Prayed",
+							isha="Not Prayed", fast=0, quran=0, hadees=0):
 		''' Update the prayer record of the date in record table '''
 
 		# Upgrade only if the record exists in database

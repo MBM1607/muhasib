@@ -3,18 +3,11 @@
 #:import SalahButton prayer_widgets.SalahButton
 
 <PrayerRecordsScreen>:
-    name: "prayer_records"
-    record_lists: record_lists
-    BoxLayout:
+	name: "prayer_records"
+	record_lists: record_lists
+	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
-
-		canvas.before:
-			Color:
-				rgba: 240/255, 240/255, 240/255, 1
-			Rectangle:
-				pos: self.pos
-				size: self.size
 
 		CustomActionBar:
 			NavigationButton:

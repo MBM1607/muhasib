@@ -27,12 +27,16 @@ class PrayerTimesScreen(Screen):
 		self.update_prayer_times()
 		self.current_time.text = self.app.get_formatted_time(self.app.get_current_time())
 		self.update_clock_event = Clock.schedule_interval(self.update_prayer_labels, 60)
+		self.location.text = self.app.location
 
 	def on_pre_leave(self):
 		''' Remove all data from the prayer times screen and remove the clock event '''
 		self.update_clock_event.cancel()
 		self.times_data = {}
 		self.times_list.data = []
+		self.current_time.text = ""
+		self.location.text = ""
+		self.next_prayer.text = ""
 
 	def update_prayer_times(self):
 		''' Update the prayer times '''
@@ -82,8 +86,7 @@ class PrayerTimesScreen(Screen):
 			self.prayer_time_left.text = time.strftime("%H hours & %M minutes remaining")
 
 		# Set the next prayer text
-		next_prayer = next_prayer + ": " + self.app.get_formatted_time(prayer_time)
-		self.next_prayer.text = next_prayer.capitalize()
+		self.next_prayer.text = next_prayer.capitalize() + ": " + self.app.get_formatted_time(prayer_time)
 
 		# Put colored focus on the next prayer time
 		self.focus_next_prayer(next_prayer.split(":")[0].capitalize())

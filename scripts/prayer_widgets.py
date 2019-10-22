@@ -41,15 +41,8 @@ class SalahButton(DoubleTextButton):
 		self.base.open_prayer_options(self.name)
 
 	def on_info(self, instance, value):
-		''' React to prayer record changing '''
-		if value == "Not prayed":
-			self.background_color = constants.WARNING_COLOR
-		elif value == "Alone":
-			self.background_color = constants.TERNARY_COLOR
-		elif value == "Delayed":
-			self.background_color =  constants.CAUTION_COLOR
-		elif value == "Group":
-			self.background_color = constants.SECONDRY_COLOR
+		''' Color the button according to the way the prayer is performed '''
+		self.background_color = constants.PRAYER_CATEGORY_COLORS[value]
 
 
 class RecordLists(BoxLayout):
@@ -79,6 +72,13 @@ class RecordLists(BoxLayout):
 
 		self.salah_record_list.data = [{"name": n.capitalize(), "info": r, "base": self} for n, r in self.prayer_record.items()]
 		self.extra_record_list.data = [{"name": n.capitalize(), "active": r, "base": self} for n, r in self.extra_record.items()]
+	
+	def destroy_lists(self):
+		''' Destroy the record lists '''
+		self.prayer_record = {}
+		self.extra_record = {}
+		self.salah_record_list.data = []
+		self.extra_record_list.data = []
 
 	def change_extra_record(self, name, value):
 		''' Update the extra records and save to database. '''
