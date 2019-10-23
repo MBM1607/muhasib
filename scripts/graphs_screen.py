@@ -5,12 +5,13 @@ from itertools import accumulate
 from kivy.uix.screenmanager import Screen
 from kivy.app import App
 from kivy.properties import ObjectProperty
+from kivy.metrics import dp
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvas
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as font_manager
 import matplotlib as mpl
 
-from constants import PRAYER_CATEGORY_NAMES, PRAYER_CATEGORY_COLORS, PRAYER_NAMES
+import constants
 from custom_widgets import ColorBoxLayout
 
 # Enter the custom fonts into the matplotlib fonts list
@@ -18,10 +19,13 @@ font_files = font_manager.findSystemFonts(fontpaths="E:/Kivy/Muhasib/data/")
 font_list = font_manager.createFontList(font_files)
 font_manager.fontManager.ttflist.extend(font_list)
 
-# Set the style and the font to be used
-#mpl.style.use("seaborn")
+# Set the graphing styles
+mpl.style.use("seaborn")
 mpl.rcParams["font.family"] = "Saira"
-
+mpl.rcParams["figure.facecolor"] = constants.GREY_COLOR
+mpl.rcParams['ytick.labelsize'] = dp(8)
+mpl.rcParams['xtick.labelsize'] = dp(8)
+mpl.rcParams['ytick.major.pad'] = 0
 
 class RecordGraphsScreen(Screen):
 	''' Screen for the record graphs '''
@@ -73,7 +77,7 @@ class RecordGraphsScreen(Screen):
 		ax.set_xlim(0, sum(max(data, key=sum)))
 
 		# Make horizontal bars for all the categories
-		for i, colname in enumerate(PRAYER_CATEGORY_NAMES):
+		for i, colname in enumerate(constants.PRAYER_CATEGORY_NAMES):
 			
 			# Calculate the width of the bars and the starting coordinates of the bars 
 			widths = [x[i] for x in data]
@@ -84,8 +88,8 @@ class RecordGraphsScreen(Screen):
 			xcenters = [x + y / 2 for x, y in zip(starts, widths)]
 
 
-			ax.barh(PRAYER_NAMES, widths, left=starts, height=0.5,
-					label=colname, color=PRAYER_CATEGORY_COLORS[colname])
+			ax.barh(constants.PRAYER_NAMES, widths, left=starts, height=0.5,
+					label=colname, color=constants.PRAYER_CATEGORY_COLORS[colname])
 			
 			# Put the width number at the center of all bars
 			for y, (x, c) in enumerate(zip(xcenters, widths)):
@@ -93,7 +97,7 @@ class RecordGraphsScreen(Screen):
 					ax.text(x, y, str(int(c)), ha='center', va='center',
 						color='white')
 		
-		ax.legend(ncol=len(PRAYER_CATEGORY_NAMES) // 2, bbox_to_anchor=(0, 1),
+		ax.legend(ncol=len(constants.PRAYER_CATEGORY_NAMES) // 2, bbox_to_anchor=(0, 1),
 				loc='lower left')
 
 		return FigureCanvas(fig)

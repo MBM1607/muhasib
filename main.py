@@ -9,7 +9,7 @@ from kivy.garden.navigationdrawer import NavigationDrawer
 from kivy.lang.builder import Builder
 from kivy.uix.screenmanager import ScreenManager
 
-from scripts.calendar import Calendar
+from scripts.calendar_screen import Calendar
 from scripts.compass import Compass
 from scripts.dashboard import Dashboard
 from scripts.custom_widgets import NavigationWidget
