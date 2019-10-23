@@ -156,7 +156,6 @@ class DateButton(CustomButton):
 		if self.editable:
 			popup = self.calendar.records_popup
 			popup.record_lists.date = self.get_date()
-			popup.record_lists.create_lists()
 			popup.open()
 		else:
 			self.state = "normal"
@@ -165,6 +164,14 @@ class DateButton(CustomButton):
 class RecordsPopup(CustomPopup):
 	''' Popup displaying prayer and other records for each date '''
 	record_lists = ObjectProperty()
+
+	def on_pre_dismiss(self):
+		''' Delete all data on the popup before dismissing it '''
+		self.record_lists.destroy_lists()
+
+	def on_pre_open(self):
+		''' Create the record lists on the popup before it is opened '''
+		self.record_lists.create_lists()
 
 
 class YearPopup(CustomModalView):
