@@ -39,8 +39,12 @@ class Database():
 	def get_record(self, date):
 		''' Get the prayer record of the date from the record table '''
 		cursor = self.db.cursor()
-		cursor.execute("SELECT * FROM record WHERE date = ?", (date,))
+		cursor.execute("SELECT fajr, dhuhr, asr, maghrib, isha, fast, quran_study, hadees_study FROM record WHERE date = ?", (date,))
 		record = cursor.fetchone()
-		if record:
-			return record[2:]
-		return False
+		return record
+	
+	def get_prayer_record_after(self, date):
+		''' Get the prayer records of all days after the specified date '''
+		cursor = self.db.cursor()
+		cursor.execute("SELECT fajr, dhuhr, asr, maghrib, isha FROM record WHERE date >= ?", (date,))
+		return cursor.fetchall()

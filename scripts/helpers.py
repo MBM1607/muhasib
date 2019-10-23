@@ -1,6 +1,6 @@
 '''  File to store all the helper functions '''
 
-from datetime import datetime
+import datetime
 
 import pytz
 
@@ -18,9 +18,13 @@ def is_even(num):
 
 def utcoffset(tz):
 	''' Take the timezone name and return its UTC offset '''
-	now = datetime.now(tz=pytz.timezone(tz))
+	now = datetime.datetime.now(tz=pytz.timezone(tz))
 	utc_offset = (now.utcoffset().days * 24) + (now.utcoffset().seconds / 3600)
 	return utc_offset
+
+def get_previous_monday(date):
+	''' Take a date and return the previous monday from that date '''
+	return date - datetime.timedelta(days=date.weekday())
 
 '''
 Jellyfish jaro-winkler algorithm copyright

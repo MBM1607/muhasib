@@ -19,7 +19,7 @@ from scripts.prayer_times import PrayerTimes
 from scripts.prayer_times_screen import PrayerTimesScreen
 from scripts.graphs_screen import RecordGraphsScreen
 from scripts.settings import Settings
-from scripts.helpers import utcoffset 
+from scripts.helpers import utcoffset
 
 Builder.load_file("kv/custom_widgets.kv")
 Builder.load_file("kv/prayer_widgets.kv")

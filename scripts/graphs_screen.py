@@ -13,6 +13,7 @@ import matplotlib as mpl
 
 import constants
 from custom_widgets import ColorBoxLayout
+from helpers import get_previous_monday
 
 # Enter the custom fonts into the matplotlib fonts list
 font_files = font_manager.findSystemFonts(fontpaths="E:/Kivy/Muhasib/data/")
@@ -37,16 +38,13 @@ class RecordGraphsScreen(Screen):
 		self.app = App.get_running_app()
 
 	def get_prayer_data(self, date):
-		results = [
-					{"Group": 0, "Alone": 0, "Delayed": 0, "Not Prayed": 0},
-					{"Group": 0, "Alone": 0, "Delayed": 0, "Not Prayed": 0},
-					{"Group": 0, "Alone": 0, "Delayed": 0, "Not Prayed": 0},
-					{"Group": 0, "Alone": 0, "Delayed": 0, "Not Prayed": 0},
-					{"Group": 0, "Alone": 0, "Delayed": 0, "Not Prayed": 0}
-				]
-		record = self.app.database.get_record(date)[:5]
-		for i, prayer in enumerate(record):
-			results[i][prayer] += 1
+		results = [{"Group": 0, "Alone": 0, "Delayed": 0, "Not Prayed": 0} for _ in range(5)]
+		records = self.app.database.get_prayer_record_after(get_previous_monday(date))
+
+		# Calculate all prayer's activity throughout the range of dates
+		for i, prayer in enumerate([x for record in records for x in record]):
+			results[i % len(constants.PRAYER_NAMES)][prayer] += 1
+		
 		return results
 		
 	def on_pre_enter(self):
