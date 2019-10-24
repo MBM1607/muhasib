@@ -1,25 +1,25 @@
 ''' Module for prayer graph screen class and all the graphing functionality need to make the record graphs '''
 
-from itertools import accumulate
 from datetime import date as datetime_date
+from itertools import accumulate
 
-from kivy.uix.screenmanager import Screen
-from kivy.app import App
-from kivy.properties import ObjectProperty, OptionProperty
-from kivy.metrics import dp
-from kivy.garden.matplotlib.backend_kivyagg import FigureCanvas
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as font_manager
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+from kivy.app import App
+from kivy.garden.matplotlib.backend_kivyagg import FigureCanvas
+from kivy.metrics import dp
+from kivy.properties import ObjectProperty, OptionProperty
+from kivy.uix.screenmanager import Screen
+from matplotlib.ticker import MaxNLocator
 
 import constants
 from custom_widgets import ColorBoxLayout
 from helpers import get_previous_monday
 
 # Enter the custom fonts into the matplotlib fonts list
-font_files = font_manager.findSystemFonts(fontpaths="E:/Kivy/Muhasib/data/")
-font_list = font_manager.createFontList(font_files)
-font_manager.fontManager.ttflist.extend(font_list)
+font_files = mpl.font_manager.findSystemFonts(fontpaths="E:/Kivy/Muhasib/data/")
+font_list = mpl.font_manager.createFontList(font_files)
+mpl.font_manager.fontManager.ttflist.extend(font_list)
 
 # Set the graphing styles
 mpl.style.use("seaborn")
@@ -122,5 +122,8 @@ class RecordGraphsScreen(Screen):
 		
 		ax.legend(ncol=len(constants.PRAYER_CATEGORY_NAMES) // 2, bbox_to_anchor=(0, 1),
 				loc='lower left')
+
+		# Force the x-axis tick labels to be integars so decimal points aren't displayed on graphs
+		ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
 		return FigureCanvas(fig)
