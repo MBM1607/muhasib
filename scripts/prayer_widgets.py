@@ -68,6 +68,7 @@ class RecordLists(BoxLayout):
 		# If fast is required then display fast record button
 		if record[5]:
 			self.extra_record["fast"] = record[6]
+
 		self.extra_record = {"quran": record[7], "hadees": record[8]}
 
 		self.salah_record_list.data = [{"name": n.capitalize(), "info": r, "base": self} for n, r in self.prayer_record.items()]

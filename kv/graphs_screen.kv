@@ -1,14 +1,27 @@
 #:kivy 1.11.1
 
+#:import GRAPHING_OPTIONS graphs_screen.GRAPHING_OPTIONS
+
 <RecordGraphsScreen>:
 	name: "record_graphs"
 	layout: layout
+	spinner: spinner
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
-		id: layout
 
 		CustomActionBar:
 			NavigationButton:
 			Label:
 				text: "Record Graphs"
+
+		BoxLayout:
+			id: layout
+			orientation: "vertical"
+			spacing: dp(5)
+			padding: dp(5)
+			CustomSpinner:
+				id: spinner
+				text: GRAPHING_OPTIONS[3]
+				values: GRAPHING_OPTIONS
+				on_text: root.change_graph_data(self.text)

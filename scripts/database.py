@@ -39,7 +39,7 @@ class Database():
 	def get_record(self, date):
 		''' Get the prayer record of the date from the record table '''
 		cursor = self.db.cursor()
-		cursor.execute("SELECT fajr, dhuhr, asr, maghrib, isha, fast, quran_study, hadees_study FROM record WHERE date = ?", (date,))
+		cursor.execute("SELECT fajr, dhuhr, asr, maghrib, isha, fast_required, fast, quran_study, hadees_study FROM record WHERE date = ?", (date,))
 		record = cursor.fetchone()
 		return record
 	

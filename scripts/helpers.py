@@ -22,9 +22,13 @@ def utcoffset(tz):
 	utc_offset = (now.utcoffset().days * 24) + (now.utcoffset().seconds / 3600)
 	return utc_offset
 
-def get_previous_monday(date):
-	''' Take a date and return the previous monday from that date '''
-	return date - datetime.timedelta(days=date.weekday())
+def get_previous_monday(date, weeks=0):
+	''' Take a date and return the previous monday from that date
+		weeks determine which week's previous monday to get where 0 is the current week
+		and 1 is the previous week
+	'''
+
+	return date - datetime.timedelta(days=date.weekday() + weeks * 7)
 
 '''
 Jellyfish jaro-winkler algorithm copyright

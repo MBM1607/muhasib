@@ -4,13 +4,14 @@ import json
 
 from kivy.app import App
 from kivy.uix.modalview import ModalView
+from kivy.uix.dropdown import DropDown
 from kivy.properties import ObjectProperty
 
-from custom_widgets import CustomButton, CustomDropDown, CustomModalView
+from custom_widgets import CustomButton, CustomModalView
 from helpers import jaro_winkler, is_even
 import constants
 
-class LocationDropDown(CustomDropDown):
+class LocationDropDown(DropDown):
 	''' Dropdown for the location suggestions '''
 
 	def dismiss(self):
