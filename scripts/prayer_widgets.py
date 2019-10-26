@@ -7,7 +7,7 @@ from kivy.properties import ListProperty, ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors.button import ButtonBehavior
 
-import constants
+from constants import CATEGORY_COLORS_DICT
 from custom_widgets import CustomButton, CustomPopup, DoubleTextButton
 
 
@@ -42,7 +42,7 @@ class SalahButton(DoubleTextButton):
 
 	def on_info(self, instance, value):
 		''' Color the button according to the way the prayer is performed '''
-		self.background_color = constants.PRAYER_CATEGORY_COLORS[value]
+		self.background_color = CATEGORY_COLORS_DICT[value]
 
 
 class RecordLists(BoxLayout):

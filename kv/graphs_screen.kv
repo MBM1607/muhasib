@@ -1,6 +1,7 @@
 #:kivy 1.11.1
 
-#:import GRAPHING_OPTIONS graphs_screen.GRAPHING_OPTIONS
+#:import DATA_OPTIONS graphs_screen.DATA_OPTIONS
+#:import GRAPH_OPTIONS graphs_screen.GRAPH_OPTIONS
 
 <RecordGraphsScreen>:
 	name: "record_graphs"
@@ -20,8 +21,18 @@
 			orientation: "vertical"
 			spacing: dp(5)
 			padding: dp(5)
-			CustomSpinner:
-				id: spinner
-				text: GRAPHING_OPTIONS[3]
-				values: GRAPHING_OPTIONS
-				on_text: root.change_graph_data(self.text)
+			BoxLayout:
+				orientation: "horizontal"
+				spacing: dp(5)
+				size_hint_y: None
+				height: dp(48)
+				CustomSpinner:
+					id: spinner
+					text: DATA_OPTIONS[3]
+					values: DATA_OPTIONS
+					on_text: root.change_graph_data(self.text)
+				CustomSpinner:
+					id: graph_spinner
+					text: GRAPH_OPTIONS[0]
+					values: GRAPH_OPTIONS
+					on_text: root.change_graph(self.text)
