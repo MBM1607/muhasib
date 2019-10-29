@@ -20,7 +20,7 @@ from custom_widgets import ColorBoxLayout
 from helpers import get_previous_monday
 
 # Enter the custom fonts into the matplotlib fonts list
-font_files = mpl.font_manager.findSystemFonts(fontpaths="E:/Kivy/Muhasib/data/")
+font_files = mpl.font_manager.findSystemFonts(fontpaths="data/")
 font_list = mpl.font_manager.createFontList(font_files)
 mpl.font_manager.fontManager.ttflist.extend(font_list)
 
@@ -119,18 +119,20 @@ def create_record_pie_graphs_figure(prayer_data):
 
 
 	fig = plt.figure(constrained_layout=True)
-	grid_spec = GridSpec(3, 4, figure=fig)
-	fig.add_subplot(grid_spec[0, 2:])
-	fig.add_subplot(grid_spec[1, :2])
-	fig.add_subplot(grid_spec[1, 2:])
-	fig.add_subplot(grid_spec[2, :2])
-	fig.add_subplot(grid_spec[2, 2:])
+	grid_spec = GridSpec(3, 2, figure=fig)
+	fig.add_subplot(grid_spec[0, 1])
+	fig.add_subplot(grid_spec[1, 0])
+	fig.add_subplot(grid_spec[1, 1])
+	fig.add_subplot(grid_spec[2, 0])
+	fig.add_subplot(grid_spec[2, 1])
 
 	create_pie_graphs(fig.axes, prayer_data)
 	
-	# Create the legend of prayer categories for all the pie graphs
+	# Create the legend of prayer categories for all the pie graphs and place it in the first axes
+	ax = fig.add_subplot(grid_spec[0, 0])
 	handles = [mpatches.Patch(color=PRAYER_CATEGORY_COLORS[i], label=PRAYER_CATEGORY_NAMES[i]) for i in range(4)]
-	fig.legend(handles=handles, ncol=1, bbox_to_anchor=(0.075, 0.91), loc="upper left")
+	ax.legend(handles=handles, ncol=1, bbox_to_anchor=(0.5, 0.5), loc="center")
+	ax.axis("off")
 
 	return FigureCanvas(fig)
 
