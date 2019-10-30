@@ -30,7 +30,7 @@ Builder.load_file("kv/compass.kv")
 Builder.load_file("kv/prayer_times_screen.kv")
 Builder.load_file("kv/prayer_records_screen.kv")
 Builder.load_file("kv/graphs_screen.kv")
-Builder.load_file("kv/calendar.kv")
+Builder.load_file("kv/calendar_screen.kv")
 
 
 class MuhasibApp(App):
