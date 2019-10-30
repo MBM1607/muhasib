@@ -38,17 +38,22 @@ class Calendar(Screen):
 
 		self.is_islamic = False
 
-	def on_pre_enter(self):
-		''' Ready the screen for display '''
+		self.bind(on_pre_enter=lambda _: self.create_calendar())
+		self.bind(on_leave=lambda _: self.destroy_calendar())
+
+	def create_calendar(self):
+		''' Create the calendar date buttons and week labels and required popups '''
 		self.month_popup = MonthPopup()
 		self.records_popup = RecordsPopup()
 		self.weekdays.data = [{"text": day} for day in ("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")]
 		self.populate_dates()
 
-	def on_pre_leave(self):
-		''' Delete all widgets from the screen '''
+	def destroy_calendar(self):
+		''' Remove all the dates and week widgets and required popups '''
 		self.month_popup = None
+		self.records_popup = None
 		self.dates.data = []
+		self.weekdays.data = []
 
 	def populate_dates(self):
 		''' Create the current month and year's calendar by creating and putting the month data into the widget grid'''

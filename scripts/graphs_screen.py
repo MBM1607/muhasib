@@ -49,7 +49,7 @@ class RecordGraphsScreen(Screen):
 
 		self.app = App.get_running_app()
 		self.bind(on_pre_enter=lambda _: self.create_graph())
-		self.bind(on_pre_leave=lambda _: self.destroy_graph())
+		self.bind(on_leave=lambda _: self.destroy_graph())
 
 	def get_prayer_data(self, date):
 		''' Get the prayer data from the  '''

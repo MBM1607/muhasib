@@ -9,10 +9,9 @@ class PrayerRecordsScreen(Screen):
 
 	record_lists = ObjectProperty()
 
-	def on_pre_enter(self):
-		''' Ready the screen for display '''
-		self.record_lists.create_lists()
-	
-	def on_pre_leave(self):
-		''' Destory all data before upon leaving the screen '''
-		self.record_lists.destroy_lists()
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+
+		self.bind(on_pre_enter=lambda _: self.record_lists.create_lists())
+		self.bind(on_leave=lambda _: self.record_lists.destroy_lists())
+

@@ -22,15 +22,18 @@ class PrayerTimesScreen(Screen):
 		super().__init__(**kwargs)
 		self.app = App.get_running_app()
 
-	def on_pre_enter(self):
-		''' Ready the screen for display and schedule upgrade event'''
+		self.bind(on_pre_enter=lambda _: self.create_prayers_data())
+		self.bind(on_leave=lambda _: self.destroy_prayer_data())
+
+	def create_prayers_data(self):
+		''' Create the prayer times data and schedule the upgrade event '''
 		self.update_prayer_times()
-		self.current_time.text = self.app.get_formatted_time(self.app.get_current_time())
+		
 		self.update_clock_event = Clock.schedule_interval(self.update_prayer_labels, 60)
 		self.location.text = self.app.location
 
-	def on_pre_leave(self):
-		''' Remove all data from the prayer times screen and remove the clock event '''
+	def destroy_prayer_data(self):
+		''' Remove all prayer data from the screen and cancel the upgrade event '''
 		self.update_clock_event.cancel()
 		self.times_data = {}
 		self.times_list.data = []
@@ -62,6 +65,7 @@ class PrayerTimesScreen(Screen):
 
 		# Get just the current hour and minutes
 		current_time = datetime.strptime(datetime.strftime(self.app.get_current_time(), "%H:%M"), "%H:%M")
+		self.current_time.text = self.app.get_formatted_time(self.app.get_current_time())
 
 		# Measure the time remaining in all prayers
 		times_remaining = []

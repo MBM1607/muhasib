@@ -12,10 +12,12 @@ class Compass(Screen):
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 		self.app = App.get_running_app()
+		self.bind(on_pre_enter=lambda _: self.set_qibla_direction())
+		self.bind(on_leave=lambda _: self.remove_qibla_direction())
 
-	def on_pre_enter(self):
-		''' Ready the screen for display '''
-		self.set_qibla_direction()
+	def remove_qibla_direction(self):
+		''' Remove the qibla direction '''
+		self.qibla_direction = ""
 
 	def set_qibla_direction(self):
 		''' Set the qibla direction from current position '''

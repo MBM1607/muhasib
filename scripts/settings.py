@@ -30,24 +30,31 @@ class Settings(Screen):
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 		self.app = App.get_running_app()
-		self.calc_method = PrayerCalculationPopup()
 		self.location_form = LocationForm()
-		self.asr_factor = AsrFactorPopup()
-		self.time_format = TimeFormatPopup()
 
 		self.load_settings()
 
-	def refresh(self):
-		''' Refresh the settings data to show the current configuration '''
-		self.settings_list.data = [{"name": "Prayer Calculation Method", "function": self.calc_method.open, "info": self.config["calc_method"]},
-								   {"name": "Asr Factor", "function": self.asr_factor.open, "info": self.config["asr_factor"]},
-								   {"name":  "Time Format", "function": self.time_format.open, "info": self.config["time_format"]},
-								   {"name": "Location", "function": self.location_form.open, "info": self.config["location"]}]
+		self.bind(on_pre_enter=lambda _: self.create_settings_list())
+		self.bind(on_pre_leave=lambda _: self.destroy_settings_list())
+	
+	def create_settings_list(self):
+		''' Create the settins list and the required popups '''
+		self.calc_method = PrayerCalculationPopup()
+		self.asr_factor = AsrFactorPopup()
+		self.time_format = TimeFormatPopup()
+		self.settings_list.data = [
+									{"name": "Prayer Calculation Method", "function": self.calc_method.open, "info": self.config["calc_method"]},
+									{"name": "Asr Factor", "function": self.asr_factor.open, "info": self.config["asr_factor"]},
+									{"name":  "Time Format", "function": self.time_format.open, "info": self.config["time_format"]},
+									{"name": "Location", "function": self.location_form.open, "info": self.config["location"]}
+								]
 
-	def open(self):
-		''' Refresh and open the popup '''
-		self.refresh()
-		super().open()
+	def destroy_settings_list(self):
+		''' Destroy the settings list '''
+		self.calc_method = None
+		self.asr_factor = None
+		self.time_format = None
+		self.settings_list.data = []
 
 	def load_settings(self):
 		''' Load the settings from the json file and make one if it doesn't exist '''
@@ -100,7 +107,7 @@ class Settings(Screen):
 		app = App.get_running_app()
 		if hasattr(app, "prayer_times_screen"):
 			app.set_prayer_times_settings()
-		self.refresh()
+		self.create_settings_list()
 		self.save_settings()
 
 

@@ -33,11 +33,11 @@ class LocationForm(CustomModalView):
 		self.app = App.get_running_app()
 		self.locations_data = {}
 		self.locations = set()
+		self.bind(on_pre_open=lambda _: self.create_locations_data())
+		self.bind(on_dismiss=lambda _: self.destroy_locations_data())
 
-	def on_pre_open(self):
-		''' Load the data required for function of the popup '''
-
-		# Extract the city, region and country from the data and make a locations set and a dictionary with it
+	def create_locations_data(self):
+		''' Load the cities data and extract the relevent information from it '''
 		with open("data/cities.json") as locations_data:
 			for data in json.load(locations_data):
 				# Case if region is not specified
@@ -49,14 +49,15 @@ class LocationForm(CustomModalView):
 					location = ", ".join((data[0], data[2], data[1]))
 					self.locations_data[location] = data
 					self.locations.add(location)
-
+		
+		# Create the locations dropdown
 		self.suggestion_dropdown = LocationDropDown()
 		self.suggestion_dropdown.bind(on_select=self.change_location)
 
-	def on_pre_dismiss(self):
-		''' Remove the data from the class'''
+	def destroy_locations_data(self):
+		''' Remove all location data from the class '''
 		self.location_text.text = ""
-		self.locations_data = {}
+		self.location_data = {}
 		self.locations = set()
 		self.suggestion_dropdown = None
 
