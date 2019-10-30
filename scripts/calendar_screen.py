@@ -169,14 +169,12 @@ class DateButton(CustomButton):
 class RecordsPopup(CustomPopup):
 	''' Popup displaying prayer and other records for each date '''
 	record_lists = ObjectProperty()
-
-	def on_pre_dismiss(self):
-		''' Delete all data on the popup before dismissing it '''
-		self.record_lists.destroy_lists()
-
-	def on_pre_open(self):
-		''' Create the record lists on the popup before it is opened '''
-		self.record_lists.create_lists()
+	
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		
+		self.bind(on_pre_open=lambda _: self.record_lists.create_lists())
+		self.bind(on_dismiss=lambda _: self.record_lists.destroy_lists())
 
 
 class YearPopup(CustomModalView):
@@ -185,7 +183,13 @@ class YearPopup(CustomModalView):
 	year_range = StringProperty("")
 	min_year = NumericProperty()
 	max_year = NumericProperty()
-	
+
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		
+		self.bind(on_pre_open=lambda _: self.create_year_grid())
+		self.bind(on_dismiss=lambda _: self.destroy_year_grid())
+
 	def set_year_range(self, year):
 		''' Set the range of years to be displayed '''
 		self.max_year = int(year)
@@ -216,12 +220,8 @@ class YearPopup(CustomModalView):
 		assert self.max_year, "0 is not a valid year"
 		self.year_grid.data = [{"text": str(year)} for year in range(self.min_year, self.max_year + 1)]
 
-	def on_pre_open(self):
-		''' Ready the poup to be displayed '''
-		self.create_year_grid()
-	
-	def on_pre_dismiss(self):
-		''' Erase all data from the popup before it is dismissed '''
+	def destroy_year_grid(self):
+		''' Erase all data from popup '''
 		self.year_grid.data = {}
 		self.year_range = ""
 	
@@ -231,23 +231,29 @@ class MonthPopup(CustomModalView):
 	month_grid = ObjectProperty()
 	year = StringProperty("")
 
-	def open_year_popup(self):
-		''' Open the year popup with the current year for selection '''
-		self.year_popup.set_year_range(self.year)
-		self.year_popup.open()
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		
+		self.bind(on_pre_open=lambda _: self.create_month_grid())
+		self.bind(on_dismiss=lambda _: self.destroy_month_grid())
 
-	def on_pre_open(self):
-		''' Populate the popup with months and ready it to be opened '''
+	def create_month_grid(self):
+		''' Create the month grid on the popup and the year popup '''
 		assert self.year
 		self.year_popup = YearPopup()
 		self.month_grid.data = [{"text": month} for month in MONTHS]
-	
-	def on_pre_dismiss(self):
-		''' Erase all data from the popup before it is dismissed '''
+
+	def destroy_month_grid(self):
+		''' Remove the month grid and other data from the popup '''
 		self.month_grid.data = {}
 		self.year_popup = None
 		self.year = ""
 		App.get_running_app().calendar.populate_dates()
+
+	def open_year_popup(self):
+		''' Open the year popup with the current year for selection '''
+		self.year_popup.set_year_range(self.year)
+		self.year_popup.open()
 
 
 class YearButton(CustomButton):
