@@ -8,6 +8,7 @@ from kivy.properties import (BooleanProperty, ListProperty, ObjectProperty,
 from kivy.metrics import dp
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
+from kivy.app import App
 from kivy.uix.dropdown import DropDown
 from kivy.uix.image import Image
 from kivy.uix.label import Label
@@ -94,6 +95,14 @@ class NavigationButton(IconButton):
 	''' Button to open the navigation drawer '''
 	pass
 
+
+class SideBarButton(HorizontalIconTextButton):
+	''' Button for the sidebar navigation '''
+	func = StringProperty()
+
+class DashboardButton(VerticalIconTextButton):
+	''' Button to be used on the dashboard '''
+	func = StringProperty()
 
 class NavigationWidget(ColorBoxLayout):
 	''' Widget to be used as side panel in the navigation drawer '''

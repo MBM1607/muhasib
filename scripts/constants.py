@@ -11,3 +11,13 @@ PRAYER_CATEGORY_NAMES = ('Group', 'Alone', 'Delayed', 'Not Prayed')
 PRAYER_CATEGORY_COLORS = (SECONDRY_COLOR, TERNARY_COLOR, CAUTION_COLOR, WARNING_COLOR)
 CATEGORY_COLORS_DICT = {PRAYER_CATEGORY_NAMES[i]: PRAYER_CATEGORY_COLORS[i] for i in range(4)}
 PRAYER_NAMES = ("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+
+NAVIGATION_DATA = (
+					{"text": "Main Screen", "icon": "data/back.png", "func": "open_dashboard"},
+					{"text": "Prayer Times", "icon": "data/time.png", "func": "open_prayer_times"},
+					{"text": "Prayer Records", "icon": "data/record.png", "func": "open_prayer_records"},
+					{"text": "Prayer Graphs", "icon": "data/graph.png", "func": "open_record_graphs"},
+					{"text": "Calendar", "icon": "data/calendar.png", "func": "open_calendar"},
+					{"text": "Qibla", "icon": "data/compass.png", "func": "open_qibla_screen"},
+					{"text": "Settings", "icon": "data/settings.png", "func": "open_settings_screen"}
+				)

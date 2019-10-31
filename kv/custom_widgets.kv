@@ -2,6 +2,7 @@
 
 #:import MAIN_COLOR constants.MAIN_COLOR
 #:import SECONDRY_COLOR constants.SECONDRY_COLOR
+#:import NAVIGATION_DATA constants.NAVIGATION_DATA
 
 <Label>:
 	font_name: "data/Saira-Regular.ttf"
@@ -129,44 +130,19 @@
 	on_press: app.navigationdrawer.toggle_state()
 	icon: "data/menu.png"
 
+<SideBarButton>:
+	on_press: getattr(app, self.func)()
+	on_release: app.navigationdrawer.toggle_state()
+
+<DashboardButton>:
+	on_press: getattr(app, self.func)()
+
 <NavigationWidget>:
 	orientation: "vertical"
 	spacing: dp(10)
 	padding: 0, dp(5), 0, dp(10)
 	background_color: MAIN_COLOR
-	HorizontalIconTextButton:
-		text: "Main Screen"
-		icon: "data/back.png"
-		on_press: app.open_dashboard()
-		on_release: app.navigationdrawer.toggle_state()
-	HorizontalIconTextButton:
-		text: "Prayer Times"
-		icon: "data/time.png"
-		on_press: app.open_prayer_times()
-		on_release: app.navigationdrawer.toggle_state()
-	HorizontalIconTextButton:
-		text: "Prayer Records"
-		icon: "data/record.png"
-		on_press: app.open_prayer_records()
-		on_release: app.navigationdrawer.toggle_state()
-	HorizontalIconTextButton:
-		text: "Prayer Graphs"
-		icon: "data/graph.png"
-		on_press: app.open_record_graphs()
-		on_release: app.navigationdrawer.toggle_state()
-	HorizontalIconTextButton:
-		text: "Calendar"
-		icon: "data/calendar.png"
-		on_press: app.open_calendar()
-		on_release: app.navigationdrawer.toggle_state()
-	HorizontalIconTextButton:
-		text: "Qibla"
-		icon: "data/compass.png"
-		on_press: app.open_qibla_screen()
-		on_release: app.navigationdrawer.toggle_state()
-	HorizontalIconTextButton:
-		text: "Settings"
-		icon: "data/settings.png"
-		on_press: app.open_settings_screen()
-		on_release: app.navigationdrawer.toggle_state()
-	Widget:
+	CustomRecycleView:
+		viewclass: "SideBarButton"
+		data: NAVIGATION_DATA
+		VerticalListLayout:
