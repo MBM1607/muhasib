@@ -14,12 +14,23 @@ from custom_widgets import TextButton, CustomModalView, DoubleTextButton
 class PrayerOptions(CustomModalView):
 	''' Popup to be display when a prayer button is released '''
 	prayer = StringProperty()
-	base = ObjectProperty()
+	options_list = ObjectProperty()
 
-	def __init__(self, prayer="", base=None, **kwargs):
-		super().__init__(*kwargs)
+	def __init__(self, prayer="", **kwargs):
+		super().__init__(**kwargs)
 		self.prayer = prayer.lower()
-		self.base = base
+
+		self.bind(on_pre_open=lambda _: self.create_options_list())
+		self.bind(on_dismiss=lambda _: self.destroy_options_list())
+	
+	def create_options_list(self):
+		''' Add the prayer category data into the options list '''
+		self.options_list.data = [{"text": name, "background_color": color}
+									for name, color in CATEGORY_COLORS_DICT.items()]
+	
+	def destroy_options_list(self):
+		''' Remove all data from prayer options list '''
+		self.options_list.data = []
 
 
 class PrayerOptionsButton(TextButton):
@@ -27,18 +38,17 @@ class PrayerOptionsButton(TextButton):
 
 	def on_release(self):
 		''' Change the prayer record according to the button pressed '''
-		popup = self.parent.parent
-		popup.base.update_prayer_record(popup.prayer, self.text)
+		popup = self.parent.parent.parent.parent
+		popup.attach_to.update_prayer_record(popup.prayer, self.text)
 		popup.dismiss()
 
 
 class SalahButton(DoubleTextButton):
 	''' Button used with salah button on home screen with popup functionality'''
-	base = ObjectProperty()
 
 	def on_release(self):
 		''' On button release open the popup '''
-		self.base.open_prayer_options(self.name)
+		self.parent.parent.parent.open_prayer_options(self.name)
 
 	def on_info(self, instance, value):
 		''' Color the button according to the way the prayer is performed '''
@@ -71,8 +81,8 @@ class RecordLists(BoxLayout):
 
 		self.extra_record = {"quran": record[7], "hadees": record[8]}
 
-		self.salah_record_list.data = [{"name": n.capitalize(), "info": r, "base": self} for n, r in self.prayer_record.items()]
-		self.extra_record_list.data = [{"name": n.capitalize(), "active": r, "base": self} for n, r in self.extra_record.items()]
+		self.salah_record_list.data = [{"name": n.capitalize(), "info": r} for n, r in self.prayer_record.items()]
+		self.extra_record_list.data = [{"name": n.capitalize(), "active": r} for n, r in self.extra_record.items()]
 	
 	def destroy_lists(self):
 		''' Destroy the record lists '''
@@ -100,4 +110,4 @@ class RecordLists(BoxLayout):
 
 	def open_prayer_options(self, prayer):
 		''' Open the prayer options popup '''
-		PrayerOptions(prayer=prayer, base=self).open()
+		PrayerOptions(prayer=prayer, attach_to=self).open()

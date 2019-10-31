@@ -3,28 +3,21 @@
 #:import constants constants
 
 <PrayerOptions>:
-	size_hint: 0.6, 0.6
-	title: "Prayer Options"
+	size_hint: 0.8, 0.5
+	options_list: options_list
 	BoxLayout:
 		orientation: "vertical"
-		spacing: dp(5)
-		padding: dp(5)
-		PrayerOptionsButton:
-			text: "Group"
-			background_color: constants.SECONDRY_COLOR
-		PrayerOptionsButton:
-			text: "Alone"
-			background_color: constants.TERNARY_COLOR
-		PrayerOptionsButton:
-			text: "Delayed"
-			background_color: constants.CAUTION_COLOR
-		PrayerOptionsButton:
-			text: "Not Prayed"
-			background_color: constants.WARNING_COLOR
-
-<PrayerOptionsButton>:
-	size_hint_y: None
-	height: dp(48)
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: "Prayer Options"
+				font_size: sp(15)
+		CustomRecycleView:
+			id: options_list
+			viewclass: "PrayerOptionsButton"
+			VerticalListLayout:
 
 <RecordLists>:
 	orientation: "vertical"
