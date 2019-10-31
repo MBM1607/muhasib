@@ -9,16 +9,16 @@ from kivy.garden.navigationdrawer import NavigationDrawer
 from kivy.lang.builder import Builder
 from kivy.uix.screenmanager import ScreenManager
 
-from scripts.calendar_screen import Calendar
-from scripts.compass import Compass
+from scripts.calendar_screen import CalendarScreen
+from scripts.qibla import QiblaScreen
 from scripts.dashboard import Dashboard
 from scripts.custom_widgets import NavigationWidget
 from scripts.database import Database
 from scripts.prayer_records_screen import PrayerRecordsScreen
 from scripts.prayer_times import PrayerTimes
 from scripts.prayer_times_screen import PrayerTimesScreen
-from scripts.graphs_screen import RecordGraphsScreen
-from scripts.settings import Settings
+from scripts.graphs_screen import PrayerGraphsScreen
+from scripts.settings import SettingsScreen
 from scripts.helpers import utcoffset
 
 Builder.load_file("kv/custom_widgets.kv")
@@ -26,7 +26,7 @@ Builder.load_file("kv/prayer_widgets.kv")
 Builder.load_file("kv/dashboard.kv")
 Builder.load_file("kv/locations.kv")
 Builder.load_file("kv/settings.kv")
-Builder.load_file("kv/compass.kv")
+Builder.load_file("kv/qibla.kv")
 Builder.load_file("kv/prayer_times_screen.kv")
 Builder.load_file("kv/prayer_records_screen.kv")
 Builder.load_file("kv/graphs_screen.kv")
@@ -52,18 +52,18 @@ class MuhasibApp(App):
 		self.screen_manager = ScreenManager()
 		self.navigationdrawer = NavigationDrawer()
 		self.dashboard = Dashboard()
-		self.calendar = Calendar()
-		self.settings = Settings()
-		self.compass = Compass()
+		self.calendar = CalendarScreen()
+		self.settings = SettingsScreen()
+		self.qibla = QiblaScreen()
 		self.prayer_times_screen = PrayerTimesScreen()
 		self.prayer_records_screen = PrayerRecordsScreen()
-		self.record_graph_screen = RecordGraphsScreen()
+		self.record_graph_screen = PrayerGraphsScreen()
 
 		# Add all the screens onto the screen manager
 		self.screen_manager.add_widget(self.dashboard)
 		self.screen_manager.add_widget(self.calendar)
 		self.screen_manager.add_widget(self.settings)
-		self.screen_manager.add_widget(self.compass)
+		self.screen_manager.add_widget(self.qibla)
 		self.screen_manager.add_widget(self.prayer_times_screen)
 		self.screen_manager.add_widget(self.prayer_records_screen)
 		self.screen_manager.add_widget(self.record_graph_screen)
@@ -131,7 +131,7 @@ class MuhasibApp(App):
 		self.today = date.today()
 		self.database.create_record(self.today)
 
-	def open_settings(self):
+	def open_settings_screen(self):
 		''' Overriding the kivy settings screen and changing it with a complete custom system.
 			This functon open the settings screen'''
 		self.screen_manager.current = "settings"
@@ -140,9 +140,9 @@ class MuhasibApp(App):
 		''' Open the calendar screen '''
 		self.screen_manager.current = "calendar"
 
-	def open_compass(self):
+	def open_qibla_screen(self):
 		''' Open the compass screen '''
-		self.screen_manager.current = "compass"
+		self.screen_manager.current = "qibla"
 	
 	def open_prayer_times(self):
 		''' Open the prayer times screen '''

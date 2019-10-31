@@ -7,24 +7,23 @@
 		orientation: "vertical"
 		spacing: dp(10)
 		CustomActionBar:
-			spacing: dp(16)
 
 		GridLayout:
 			cols: 2
 			padding: dp(5)
 			spacing: dp(5)
 			VerticalIconTextButton:
+				icon: "data/time.png"
+				text: "Prayer Times"
+				on_press: app.open_prayer_times()
+			VerticalIconTextButton:
 				icon: "data/record.png"
 				text: "Prayer Records"
 				on_press: app.open_prayer_records()
 			VerticalIconTextButton:
 				icon: "data/graph.png"
-				text: "Record Graphs"
+				text: "Prayer Graphs"
 				on_press: app.open_record_graphs()
-			VerticalIconTextButton:
-				icon: "data/time.png"
-				text: "Prayer Times"
-				on_press: app.open_prayer_times()
 			VerticalIconTextButton:
 				icon: "data/calendar.png"
 				text: "Calendar"
@@ -32,9 +31,9 @@
 			VerticalIconTextButton:
 				icon: "data/compass.png"
 				text: "Qibla"
-				on_press: app.open_compass()
+				on_press: app.open_qibla_screen()
 			VerticalIconTextButton:
 				icon: "data/settings.png"
 				text: "Settings"
-				on_press: app.open_settings()
+				on_press: app.open_settings_screen()
 			

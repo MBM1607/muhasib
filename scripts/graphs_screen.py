@@ -37,10 +37,9 @@ DATA_OPTIONS = ("Last Week", "Last Two Weeks", "Last Three Weeks", "Last Month")
 GRAPH_OPTIONS = ("Bar Graph", "Pie Graph")
 
 
-class RecordGraphsScreen(Screen):
+class PrayerGraphsScreen(Screen):
 	''' Screen for the record graphs '''
 	layout = ObjectProperty()
-	spinner = ObjectProperty()
 	graph_data = OptionProperty(DATA_OPTIONS[3], options=list(DATA_OPTIONS))
 	graph = OptionProperty(GRAPH_OPTIONS[0], options=list(GRAPH_OPTIONS))
 

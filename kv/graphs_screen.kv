@@ -3,19 +3,15 @@
 #:import DATA_OPTIONS graphs_screen.DATA_OPTIONS
 #:import GRAPH_OPTIONS graphs_screen.GRAPH_OPTIONS
 
-<RecordGraphsScreen>:
+<PrayerGraphsScreen>:
 	name: "record_graphs"
 	layout: layout
-	spinner: spinner
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
 
-		CustomActionBar:
-			NavigationButton:
-			Label:
-				text: "Record Graphs"
-
+		ScreenActionBar:
+			text: "Prayer Graphs"
 		BoxLayout:
 			id: layout
 			orientation: "vertical"
@@ -27,12 +23,10 @@
 				size_hint_y: None
 				height: dp(48)
 				CustomSpinner:
-					id: spinner
 					text: DATA_OPTIONS[3]
 					values: DATA_OPTIONS
 					on_text: root.change_graph_data(self.text)
 				CustomSpinner:
-					id: graph_spinner
 					text: GRAPH_OPTIONS[0]
 					values: GRAPH_OPTIONS
 					on_text: root.change_graph(self.text)

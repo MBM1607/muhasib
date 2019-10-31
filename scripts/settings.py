@@ -8,7 +8,7 @@ from kivy.properties import ObjectProperty, DictProperty, StringProperty
 from kivy.clock import Clock
 from kivy.app import App
 
-from custom_widgets import CustomButton, CustomPopup, DoubleTextButton
+from custom_widgets import TextButton, CustomModalView, DoubleTextButton
 from locations import LocationForm
 
 
@@ -22,7 +22,7 @@ class SettingsButton(DoubleTextButton):
 	def on_press(self):
 		self.function()
 
-class Settings(Screen):
+class SettingsScreen(Screen):
 	''' Class for a settings screen to change settings '''
 	settings_list = ObjectProperty()
 	config = DictProperty()
@@ -111,7 +111,7 @@ class Settings(Screen):
 		self.save_settings()
 
 
-class SettingsPopup(CustomPopup):
+class SettingsPopup(CustomModalView):
 	''' Base Class for the settings popup '''
 	recycle_view = ObjectProperty()
 	config_name = StringProperty()
@@ -141,12 +141,12 @@ class TimeFormatPopup(SettingsPopup):
 		super().open()
 
 
-class SettingsPopupButton(CustomButton):
+class SettingsPopupButton(TextButton):
 	''' Button for Settings Popup '''
 	def on_press(self):
 		settings = App.get_running_app().settings
 		config = settings.config
-		popup = self.parent.parent.parent.parent.parent
+		popup = self.parent.parent.parent
 		config[popup.config_name] = self.text
 
 		popup.dismiss()

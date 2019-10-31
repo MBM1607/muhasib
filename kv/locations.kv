@@ -5,27 +5,35 @@
 	location_text: location_text
 
 	BoxLayout:
-		orientation: "horizontal"
-
-		TextInput:
-			id: location_text
-			multiline: False
-			hint_text_color: MAIN_COLOR
-			selection_color: (*MAIN_COLOR[:3], 0.5)
-			foreground_color: MAIN_COLOR
-			pos_hint: {'top': 1}
-			size_hint: 1, 0
-			height: dp(48)
-			hint_text: "City, Region, Country"
-			focus: True
-			on_text_validate: root.check_input_location()
-	BoxLayout:
-		orientation: "horizontal"
-		LocationButton:
-			text: "Submit"
-			on_press: root.check_input_location()
-			pos_hint: {'bottom': 1}
-			size_hint_x: 1
+		orientation: "vertical"
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: "Location"
+				font_size: sp(15)
+		BoxLayout:
+			orientation: "horizontal"
+			TextInput:
+				id: location_text
+				multiline: False
+				hint_text_color: MAIN_COLOR
+				selection_color: (*MAIN_COLOR[:3], 0.5)
+				foreground_color: MAIN_COLOR
+				pos_hint: {'top': 1}
+				size_hint: 1, 0
+				height: dp(48)
+				hint_text: "City, Region, Country"
+				focus: True
+				on_text_validate: root.check_input_location()
+		BoxLayout:
+			orientation: "horizontal"
+			LocationButton:
+				text: "Submit"
+				on_press: root.check_input_location()
+				pos_hint: {'bottom': 1}
+				size_hint_x: 1
 
 <LocationButton>:
 	size_hint_y: None

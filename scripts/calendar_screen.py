@@ -13,7 +13,7 @@ from kivy.uix.screenmanager import Screen
 
 import constants
 import convertdate.islamic as islamic
-from custom_widgets import CustomButton, CustomPopup, CustomModalView
+from custom_widgets import TextButton, CustomModalView
 
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
@@ -24,7 +24,7 @@ ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabo' ath-Thani ",
 			"Ramadan", "Shawwal", "Dhu al-Qa‘dah", "Dhu al-Hijjah")
 
 
-class Calendar(Screen):
+class CalendarScreen(Screen):
 	''' Class to hold all the calendar functionality '''
 
 	month_year_button = ObjectProperty()
@@ -139,7 +139,7 @@ class Calendar(Screen):
 			self.populate_dates()
 
 
-class DateButton(CustomButton):
+class DateButton(TextButton):
 	''' Button for a day in a month '''
 
 	def __init__(self, date=None, editable=True, **kwargs):
@@ -166,7 +166,7 @@ class DateButton(CustomButton):
 			self.state = "normal"
 
 
-class RecordsPopup(CustomPopup):
+class RecordsPopup(CustomModalView):
 	''' Popup displaying prayer and other records for each date '''
 	record_lists = ObjectProperty()
 	
@@ -256,7 +256,7 @@ class MonthPopup(CustomModalView):
 		self.year_popup.open()
 
 
-class YearButton(CustomButton):
+class YearButton(TextButton):
 	''' Button for the Year Popup grid '''
 	
 	def __init__(self, **kwargs):
@@ -278,7 +278,7 @@ class YearButton(CustomButton):
 			self.calendar.change_year(self.year)
 
 
-class MonthButton(CustomButton):
+class MonthButton(TextButton):
 	''' Button for the Month Popup grid '''
 	
 	def __init__(self, **kwargs):

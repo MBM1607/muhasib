@@ -1,15 +1,13 @@
 #:kivy 1.11.1
 
-<Settings>:
+<SettingsScreen>:
 	settings_list: settings_list
 	name: "settings"
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
-		CustomActionBar:
-			NavigationButton:
-			Label:
-				text: "Settings"
+		ScreenActionBar:
+			text: "Settings"
 		CustomRecycleView:
 			id: settings_list
 			size_hint_y: 0.9

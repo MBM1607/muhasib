@@ -12,7 +12,6 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.modalview import ModalView
-from kivy.uix.popup import Popup
 from kivy.uix.recycleview import RecycleView
 
 import constants
@@ -32,7 +31,7 @@ class BaseButton(ButtonBehavior, ColorBoxLayout):
 	border = ListProperty([16, 16, 16, 16])
 
 
-class CustomButton(BaseButton, Label):
+class TextButton(BaseButton, Label):
 	''' A custom Button which is identical to the normal kivy button '''
 	pass
 
@@ -41,6 +40,9 @@ class CustomActionBar(ColorBoxLayout):
 	''' Class for a custom action bar '''
 	background_color = ListProperty(constants.MAIN_COLOR)
 
+class ScreenActionBar(CustomActionBar):
+	''' Action Bar with navigation button and text for the screens '''
+	text = StringProperty()
 
 class IconButton(ButtonBehavior, Image):
 	''' Button with an icon instead of text '''
@@ -89,8 +91,7 @@ class LabelCheckBox(ColorBoxLayout):
 
 
 class NavigationButton(IconButton):
-	''' Button to open the navigation drawer.
-			This button is used on all the screens, so it needs its own class'''
+	''' Button to open the navigation drawer '''
 	pass
 
 
@@ -99,7 +100,7 @@ class NavigationWidget(ColorBoxLayout):
 	pass
 
 
-class CustomSpinner(CustomButton):
+class CustomSpinner(TextButton):
 	''' Custom Appearance and implementation of the Spinner class of Kivy
 	'''
 	values = ListProperty()
@@ -126,7 +127,7 @@ class CustomSpinner(CustomButton):
 	def build_dropdown(self):
 		''' Build the dropdown from the values '''
 		for i, value in enumerate(self.values):
-			item = CustomButton(size_hint_y=None, height=dp(48), text=value)
+			item = TextButton(size_hint_y=None, height=dp(48), text=value)
 			if is_even(i):
 				item.background_color = constants.TERNARY_COLOR
 			else:
@@ -149,11 +150,6 @@ class CustomSpinner(CustomButton):
 
 class CustomModalView(ModalView):
 	''' Custom Appearance for all modalviews  '''
-	pass
-
-
-class CustomPopup(Popup):
-	''' Custom Appearance for all popups '''
 	pass
 
 

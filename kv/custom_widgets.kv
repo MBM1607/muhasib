@@ -7,9 +7,6 @@
 	font_name: "data/Saira-Regular.ttf"
 	font_size: sp(12)
 
-<Screen>:
-	ColorBoxLayout:
-
 <ColorBoxLayout>:
 	canvas.before:
 		Color:
@@ -18,11 +15,24 @@
 			pos: self.pos
 			size: self.size
 
+<Screen>:
+	ColorBoxLayout:
+	
+<BaseButton>:
+	state_image: self.background_normal if self.state == 'normal' else self.background_down
+	canvas.before:
+		Color:
+			rgba: self.background_color
+		BorderImage:
+			border: self.border
+			pos: self.pos
+			size: self.size
+			source: self.state_image
+
 <IconButton>:
 	size_hint: None, 1
 	source: root.icon
-	pos: root.pos
-	size: root.size
+	size: dp(32), dp(32)
 
 <HorizontalIconTextButton>:
 	orientation: "horizontal"
@@ -48,20 +58,6 @@
 		size_hint: 1, None
 		size: self.texture_size
 		font_size: sp(15)
-	
-<BaseButton>:
-	state_image: self.background_normal if self.state == 'normal' else self.background_down
-	canvas.before:
-		Color:
-			rgba: self.background_color
-		BorderImage:
-			border: self.border
-			pos: self.pos
-			size: self.size
-			source: self.state_image
-
-<CustomButton>:
-	font_size: sp(12)
 
 <CustomSpinner>:
 	background_color: SECONDRY_COLOR
@@ -77,16 +73,15 @@
 	padding: dp(10)
 	height: dp(48)
 
+<ScreenActionBar>:
+	NavigationButton:
+	Label:
+		text: root.text
+		font_size: sp(15)
+
 <CustomCheckBox@CheckBox>:
 	background_checkbox_normal: "data/checkbox_off.png"
 	background_checkbox_down: "data/checkbox_on.png"
-
-<CustomPopup>:
-	background: ""
-	title_color: 0, 0, 0, 1
-	title_font: "data/Saira-Regular.ttf"
-	title_size: sp(15)
-	separator_color: MAIN_COLOR
 
 <LabelCheckBox>:
 	spacing: dp(10)
@@ -132,7 +127,6 @@
 
 <NavigationButton>:
 	on_press: app.navigationdrawer.toggle_state()
-	size: dp(32), dp(32)
 	icon: "data/menu.png"
 
 <NavigationWidget>:
@@ -156,7 +150,7 @@
 		on_press: app.open_prayer_records()
 		on_release: app.navigationdrawer.toggle_state()
 	HorizontalIconTextButton:
-		text: "Record Graphs"
+		text: "Prayer Graphs"
 		icon: "data/graph.png"
 		on_press: app.open_record_graphs()
 		on_release: app.navigationdrawer.toggle_state()
@@ -168,11 +162,11 @@
 	HorizontalIconTextButton:
 		text: "Qibla"
 		icon: "data/compass.png"
-		on_press: app.open_compass()
+		on_press: app.open_qibla_screen()
 		on_release: app.navigationdrawer.toggle_state()
 	HorizontalIconTextButton:
 		text: "Settings"
 		icon: "data/settings.png"
-		on_press: app.open_settings()
+		on_press: app.open_settings_screen()
 		on_release: app.navigationdrawer.toggle_state()
 	Widget:

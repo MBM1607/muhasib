@@ -6,7 +6,7 @@
 <BlackLabel@Label>:
 	color: 0, 0, 0, 1
 
-<Calendar>:
+<CalendarScreen>:
 	name: "calendar"
 	dates: dates
 	weekdays: weekdays
@@ -16,14 +16,10 @@
 		orientation: "vertical"
 		spacing: dp(10)
 
-		CustomActionBar:
-			NavigationButton:
-			Label:
-				text: "Calendar"
-
+		ScreenActionBar:
+			text: "Calendar"
 		BoxLayout:
 			orientation: "vertical"
-
 			BoxLayout:
 				orientation: "horizontal"
 				size_hint_y: 0.1
@@ -31,16 +27,14 @@
 				padding: dp(5)
 				IconButton:
 					icon: "data/down.png"
-					size: dp(32), dp(32)
 					color: MAIN_COLOR
 					on_press: root.previous_month()
-				CustomButton:
+				TextButton:
 					id: month_year_button
 					size_hint_x: 0.7
 					on_press: root.open_month_popup()
 				IconButton:
 					icon: "data/up.png"
-					size: dp(32), dp(32)
 					color: MAIN_COLOR
 					on_press: root.next_month()
 			CustomRecycleView:
@@ -73,17 +67,14 @@
 			IconButton:
 				icon: "data/back.png"
 				on_press: root.dismiss()
-				size: dp(32), dp(32)
 			Label:
 				text: root.year_range
 				font_size: sp(20)
 			IconButton:
 				icon: "data/up.png"
-				size: dp(32), dp(32)
 				on_press: root.next_year_range()
 			IconButton:
 				icon: "data/down.png"
-				size: dp(32), dp(32)
 				on_press: root.previous_year_range()
 		WidgetGrid:
 			id: year_grid
@@ -100,18 +91,15 @@
 			IconButton:
 				icon: "data/back.png"
 				on_press: root.dismiss()
-				size: dp(32), dp(32)
-			CustomButton:
+			TextButton:
 				text: root.year
 				on_press: root.open_year_popup()
 				font_size: sp(20)
 			IconButton:
 				icon: "data/up.png"
-				size: dp(32), dp(32)
 				on_press: app.calendar.next_year()
 			IconButton:
 				icon: "data/down.png"
-				size: dp(32), dp(32)
 				on_press: app.calendar.previous_year()
 		WidgetGrid:
 			id: month_grid

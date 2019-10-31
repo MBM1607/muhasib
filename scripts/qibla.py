@@ -5,7 +5,7 @@ from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
 
 
-class Compass(Screen):
+class QiblaScreen(Screen):
 	''' Class for the screen containing compass '''
 	qibla_direction = StringProperty()
 

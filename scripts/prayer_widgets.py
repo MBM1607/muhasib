@@ -8,10 +8,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors.button import ButtonBehavior
 
 from constants import CATEGORY_COLORS_DICT
-from custom_widgets import CustomButton, CustomPopup, DoubleTextButton
+from custom_widgets import TextButton, CustomModalView, DoubleTextButton
 
 
-class PrayerOptions(CustomPopup):
+class PrayerOptions(CustomModalView):
 	''' Popup to be display when a prayer button is released '''
 	prayer = StringProperty()
 	base = ObjectProperty()
@@ -22,12 +22,12 @@ class PrayerOptions(CustomPopup):
 		self.base = base
 
 
-class PrayerOptionsButton(CustomButton):
+class PrayerOptionsButton(TextButton):
 	''' Button to be used on prayer options popup'''
 
 	def on_release(self):
 		''' Change the prayer record according to the button pressed '''
-		popup = self.parent.parent.parent.parent
+		popup = self.parent.parent
 		popup.base.update_prayer_record(popup.prayer, self.text)
 		popup.dismiss()
 

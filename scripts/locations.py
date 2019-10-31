@@ -7,7 +7,7 @@ from kivy.uix.modalview import ModalView
 from kivy.uix.dropdown import DropDown
 from kivy.properties import ObjectProperty
 
-from custom_widgets import CustomButton, CustomModalView
+from custom_widgets import TextButton, CustomModalView
 from helpers import jaro_winkler, is_even
 import constants
 
@@ -20,7 +20,7 @@ class LocationDropDown(DropDown):
 		super().dismiss()
 
 
-class LocationButton(CustomButton):
+class LocationButton(TextButton):
 	pass
 
 
