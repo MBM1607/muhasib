@@ -45,18 +45,6 @@ class SettingsScreen(Screen):
 									{"name": "Location", "function": self.location_form.open, "info": settings["location"]}
 								]
 
-	def update_settings_data(self):
-		''' Update the date in the settings_list '''
-		print("wjat")
-		if self.settings_list.data:
-			settings = App.get_running_app().settings
-			self.settings_list.data = [
-										{"name": "Prayer Calculation Method", "function": self.calc_method.open, "info": settings["calc_method"]},
-										{"name": "Asr Factor", "function": self.asr_factor.open, "info": settings["asr_factor"]},
-										{"name":  "Time Format", "function": self.time_format.open, "info": settings["time_format"]},
-										{"name": "Location", "function": self.location_form.open, "info": settings["location"]}
-									]
-
 	def destroy_settings_list(self):
 		''' Destroy the settings list '''
 		self.calc_method = None

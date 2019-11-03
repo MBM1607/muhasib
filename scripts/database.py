@@ -1,7 +1,8 @@
 import sqlite3
+from datetime import date, timedelta
 
 import convertdate.islamic as islamic
-
+from helpers import daterange
 
 class Database():
 	''' Class to handle all the database related functionality '''
@@ -43,8 +44,13 @@ class Database():
 		record = cursor.fetchone()
 		return record
 	
-	def get_prayer_record_after(self, date):
-		''' Get the prayer records of all days after the specified date '''
+	def get_prayer_record_range(self, date, max_date=date.today()):
+		''' Get the prayer records of all days after the specified date and upto the maximum date '''
+
+		# Loop through the date range and ensure that record for all the dates exist
+		for dt in daterange(date, max_date + timedelta(1)):
+			self.create_record(dt)
+
 		cursor = self.db.cursor()
-		cursor.execute("SELECT fajr, dhuhr, asr, maghrib, isha FROM record WHERE date >= ?", (date,))
+		cursor.execute("SELECT fajr, dhuhr, asr, maghrib, isha FROM record WHERE date >= ? AND date <= ? ", (date, max_date))
 		return cursor.fetchall()

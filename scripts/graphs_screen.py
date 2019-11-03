@@ -61,10 +61,10 @@ class PrayerGraphsScreen(Screen):
 		elif self.graph_data == DATA_OPTIONS[2]:
 			date = get_previous_monday(date, weeks=2)
 		elif self.graph_data == DATA_OPTIONS[3]:
-			date = datetime_date(date.year, date.month, 1)
+			date = get_previous_monday(date, weeks=3)
 
 		results = [[0, 0, 0, 0] for _ in range(5)]
-		records = self.app.database.get_prayer_record_after(date)
+		records = self.app.database.get_prayer_record_range(date)
 
 		# Calculate all prayer's activity throughout the range of dates
 		for i, prayer in enumerate(chain(*records)):

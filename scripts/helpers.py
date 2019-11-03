@@ -10,6 +10,11 @@ def _check_type(s):
 	if not isinstance(s, str):
 		raise TypeError(f"Expected str or unicode, got {type(s).__name__}")
 
+def daterange(start_date, end_date):
+	''' Create a range of dates from the start to the end date '''
+	for n in range(int((end_date - start_date).days)):
+		yield start_date + datetime.timedelta(n)
+
 def is_even(num):
 	''' Takes a number and return True if the number is even else return false '''
 	if num % 2:
