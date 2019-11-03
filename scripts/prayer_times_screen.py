@@ -30,7 +30,7 @@ class PrayerTimesScreen(Screen):
 		self.update_prayer_times()
 		
 		self.update_clock_event = Clock.schedule_interval(self.update_prayer_labels, 60)
-		self.location.text = self.app.location
+		self.location.text = self.app.settings["location"]
 
 	def destroy_prayer_data(self):
 		''' Remove all prayer data from the screen and cancel the upgrade event '''

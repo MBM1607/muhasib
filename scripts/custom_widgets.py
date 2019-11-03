@@ -98,11 +98,13 @@ class NavigationButton(IconButton):
 
 class SideBarButton(HorizontalIconTextButton):
 	''' Button for the sidebar navigation '''
-	func = StringProperty()
+	screen = StringProperty()
+
 
 class DashboardButton(VerticalIconTextButton):
 	''' Button to be used on the dashboard '''
-	func = StringProperty()
+	screen = StringProperty()
+
 
 class NavigationWidget(ColorBoxLayout):
 	''' Widget to be used as side panel in the navigation drawer '''

@@ -4,8 +4,7 @@ import json
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
-from kivy.properties import ObjectProperty, DictProperty, StringProperty
-from kivy.clock import Clock
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.app import App
 
 from custom_widgets import TextButton, CustomModalView, DoubleTextButton
@@ -25,29 +24,38 @@ class SettingsButton(DoubleTextButton):
 class SettingsScreen(Screen):
 	''' Class for a settings screen to change settings '''
 	settings_list = ObjectProperty()
-	config = DictProperty()
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
-		self.app = App.get_running_app()
-		self.location_form = LocationForm()
-
-		self.load_settings()
 
 		self.bind(on_pre_enter=lambda _: self.create_settings_list())
 		self.bind(on_pre_leave=lambda _: self.destroy_settings_list())
 	
 	def create_settings_list(self):
-		''' Create the settins list and the required popups '''
+		''' Create the settings list and the required popups '''
+		settings = App.get_running_app().settings
 		self.calc_method = PrayerCalculationPopup()
 		self.asr_factor = AsrFactorPopup()
 		self.time_format = TimeFormatPopup()
+		self.location_form = LocationForm()
 		self.settings_list.data = [
-									{"name": "Prayer Calculation Method", "function": self.calc_method.open, "info": self.config["calc_method"]},
-									{"name": "Asr Factor", "function": self.asr_factor.open, "info": self.config["asr_factor"]},
-									{"name":  "Time Format", "function": self.time_format.open, "info": self.config["time_format"]},
-									{"name": "Location", "function": self.location_form.open, "info": self.config["location"]}
+									{"name": "Prayer Calculation Method", "function": self.calc_method.open, "info": settings["calc_method"]},
+									{"name": "Asr Factor", "function": self.asr_factor.open, "info": settings["asr_factor"]},
+									{"name":  "Time Format", "function": self.time_format.open, "info": settings["time_format"]},
+									{"name": "Location", "function": self.location_form.open, "info": settings["location"]}
 								]
+
+	def update_settings_data(self):
+		''' Update the date in the settings_list '''
+		print("wjat")
+		if self.settings_list.data:
+			settings = App.get_running_app().settings
+			self.settings_list.data = [
+										{"name": "Prayer Calculation Method", "function": self.calc_method.open, "info": settings["calc_method"]},
+										{"name": "Asr Factor", "function": self.asr_factor.open, "info": settings["asr_factor"]},
+										{"name":  "Time Format", "function": self.time_format.open, "info": settings["time_format"]},
+										{"name": "Location", "function": self.location_form.open, "info": settings["location"]}
+									]
 
 	def destroy_settings_list(self):
 		''' Destroy the settings list '''
@@ -55,60 +63,6 @@ class SettingsScreen(Screen):
 		self.asr_factor = None
 		self.time_format = None
 		self.settings_list.data = []
-
-	def load_settings(self):
-		''' Load the settings from the json file and make one if it doesn't exist '''
-		try:
-			with open("data/settings.json", "r") as json_file:
-				self.config = json.load(json_file)
-		except FileNotFoundError:
-			self.config = {
-							"latitude": 0, "longitude": 0, "altitude": 0,
-							"location": "", "calc_method": "",
-							"asr_factor": "", "time_format": ""
-							}
-			self.save_settings()
-
-		Clock.schedule_once(self.location_check)
-
-	def location_data_present(self):
-		''' Check if the location data is in the configuration '''
-		if self.config["location"] and self.config["latitude"] and self.config["longitude"] and self.config["timezone"]:
-			return True
-		else:
-			return False
-
-	def location_check(self, *args):
-		''' Check if location is present, if not open the form to get location '''
-
-		if self.location_data_present():
-			App.get_running_app().change_location(self.config["location"],
-												self.config["latitude"], self.config["longitude"],
-												self.config["altitude"], self.config["timezone"],
-												update_config=False)
-		else:
-			self.location_form.open()
-
-	def save_settings(self):
-		''' Save the settings in a json file '''
-		with open("data/settings.json", "w") as json_file:
-			json.dump(self.config, json_file)
-
-	def get_config(self, key, defualt):
-		''' Get the configuration for the specific key and return with defualt if not '''
-		if key in self.config.keys() and self.config[key]:
-			return self.config[key]
-		else:
-			self.config[key] = defualt
-			return defualt
-
-	def on_config(self, instance, value):
-		''' When config changes then upgrade prayer times and save the settings '''
-		app = App.get_running_app()
-		if hasattr(app, "prayer_times_screen"):
-			app.set_prayer_times_settings()
-		self.create_settings_list()
-		self.save_settings()
 
 
 class SettingsPopup(CustomModalView):
@@ -144,9 +98,9 @@ class TimeFormatPopup(SettingsPopup):
 class SettingsPopupButton(TextButton):
 	''' Button for Settings Popup '''
 	def on_press(self):
+		''' Change the configuration to the chosen button's text '''
 		settings = App.get_running_app().settings
-		config = settings.config
 		popup = self.parent.parent.parent
-		config[popup.config_name] = self.text
+		settings[popup.config_name] = self.text
 
 		popup.dismiss()

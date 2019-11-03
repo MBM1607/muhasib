@@ -5,7 +5,7 @@ import json
 from kivy.app import App
 from kivy.uix.modalview import ModalView
 from kivy.uix.dropdown import DropDown
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, DictProperty
 
 from custom_widgets import TextButton, CustomModalView
 from helpers import jaro_winkler, is_even

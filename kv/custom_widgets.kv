@@ -131,11 +131,11 @@
 	icon: "data/menu.png"
 
 <SideBarButton>:
-	on_press: getattr(app, self.func)()
+	on_press: app.screen_manager.current = self.screen
 	on_release: app.navigationdrawer.toggle_state()
 
 <DashboardButton>:
-	on_press: getattr(app, self.func)()
+	on_press: app.screen_manager.current = self.screen
 
 <NavigationWidget>:
 	orientation: "vertical"

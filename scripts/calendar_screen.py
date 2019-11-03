@@ -3,8 +3,7 @@
 import calendar
 import datetime
 
-from kivy.app import App
-from kivy.properties import ObjectProperty, StringProperty, ListProperty, NumericProperty
+from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
@@ -17,7 +16,6 @@ from custom_widgets import TextButton, CustomModalView
 
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
-
 
 ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabo' ath-Thani ",
 			"Jumada al-Ula", "Jumada al-Akhirah", "Rajab", "Sha'ban",
@@ -35,7 +33,6 @@ class CalendarScreen(Screen):
 		super().__init__(**kwargs)
 		d = datetime.date.today()
 		self.year, self.month, self.day = d.year, d.month, d.day
-
 		self.is_islamic = False
 
 		self.bind(on_pre_enter=lambda _: self.create_calendar())
@@ -43,15 +40,13 @@ class CalendarScreen(Screen):
 
 	def create_calendar(self):
 		''' Create the calendar date buttons and week labels and required popups '''
-		self.month_popup = MonthPopup()
-		self.records_popup = RecordsPopup()
+		self.month_popup = MonthPopup(cal=self)
 		self.weekdays.data = [{"text": day} for day in ("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")]
 		self.populate_dates()
 
 	def destroy_calendar(self):
 		''' Remove all the dates and week widgets and required popups '''
 		self.month_popup = None
-		self.records_popup = None
 		self.dates.data = []
 		self.weekdays.data = []
 
@@ -78,7 +73,7 @@ class CalendarScreen(Screen):
 				date = datetime.date(self.year, self.month, day)
 
 				# If date is of the future make the popup uneditable
-				if day > self.day:
+				if date > datetime.date.today():
 					editable = False
 				else:
 					editable = True
@@ -144,23 +139,13 @@ class DateButton(TextButton):
 
 	def __init__(self, date=None, editable=True, **kwargs):
 		super().__init__(**kwargs)
-		self.calendar = App.get_running_app().calendar
 		self.date = date
 		self.editable = editable
-
-	def get_date(self):
-		''' Get the date of the button in gregorian calendar '''
-		if self.calendar.is_islamic:
-			date = islamic.to_gregorian(self.date.year, self.date.month, self.date.day)
-			return datetime.date(*date)
-		else:
-			return self.date
 
 	def on_press(self):
 		'''  Display the popup with prayer record of the date '''
 		if self.editable:
-			popup = self.calendar.records_popup
-			popup.record_lists.date = self.get_date()
+			popup = RecordsPopup(self.date)
 			popup.open()
 		else:
 			self.state = "normal"
@@ -170,9 +155,10 @@ class RecordsPopup(CustomModalView):
 	''' Popup displaying prayer and other records for each date '''
 	record_lists = ObjectProperty()
 	
-	def __init__(self, **kwargs):
+	def __init__(self, date=None,**kwargs):
 		super().__init__(**kwargs)
 		
+		self.record_lists.date = date
 		self.bind(on_pre_open=lambda _: self.record_lists.create_lists())
 		self.bind(on_dismiss=lambda _: self.record_lists.destroy_lists())
 
@@ -180,13 +166,15 @@ class RecordsPopup(CustomModalView):
 class YearPopup(CustomModalView):
 	''' Popup to select year for the calendar '''
 	year_grid = ObjectProperty()
+	calendar = ObjectProperty()
 	year_range = StringProperty("")
 	min_year = NumericProperty()
 	max_year = NumericProperty()
 
-	def __init__(self, **kwargs):
+	def __init__(self, cal=None, **kwargs):
 		super().__init__(**kwargs)
-		
+		self.calendar = cal
+
 		self.bind(on_pre_open=lambda _: self.create_year_grid())
 		self.bind(on_dismiss=lambda _: self.destroy_year_grid())
 
@@ -218,7 +206,8 @@ class YearPopup(CustomModalView):
 		''' Create year buttons from the year range '''
 		assert self.min_year, "0 is not a valid year"
 		assert self.max_year, "0 is not a valid year"
-		self.year_grid.data = [{"text": str(year)} for year in range(self.min_year, self.max_year + 1)]
+		year_range = range(self.min_year, self.max_year + 1)
+		self.year_grid.data = [{"calendar": self.calendar, "text": str(year)} for year in year_range]
 
 	def destroy_year_grid(self):
 		''' Erase all data from popup '''
@@ -230,25 +219,29 @@ class MonthPopup(CustomModalView):
 	''' Popup to select month for the calendar '''
 	month_grid = ObjectProperty()
 	year = StringProperty("")
+	calendar = ObjectProperty()
 
-	def __init__(self, **kwargs):
+	def __init__(self, cal=None, **kwargs):
 		super().__init__(**kwargs)
-		
+		self.calendar = cal
+
 		self.bind(on_pre_open=lambda _: self.create_month_grid())
+		self.bind(on_pre_dismiss=lambda _: self.calendar.populate_dates())
 		self.bind(on_dismiss=lambda _: self.destroy_month_grid())
 
 	def create_month_grid(self):
 		''' Create the month grid on the popup and the year popup '''
-		assert self.year
-		self.year_popup = YearPopup()
-		self.month_grid.data = [{"text": month} for month in MONTHS]
+		assert self.year, "The year is not given to month popup"
+		assert self.calendar, "Calendar object is not supplied to month popup"
+
+		self.year_popup = YearPopup(cal=self.calendar)
+		self.month_grid.data = [{"calendar": self.calendar, "text": month} for month in MONTHS]
 
 	def destroy_month_grid(self):
 		''' Remove the month grid and other data from the popup '''
 		self.month_grid.data = {}
 		self.year_popup = None
 		self.year = ""
-		App.get_running_app().calendar.populate_dates()
 
 	def open_year_popup(self):
 		''' Open the year popup with the current year for selection '''
@@ -258,10 +251,11 @@ class MonthPopup(CustomModalView):
 
 class YearButton(TextButton):
 	''' Button for the Year Popup grid '''
+	calendar = ObjectProperty()
 	
-	def __init__(self, **kwargs):
+	def __init__(self, cal=None, **kwargs):
 		super().__init__(**kwargs)
-		self.calendar = App.get_running_app().calendar
+		self.calendar = cal
 
 	def on_text(self, instance, value):
 		''' When month is given a name then give it focus if it is the current month and instantiate the month's number '''
@@ -272,7 +266,7 @@ class YearButton(TextButton):
 			self.background_color = constants.MAIN_COLOR
 
 	def on_press(self):
-		''' Handle the pressing of MonthButton '''
+		''' Change the calendar's year to the year selected if it is not the current year'''
 		if self.calendar.year != self.year:
 			self.calendar.month_popup.year_popup.dismiss()
 			self.calendar.change_year(self.year)
@@ -280,10 +274,10 @@ class YearButton(TextButton):
 
 class MonthButton(TextButton):
 	''' Button for the Month Popup grid '''
+	calendar = ObjectProperty()
 	
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
-		self.calendar = App.get_running_app().calendar
 
 	def on_text(self, instance, value):
 		''' When month is given a name then give it focus if it is the current month and instantiate the month's number '''
@@ -294,7 +288,7 @@ class MonthButton(TextButton):
 			self.background_color = constants.MAIN_COLOR
 
 	def on_press(self):
-		''' Handle the pressing of MonthButton '''
+		''' Change the current month of the calendar if the selected button is not current month '''
 		if self.calendar.month != self.month_no:
 			self.calendar.change_month(self.month_no)
 			self.calendar.month_popup.dismiss()
