@@ -1,5 +1,7 @@
 #:kivy 1.11.1
 
+#:import SECONDRY_COLOR constants.SECONDRY_COLOR
+
 <SettingsScreen>:
 	settings_list: settings_list
 	name: "settings"
@@ -13,28 +15,43 @@
 			size_hint_y: 0.9
 			viewclass: "SettingsButton"
 			VerticalListLayout:
-
+				padding: 0
 
 <SettingsButton>:
+	background_color: SECONDRY_COLOR
+
+<SettingTextButton>:
 	size_hint_y: None
 	height: dp(48)
+	background_color: SECONDRY_COLOR
 
-<SettingsPopup>:
-	size_hint: 0.8, 0.8
-	recycle_view: recycle_view
-	CustomRecycleView:
-		id: recycle_view
-		viewclass: "SettingsPopupButton"
-		VerticalListLayout:
-
-<PrayerCalculationPopup>:
-	title: "Prayer Calculation Method"
-	config_name: "calc_method"
-
-<AsrFactorPopup>:
-	title: "Asr Factor"
-	config_name: "asr_factor"
-
-<TimeFormatPopup>:
-	title: "Time Format"
-	config_name: "time_format"
+<PrayerTimeSettings>:
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(5)
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: "Prayer Times Settings"
+				font_size: sp(15)
+		BoxLayout:
+			orientation: "vertical"
+			spacing: dp(10)
+			LabelCheckBox:
+				name: "Show Imsak Time"
+				active: app.settings["show_imsak_time"]
+				on_active: app.settings["show_imsak_time"] = self.active
+			SettingTextButton:
+				text: "Isha and Fajr Method"
+			SettingTextButton:
+				text: "Asr Method"
+			SettingTextButton:
+				text: "High Latitude Method"
+			SettingTextButton:
+				text: "Jummah Offset"
+			SettingTextButton:
+				text: "Imsak Offset"
+			SettingTextButton:
+				text: "Manual Corrections"

@@ -75,20 +75,15 @@ class LabelCheckBox(ColorBoxLayout):
 	''' Checkbox with its very own label in a colored layout ''' 
 	name = StringProperty()
 	active = BooleanProperty(False)
-	base = ObjectProperty()
 	background_color = ListProperty(constants.WARNING_COLOR)
 
 	def on_active(self, instance, value):
-		''' When check box is clicked change the value in the record and the color '''
-
+		''' When the status of the checkbox is changed then change the background color '''
+	
 		if value:
 			self.background_color = constants.SECONDRY_COLOR
 		else:
 			self.background_color = constants.WARNING_COLOR
-
-		# Ensure that this is not the first loading before saving change to the database
-		if self.base:
-			self.base.change_extra_record(self.name.lower(), value)
 
 
 class NavigationButton(IconButton):

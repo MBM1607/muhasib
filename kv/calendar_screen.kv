@@ -97,10 +97,10 @@
 				font_size: sp(20)
 			IconButton:
 				icon: "data/up.png"
-				on_press: app.calendar.next_year()
+				on_press: root.calendar.next_year()
 			IconButton:
 				icon: "data/down.png"
-				on_press: app.calendar.previous_year()
+				on_press: root.calendar.previous_year()
 		WidgetGrid:
 			id: month_grid
 			viewclass: "MonthButton"

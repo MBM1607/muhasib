@@ -8,7 +8,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors.button import ButtonBehavior
 
 from constants import CATEGORY_COLORS_DICT
-from custom_widgets import TextButton, CustomModalView, DoubleTextButton
+from custom_widgets import TextButton, CustomModalView, DoubleTextButton, LabelCheckBox
 
 
 class PrayerOptions(CustomModalView):
@@ -35,7 +35,6 @@ class PrayerOptions(CustomModalView):
 
 class PrayerOptionsButton(TextButton):
 	''' Button to be used on prayer options popup'''
-
 	def on_release(self):
 		''' Change the prayer record according to the button pressed '''
 		popup = self.parent.parent.parent.parent
@@ -43,8 +42,22 @@ class PrayerOptionsButton(TextButton):
 		popup.dismiss()
 
 
+class ExtraRecordButton(LabelCheckBox):
+	''' Button to show the current record of an extra record and allow changing of the record '''
+
+	def on_active(self, instance, value):
+		''' Change the record in the root's data list when activation status is changed '''
+
+		super().on_active(instance, value)
+
+		# Ensure that this is not the first loading before saving change to the database
+		if self.parent:
+			records_list = self.parent.parent.parent
+			records_list.change_extra_record(self.name.lower(), value)
+
+
 class SalahButton(DoubleTextButton):
-	''' Button used with salah button on home screen with popup functionality'''
+	'''	Button to display the current prayer record and allow changing of the record '''
 
 	def on_release(self):
 		''' On button release open the popup '''

@@ -36,16 +36,17 @@ import math
 class PrayerTimes():
 	''' A class to hold all the prayer times calculation capabilities '''
 
-	def __init__(self, method="Muslim World League", time_format="24h", asr_param="Standard", timezone=0, coords=(34.1687502, 73.2214982, 1214)) :
+	def __init__(self) :
 		
 		self.time_suffixes = ["am", "pm"]
-		self.timezone = timezone
-		self.time_format = time_format
-		self.asr_param = asr_param
+		self.timezone = 0
+		self.time_format = "24h"
+		self.asr_param = "Standard"
+		self.show_imsak_time = True
 
-		self.lat = coords[0]
-		self.lng = coords[1]
-		self.alt = coords[2] if len(coords) > 2 else 0
+		self.lat = 0
+		self.lng = 0
+		self.alt = 0
 
 		self.time_names = {'imsak', 'fajr', 'sunrise', 'dhuhr', 'asr',
 							'sunset', 'maghrib', 'isha', 'midnight'}
@@ -55,7 +56,7 @@ class PrayerTimes():
 
 
 		# Default Parameters in Calculation Methods
-		self.default_params = {
+		default_params = {
 			'maghrib': '0 min', 'midnight': 'Standard'
 		}
 		
@@ -63,29 +64,29 @@ class PrayerTimes():
 		# Calculation Methods
 		self.methods = {
 			'Muslim World League':
-				{**{'fajr': 18, 'isha': 17}, **self.default_params},
+				{**{'fajr': 18, 'isha': 17}, **default_params},
 			'Islamic Society of North America (ISNA)':
-				{**{'fajr': 15, 'isha': 15}, **self.default_params},
+				{**{'fajr': 15, 'isha': 15}, **default_params},
 			'Egyptian General Authority of Survey':
-				{**{'fajr': 19.5, 'isha': 17.5}, **self.default_params},
+				{**{'fajr': 19.5, 'isha': 17.5}, **default_params},
 			'Umm Al-Qura University, Makkah':
-				{**{'fajr': 18.5, 'isha': '90 min'}, **self.default_params},  # fajr was 19 degrees before 1430 hijri
+				{**{'fajr': 18.5, 'isha': '90 min'}, **default_params},  # fajr was 19 degrees before 1430 hijri
 			'University of Islamic Sciences, Karachi':
-				{**{'fajr': 18, 'isha': 18}, **self.default_params},
+				{**{'fajr': 18, 'isha': 18}, **default_params},
 			'Gulf Region':
-				{**{'fajr': 19.5, 'isha': '90 min'}, **self.default_params},
+				{**{'fajr': 19.5, 'isha': '90 min'}, **default_params},
 			'Kuwait':
-				{**{'fajr': 18, 'isha': 17.5}, **self.default_params},
+				{**{'fajr': 18, 'isha': 17.5}, **default_params},
 			'Qatar':
-				{**{'fajr': 18, 'isha': '90 min'}, **self.default_params},
+				{**{'fajr': 18, 'isha': '90 min'}, **default_params},
 			'Majlis Ugama Islam Singapura, Singapore':
-				{**{'fajr': 20, 'isha': 18}, **self.default_params},
+				{**{'fajr': 20, 'isha': 18}, **default_params},
 			'Union Organization Islamic de France':
-				{**{'fajr': 12, 'isha': 12}, **self.default_params},
+				{**{'fajr': 12, 'isha': 12}, **default_params},
 			'Diyanet İşleri Başkanlığı, Turkey':
-				{**{'fajr': 18, 'isha': 17}, **self.default_params},
+				{**{'fajr': 18, 'isha': 17}, **default_params},
 			'Spiritual Administration of Muslims of Russia':
-				{**{'fajr': 16, 'isha': 15}, **self.default_params},
+				{**{'fajr': 16, 'isha': 15}, **default_params},
 			'Institute of Geophysics, University of Tehran': 
 				{'fajr': 17.7, 'isha': 14, 'maghrib': 4.5, 'midnight': 'Jafari'},  # isha is not explicitly specified in this method
 			'Shia Ithna-Ashari, Leva Institute, Qum':
@@ -99,7 +100,7 @@ class PrayerTimes():
 			"dhuhr"    : '0 min',
 			"highLats" : 'NightMiddle',
 		}
-		self.set_method(method)
+		self.set_method("Muslim World League")
 
 
 	def set_method(self, method):
@@ -111,7 +112,10 @@ class PrayerTimes():
 		if type(date).__name__ == 'date':
 			date = (date.year, date.month, date.day)
 		self.jDate = self.julian(date[0], date[1], date[2]) - self.lng / (15 * 24.0)
-		return self.compute_times()
+		times = self.compute_times()
+		if not self.show_imsak_time:
+			del times["imsak"]
+		return times
 
 	def get_formatted_time(self, time, suffixes = None):
 		''' Convert float time to the given format (see time_formats) '''

@@ -44,11 +44,10 @@ class MuhasibApp(App):
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 
-		self.prayer_times = PrayerTimes()
 
 		# Load the setting configuration setting its prayer time parameters
+		self.prayer_times = PrayerTimes()
 		self.load_settings()
-		self.set_prayer_times_settings()
 
 		# Initialize the database
 		self.database = Database()
@@ -95,6 +94,7 @@ class MuhasibApp(App):
 
 	def set_prayer_times_settings(self):
 		''' Change the prayer times calculation settings according to app's settings '''
+		self.prayer_times.show_imsak_time = self.settings["show_imsak_time"]
 		self.prayer_times.time_format = self.settings["time_format"]
 		self.prayer_times.asr_param = self.settings["asr_factor"]
 		self.prayer_times.set_method(self.settings["calc_method"])
@@ -139,7 +139,8 @@ class MuhasibApp(App):
 			self.settings = {
 							"latitude": 0, "longitude": 0, "altitude": 0,
 							"location": "", "calc_method": "Muslim World League",
-							"asr_factor": "Standard", "time_format": "24h"
+							"asr_factor": "Standard", "time_format": "24h",
+							"show_imsak_time": True
 							}
 			self.save_settings()
 
