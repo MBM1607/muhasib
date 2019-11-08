@@ -41,9 +41,11 @@ class CustomActionBar(ColorBoxLayout):
 	''' Class for a custom action bar '''
 	background_color = ListProperty(constants.MAIN_COLOR)
 
+
 class ScreenActionBar(CustomActionBar):
 	''' Action Bar with navigation button and text for the screens '''
 	text = StringProperty()
+
 
 class IconButton(ButtonBehavior, Image):
 	''' Button with an icon instead of text '''
@@ -71,20 +73,23 @@ class DoubleTextButton(BaseButton):
 	background_color = ListProperty(constants.MAIN_COLOR)
 
 
-class LabelCheckBox(ColorBoxLayout):
+class LabelCheckBox(BaseButton):
 	''' Checkbox with its very own label in a colored layout ''' 
 	name = StringProperty()
 	active = BooleanProperty(False)
-	background_color = ListProperty(constants.WARNING_COLOR)
+	checkbox_on = StringProperty()
+	checkbox_off = StringProperty()
+	unactive_color = ListProperty(constants.WARNING_COLOR)
+	active_color = ListProperty(constants.SECONDRY_COLOR)
 
-	def on_active(self, instance, value):
-		''' When the status of the checkbox is changed then change the background color '''
-	
-		if value:
-			self.background_color = constants.SECONDRY_COLOR
-		else:
-			self.background_color = constants.WARNING_COLOR
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
 
+		self.bind(on_press=lambda _: self.toggle_state())
+
+	def toggle_state(self):
+		''' toggle the acitvation state of the button '''
+		self.active = not self.active
 
 class NavigationButton(IconButton):
 	''' Button to open the navigation drawer '''

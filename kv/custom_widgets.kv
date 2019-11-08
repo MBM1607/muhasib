@@ -80,20 +80,17 @@
 		text: root.text
 		font_size: sp(15)
 
-<CustomCheckBox@CheckBox>:
-	background_checkbox_normal: "data/checkbox_off.png"
-	background_checkbox_down: "data/checkbox_on.png"
-
 <LabelCheckBox>:
 	size_hint_y: None
 	spacing: dp(10)
 	height: dp(48)
+	checkbox_on: "data/checkbox_on.png"
+	checkbox_off: "data/checkbox_off.png"
+	background_color: self.active_color if self.active else self.unactive_color
 	Label:
 		text: root.name
-
-	CustomCheckBox:
-		active: root.active
-		on_active: root.active = self.active
+	Image:
+		source: root.checkbox_on if root.active else root.checkbox_off
 
 <DoubleTextButton>:
 	spacing: dp(10)

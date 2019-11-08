@@ -48,8 +48,6 @@ class ExtraRecordButton(LabelCheckBox):
 	def on_active(self, instance, value):
 		''' Change the record in the root's data list when activation status is changed '''
 
-		super().on_active(instance, value)
-
 		# Ensure that this is not the first loading before saving change to the database
 		if self.parent:
 			records_list = self.parent.parent.parent
