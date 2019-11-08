@@ -9,6 +9,7 @@ from kivy.properties import DictProperty
 from kivy.garden.navigationdrawer import NavigationDrawer
 from kivy.lang.builder import Builder
 from kivy.uix.screenmanager import ScreenManager
+from pytz import timezone
 
 from scripts.calendar_screen import CalendarScreen
 from scripts.qibla import QiblaScreen
@@ -80,10 +81,7 @@ class MuhasibApp(App):
 	
 	def get_current_time(self):
 		''' Get the UTC time of the timezone currently set in settings '''
-		time = datetime.utcnow()
-		tz = self.settings["timezone"]
-		utc = timedelta(seconds=utcoffset(tz) * 3600)
-		return utc + time
+		return datetime.now(tz=timezone(self.settings["timezone"]))
 
 	def get_formatted_time(self, time):
 		''' Take a time and return it in the string format of the configuration '''

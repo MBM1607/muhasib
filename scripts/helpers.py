@@ -2,7 +2,7 @@
 
 import datetime
 
-import pytz
+from pytz import timezone
 
 
 def _check_type(s):
@@ -23,7 +23,7 @@ def is_even(num):
 
 def utcoffset(tz):
 	''' Take the timezone name and return its UTC offset '''
-	now = datetime.datetime.now(tz=pytz.timezone(tz))
+	now = datetime.datetime.now(tz=timezone(tz))
 	utc_offset = (now.utcoffset().days * 24) + (now.utcoffset().seconds / 3600)
 	return utc_offset
 

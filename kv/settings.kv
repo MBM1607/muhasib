@@ -36,22 +36,28 @@
 			Label:
 				text: "Prayer Times Settings"
 				font_size: sp(15)
-		BoxLayout:
-			orientation: "vertical"
-			spacing: dp(10)
-			LabelCheckBox:
-				name: "Show Imsak Time"
-				active: app.settings["show_imsak_time"]
-				on_active: app.settings["show_imsak_time"] = self.active
-			SettingTextButton:
-				text: "Isha and Fajr Method"
-			SettingTextButton:
-				text: "Asr Method"
-			SettingTextButton:
-				text: "High Latitude Method"
-			SettingTextButton:
-				text: "Jummah Offset"
-			SettingTextButton:
-				text: "Imsak Offset"
-			SettingTextButton:
-				text: "Manual Corrections"
+		ScrollView:
+			do_scroll_x: False
+			scroll_type: ["content", "bars"]
+			bar_color: 0, 0, 0, 1
+			BoxLayout:
+				orientation: "vertical"
+				size_hint_y: None
+				height: dp(396)
+				spacing: dp(10)
+				LabelCheckBox:
+					name: "Show Imsak Time"
+					active: app.settings["show_imsak_time"]
+					on_active: app.settings["show_imsak_time"] = self.active
+				SettingTextButton:
+					text: "Isha and Fajr Method"
+				SettingTextButton:
+					text: "Asr Method"
+				SettingTextButton:
+					text: "High Latitude Method"
+				SettingTextButton:
+					text: "Jummah Offset"
+				SettingTextButton:
+					text: "Imsak Offset"
+				SettingTextButton:
+					text: "Manual Corrections"
