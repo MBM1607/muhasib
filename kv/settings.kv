@@ -25,6 +25,13 @@
 	height: dp(48)
 	background_color: SECONDRY_COLOR
 
+<SettingsPopup>:
+	size_hint: 0.9, 0.9
+	CustomRecycleView:
+		viewclass: "SettingPopupButton"
+		data: root.data
+		VerticalListLayout:
+
 <PrayerTimeSettings>:
 	BoxLayout:
 		orientation: "vertical"
@@ -43,21 +50,32 @@
 			BoxLayout:
 				orientation: "vertical"
 				size_hint_y: None
-				height: dp(396)
+				height: dp(512)
 				spacing: dp(10)
 				LabelCheckBox:
 					name: "Show Imsak Time"
 					active: app.settings["show_imsak_time"]
 					on_active: app.settings["show_imsak_time"] = self.active
 				SettingTextButton:
-					text: "Isha and Fajr Method"
+					text: "Time Format"
+					on_press: root.open_popup("time_format")
+				SettingTextButton:
+					text: "Prayer Method"
+					on_press: root.open_popup("calc_method")
 				SettingTextButton:
 					text: "Asr Method"
+					on_press: root.open_popup("asr_factor")
 				SettingTextButton:
 					text: "High Latitude Method"
-				SettingTextButton:
-					text: "Jummah Offset"
+					on_press: root.open_popup("high_lats")
 				SettingTextButton:
 					text: "Imsak Offset"
+					on_press: root.open_popup("imsak_offset")
+				SettingTextButton:
+					text: "Dhuhr Offset"
+					on_press: root.open_popup("dhuhr_offset")
+				SettingTextButton:
+					text: "Jummah Offset"
+					on_press: root.open_popup("jummah_offset")
 				SettingTextButton:
 					text: "Manual Corrections"

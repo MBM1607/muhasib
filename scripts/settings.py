@@ -2,13 +2,16 @@
 
 import json
 
+from kivy.app import App
+from kivy.properties import ListProperty, ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
-from kivy.properties import ObjectProperty, StringProperty
-from kivy.app import App
 
-from custom_widgets import HorizontalIconTextButton, CustomModalView, TextButton
+import constants
+from custom_widgets import (CustomModalView, HorizontalIconTextButton,
+							TextButton)
 from locations import LocationForm
+
 
 class SettingsButton(HorizontalIconTextButton):
 	''' Settings button class for the opening different setting popups '''
@@ -47,5 +50,43 @@ class SettingsScreen(Screen):
 
 class PrayerTimeSettings(CustomModalView):
 	''' Popup class to contain all prayer time settings '''
-	def __init__(self, **kwargs):
+
+	def open_popup(self, setting_name):
+		''' Open the popup with the given setting name '''
+		popup = SettingsPopup(setting_name)
+		popup.open()
+
+
+class SettingsPopup(CustomModalView):
+	''' Popup class for all the setting options '''
+	data = ListProperty()
+
+	def __init__(self, setting_name, **kwargs):
 		super().__init__(**kwargs)
+		self.settings = App.get_running_app().settings
+		self.name = setting_name
+
+		self.bind(on_pre_open=lambda _: self.create_data_list())
+
+	def create_data_list(self):
+		''' Create the data list for the chosen settings '''
+		for text in constants.SETTINGS_OPTIONS[self.name]:
+			btn = {"text": text}
+			if text == self.settings[self.name]:
+				btn["background_color"] = constants.SECONDRY_COLOR
+			else:
+				btn["background_color"] = constants.CAUTION_COLOR
+			self.data.append(btn)
+
+	def save_setting(self, text):
+		''' Save the setting and dismiss the popup '''
+		self.settings[self.name] = text
+		self.dismiss()
+
+
+class SettingPopupButton(TextButton):
+	''' Button for the settings popup '''
+	
+	def on_press(self):
+		popup = self.parent.parent.parent
+		popup.save_setting(self.text)

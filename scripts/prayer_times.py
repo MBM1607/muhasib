@@ -43,6 +43,7 @@ class PrayerTimes():
 		self.time_format = "24h"
 		self.asr_param = "Standard"
 		self.show_imsak_time = True
+		self.is_jummah = False
 
 		self.lat = 0
 		self.lng = 0
@@ -87,18 +88,19 @@ class PrayerTimes():
 				{**{'fajr': 18, 'isha': 17}, **default_params},
 			'Spiritual Administration of Muslims of Russia':
 				{**{'fajr': 16, 'isha': 15}, **default_params},
-			'Institute of Geophysics, University of Tehran': 
+			'Institute of Geophysics, University of Tehran':
 				{'fajr': 17.7, 'isha': 14, 'maghrib': 4.5, 'midnight': 'Jafari'},  # isha is not explicitly specified in this method
 			'Shia Ithna-Ashari, Leva Institute, Qum':
 				{'fajr': 16, 'isha': 14, 'maghrib': 4, 'midnight': 'Jafari'}
 		}
 
-		
+
 		# initialize settings
 		self.settings = {
-			"imsak"    : '10 min',
-			"dhuhr"    : '0 min',
-			"highLats" : 'NightMiddle',
+			"imsak": '10 min',
+			"dhuhr": '0 min',
+			"jummah": '0 min',
+			"high_lats": 'Night Middle',
 		}
 		self.set_method("Muslim World League")
 
@@ -109,10 +111,12 @@ class PrayerTimes():
 
 	def get_times(self, date):
 		''' Return prayer times for a given date '''
-		if type(date).__name__ == 'date':
-			date = (date.year, date.month, date.day)
-		self.jDate = self.julian(date[0], date[1], date[2]) - self.lng / (15 * 24.0)
+		if date.weekday() == 4:
+			self.is_jummah = True
+
+		self.jDate = self.julian(date.year, date.month, date.day) - self.lng / (15 * 24.0)
 		times = self.compute_times()
+
 		if not self.show_imsak_time:
 			del times["imsak"]
 		return times
@@ -234,23 +238,25 @@ class PrayerTimes():
 
 	def adjust_times(self, times):
 		''' Adjust times in a prayer time array '''
-		params = self.settings
 		tz_adjust = self.timezone - self.lng / 15.0
 		for t in times.keys():
 			times[t] += tz_adjust
 
-		if params['highLats'] != 'None':
+		if self.settings['high_lats'] != 'None':
 			times = self.adjust_high_lats(times)
 
-		if self.is_min(params['imsak']):
-			times['imsak'] = times['fajr'] - self.eval(params['imsak']) / 60.0
+		if self.is_min(self.settings['imsak']):
+			times['imsak'] = times['fajr'] - self.eval(self.settings['imsak']) / 60.0
 		# need to ask about 'min' settings
-		if self.is_min(params['maghrib']):
-			times['maghrib'] = times['sunset'] - self.eval(params['maghrib']) / 60.0
+		if self.is_min(self.settings['maghrib']):
+			times['maghrib'] = times['sunset'] - self.eval(self.settings['maghrib']) / 60.0
 
-		if self.is_min(params['isha']):
-			times['isha'] = times['maghrib'] - self.eval(params['isha']) / 60.0
-		times['dhuhr'] += self.eval(params['dhuhr']) / 60.0
+		if self.is_min(self.settings['isha']):
+			times['isha'] = times['maghrib'] - self.eval(self.settings['isha']) / 60.0
+		times['dhuhr'] += self.eval(self.settings['dhuhr']) / 60.0
+
+		if self.is_jummah:
+			times["dhuhr"] += self.eval(self.settings["jummah"]) / 60.0
 
 		return times
 
@@ -299,11 +305,11 @@ class PrayerTimes():
 	def night_portion(self, angle, night):
 		''' The night portion used for adjusting times in higher latitudes '''
 
-		method = self.settings['highLats']
+		method = self.settings['high_lats']
 		portion = 1/2.0  # midnight
-		if method == 'AngleBased':
+		if method == 'Angle Based':
 			portion = 1/60.0 * angle
-		if method == 'OneSeventh':
+		if method == 'One Seventh':
 			portion = 1/7.0
 		return portion * night
 

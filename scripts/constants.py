@@ -21,3 +21,23 @@ NAVIGATION_DATA = (
 					{"text": "Qibla", "icon": "data/compass.png", "screen": "qibla"},
 					{"text": "Settings", "icon": "data/settings.png", "screen": "settings"}
 				)
+
+PRAYER_METHODS = (
+				'Muslim World League', 'Islamic Society of North America (ISNA)',
+				'Egyptian General Authority of Survey', 'Umm Al-Qura University, Makkah',
+				'University of Islamic Sciences, Karachi', 'Gulf Region', 'Kuwait',
+				'Qatar', 'Majlis Ugama Islam Singapura, Singapore',
+				'Union Organization Islamic de France', 'Diyanet İşleri Başkanlığı, Turkey',
+				'Spiritual Administration of Muslims of Russia', 'Institute of Geophysics, University of Tehran',
+				'Shia Ithna-Ashari, Leva Institute, Qum'
+				)
+
+ASR_FACTORS = ("Standard", "Hanafi")
+TIME_FORMATS = ("24h", "12h")
+HIGH_LAT_METHODS = ("Night Middle", "Angle Based", "One Seventh")
+OFFSET_MINUTES = tuple(f"{x} min" for x in range(61))
+
+SETTINGS_OPTIONS = {"calc_method": PRAYER_METHODS, "asr_factor": ASR_FACTORS,
+					"time_format": TIME_FORMATS, "high_lats": HIGH_LAT_METHODS,
+					"imsak_offset": OFFSET_MINUTES, "dhuhr_offset": OFFSET_MINUTES,
+					"jummah_offset": OFFSET_MINUTES}

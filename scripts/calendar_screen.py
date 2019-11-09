@@ -204,8 +204,11 @@ class YearPopup(CustomModalView):
 
 	def create_year_grid(self):
 		''' Create year buttons from the year range '''
-		assert self.min_year, "0 is not a valid year"
-		assert self.max_year, "0 is not a valid year"
+		if not self.min_year:
+			raise ValueError("0 is not a valid value for min_year")
+		elif not self.max_year:
+			raise ValueError("0 is not a valid value for max_year")
+
 		year_range = range(self.min_year, self.max_year + 1)
 		self.year_grid.data = [{"calendar": self.calendar, "text": str(year)} for year in year_range]
 
@@ -231,8 +234,10 @@ class MonthPopup(CustomModalView):
 
 	def create_month_grid(self):
 		''' Create the month grid on the popup and the year popup '''
-		assert self.year, "The year is not given to month popup"
-		assert self.calendar, "Calendar object is not supplied to month popup"
+		if not self.year:
+			raise ValueError("Year Value cannot be none")
+		elif not self.calendar:
+			raise ValueError("Calendar object cannot be none")
 
 		self.year_popup = YearPopup(cal=self.calendar)
 		self.month_grid.data = [{"calendar": self.calendar, "text": month} for month in MONTHS]
