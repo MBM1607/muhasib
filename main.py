@@ -151,7 +151,9 @@ class MuhasibApp(App):
 							"dhuhr_offset": "0 min", "imsak_offset": "10 min",
 							"jummah_offset": "15 min", "fajr_adjustment": "0 min",
 							"dhuhr_adjustment": "0 min", "asr_adjustment": "0 min",
-							"maghrib_adjustment": "0 min", "isha_adjustment": "0 min"
+							"maghrib_adjustment": "0 min", "isha_adjustment": "0 min",
+							"fasting_record": "Show in Ramazan", "quran_record": "Don't Show",
+							"hadees_record": "Don't Show"
 							}
 			self.save_settings()
 

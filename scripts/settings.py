@@ -37,7 +37,7 @@ class SettingsScreen(Screen):
 		'''Create the settings list and the required popups'''
 		self.settings_list.data = [
 									{"text": "Prayer Times Settings", "icon": "data/time.png", "on_press": PrayerTimeSettings().open},
-									{"text": "Prayer Record Settings", "icon": "data/record.png"},
+									{"text": "Prayer Record Settings", "icon": "data/record.png", "on_press": PrayerRecordSettings().open},
 									{"text": "Calendar Settings", "icon": "data/calendar.png"},
 									{"text": "Location Settings", "icon": "data/location.png", "on_press": LocationForm().open},
 									{"text": "Notifications Settings", "icon": "data/notification.png"}
@@ -114,3 +114,21 @@ class SettingPopupButton(TextButton):
 		'''Save the setting selected'''
 		popup = self.parent.parent.parent
 		popup.save_setting(self.text)
+
+
+class PrayerRecordSettings(CustomModalView):
+	'''Popup class for the prayer records settings'''
+
+	def open_record_popup(self, name):
+		'''Open the popup for the record which's name is passed in'''
+		popup = SettingsPopup(name)
+		popup.open()
+
+class RecordSettingButton(SettingTextButton):
+	'''Button for the Prayer Record Settigns'''
+	name = StringProperty()
+
+	def on_press(self):
+		'''Open the record options popup to change record viewing setting'''
+		popup = self.parent.parent.parent.parent
+		popup.open_record_popup(self.name)

@@ -37,9 +37,14 @@ TIME_FORMATS = ("24h", "12h")
 HIGH_LAT_METHODS = ("Night Middle", "Angle Based", "One Seventh")
 OFFSET_MINUTES = tuple(f"{x} min" for x in range(61))
 
+FASTING_RECORD_OPTIONS = ("Show", "Show in Ramazan", "Don't Show")
+RECORD_OPTIONS = ("Show", "Don't Show")
+
 SETTINGS_OPTIONS = {"calc_method": PRAYER_METHODS, "asr_factor": ASR_FACTORS,
 					"time_format": TIME_FORMATS, "high_lats": HIGH_LAT_METHODS,
 					"imsak_offset": OFFSET_MINUTES, "dhuhr_offset": OFFSET_MINUTES,
 					"jummah_offset": OFFSET_MINUTES, "fajr_adjustment": OFFSET_MINUTES,
 					"dhuhr_adjustment": OFFSET_MINUTES, "asr_adjustment": OFFSET_MINUTES,
-					"maghrib_adjustment": OFFSET_MINUTES, "isha_adjustment": OFFSET_MINUTES}
+					"maghrib_adjustment": OFFSET_MINUTES, "isha_adjustment": OFFSET_MINUTES,
+					"fasting_record": FASTING_RECORD_OPTIONS, "quran_record": RECORD_OPTIONS,
+					"hadees_record": RECORD_OPTIONS}

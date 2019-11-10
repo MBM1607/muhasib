@@ -50,6 +50,23 @@
 			VerticalListLayout:
 				padding: 0
 
+<PrayerRecordSettings>:
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(5)
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: "Prayer Record Settings"
+				font_size: sp(15)
+		CustomRecycleView:
+			viewclass: "RecordSettingButton"
+			data: [{"text": "Fasting Record", "name": "fasting_record"}, {"text": "Quran Study Record", "name": "quran_record"}, {"text": "Hadees Study Record", "name": "hadees_record"}]
+			VerticalListLayout:
+				padding: 0
+
 <PrayerTimeSettings>:
 	BoxLayout:
 		orientation: "vertical"

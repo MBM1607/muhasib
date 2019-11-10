@@ -73,7 +73,9 @@ class RecordLists(BoxLayout):
 
 	def __init__(self, date=date.today(), **kwargs):
 		super().__init__(**kwargs)
-		self.database = App.get_running_app().database
+		app = App.get_running_app()
+		self.database = app.database
+		self.settings = app.settings
 		self.date = date
 		self.prayer_record = {}
 		self.extra_record = {}
@@ -86,11 +88,14 @@ class RecordLists(BoxLayout):
 		self.prayer_record = {"fajr": record[0], "dhuhr": record[1], "asr": record[2],
 							"maghrib": record[3], "isha": record[4]}
 
-		# If fast is required then display fast record button
-		if record[5]:
-			self.extra_record["fast"] = record[6]
-
-		self.extra_record = {"quran": record[7], "hadees": record[8]}
+		if ((self.settings["fasting_record"] == "Show in Ramazan" and record[5])
+			or self.settings["fasting_record"] == "Show"):
+				self.extra_record["fast"] = record[6]
+		
+		if self.settings["quran_record"] == "Show":
+			self.extra_record["quran"] = record[7]
+		if self.settings["hadees_record"] == "Show":
+			self.extra_record["hadees"] = record[8]
 
 		self.salah_record_list.data = [{"name": n.capitalize(), "info": r} for n, r in self.prayer_record.items()]
 		self.extra_record_list.data = [{"name": n.capitalize(), "active": r} for n, r in self.extra_record.items()]
