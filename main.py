@@ -92,7 +92,7 @@ class MuhasibApp(App):
 
 	def set_prayer_times_settings(self):
 		''' Change the prayer times calculation settings according to app's settings '''
-		self.prayer_times.show_imsak_time = self.settings["show_imsak_time"]
+		self.prayer_times.imsak_time = self.settings["imsak_time"]
 		self.prayer_times.settings["high_lats"] = self.settings["high_lats"]
 		self.prayer_times.settings["dhuhr"] = self.settings["dhuhr_offset"]
 		self.prayer_times.settings["imsak"] = self.settings["imsak_offset"]
@@ -147,7 +147,7 @@ class MuhasibApp(App):
 							"latitude": 0, "longitude": 0, "altitude": 0,
 							"location": "", "calc_method": "Muslim World League",
 							"asr_factor": "Standard", "time_format": "24h",
-							"show_imsak_time": True, "high_lats": "Night Middle",
+							"imsak_time": "Show", "high_lats": "Night Middle",
 							"dhuhr_offset": "0 min", "imsak_offset": "10 min",
 							"jummah_offset": "15 min", "fajr_adjustment": "0 min",
 							"dhuhr_adjustment": "0 min", "asr_adjustment": "0 min",

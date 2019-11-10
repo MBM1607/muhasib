@@ -42,7 +42,7 @@ class PrayerTimes():
 		self.timezone = 0
 		self.time_format = "24h"
 		self.asr_param = "Standard"
-		self.show_imsak_time = True
+		self.imsak_time = "Show"
 		self.is_jummah = False
 
 		self.lat = 0
@@ -117,7 +117,7 @@ class PrayerTimes():
 		self.jDate = self.julian(date.year, date.month, date.day) - self.lng / (15 * 24.0)
 		times = self.compute_times()
 
-		if not self.show_imsak_time:
+		if self.imsak_time != "Show":
 			del times["imsak"]
 		return times
 

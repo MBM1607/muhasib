@@ -8,14 +8,21 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 
 import constants
-from custom_widgets import (CustomModalView, HorizontalIconTextButton,
-							TextButton)
+from custom_widgets import CustomModalView, TextButton
 from locations import LocationForm
 
 
-class SettingsButton(HorizontalIconTextButton):
-	'''Settings button class for the opening different setting popups'''
-	pass
+RECORD_SETTINGS_DATA = [{"text": "Fasting Record", "name": "fasting_record"},
+						{"text": "Quran Study Record", "name": "quran_record"},
+						{"text": "Hadees Study Record", "name": "hadees_record"}]
+TIMES_SETTINGS_DATA = [{"text": "Imsak Time", "name": "imsak_time"},
+						{"text": "Time Format", "name": "time_format"},
+						{"text": "Asr Factor", "name": "asr_factor"},
+						{"text": "High Latitude Method", "name": "high_lats"},
+						{"text": "Imsak Offset", "name": "imsak_offset"},
+						{"text": "Dhuhr Offset", "name": "dhuhr_offset"},
+						{"text": "Jummah Offset", "name": "jummah_offset"},
+						{"text": "Manual Corrections", "name": "manual_times_popup_open"}]
 
 
 class SettingTextButton(TextButton):
@@ -48,12 +55,25 @@ class SettingsScreen(Screen):
 		self.settings_list.data = []
 
 
+class PrayerSettingButton(SettingTextButton):
+	'''Button for the prayer times settings'''
+	name = StringProperty()
+
+	def on_press(self):
+		'''Open the setting popup'''
+		popup = self.parent.parent.parent.parent
+		# Special case for the manual correction setting option
+		if self.text == "Manual Corrections":
+			getattr(popup, self.name)()
+		else:
+			popup.open_setting_popup(self.name)
+
 class PrayerTimeSettings(CustomModalView):
 	'''Popup class to contain all prayer time settings'''
 
-	def open_popup(self, setting_name):
+	def open_setting_popup(self, setting_name):
 		'''Open the popup with the given setting name'''
-		popup = SettingsPopup(setting_name)
+		popup = SettingPopup(setting_name)
 		popup.open()
 
 	def manual_times_popup_open(self):
@@ -67,7 +87,7 @@ class ManualTimesPopup(CustomModalView):
 	
 	def open_times_popup(self, name):
 		'''Open the offset minutes popup'''
-		popup = SettingsPopup(name)
+		popup = SettingPopup(name)
 		popup.open()
 
 
@@ -80,8 +100,8 @@ class ManualTimesButton(SettingTextButton):
 		popup.open_times_popup(f"{self.text.lower()}_adjustment")
 
 
-class SettingsPopup(CustomModalView):
-	''' Popup class for all the setting options '''
+class SettingPopup(CustomModalView):
+	'''Popup class for all the setting options'''
 	data = ListProperty()
 
 	def __init__(self, setting_name, **kwargs):
@@ -121,11 +141,11 @@ class PrayerRecordSettings(CustomModalView):
 
 	def open_record_popup(self, name):
 		'''Open the popup for the record which's name is passed in'''
-		popup = SettingsPopup(name)
+		popup = SettingPopup(name)
 		popup.open()
 
 class RecordSettingButton(SettingTextButton):
-	'''Button for the Prayer Record Settigns'''
+	'''Button for the Prayer Record Settings'''
 	name = StringProperty()
 
 	def on_press(self):

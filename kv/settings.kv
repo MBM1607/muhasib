@@ -2,6 +2,8 @@
 
 #:import SECONDRY_COLOR constants.SECONDRY_COLOR
 #:import PRAYER_NAMES constants.PRAYER_NAMES
+#:import RECORD_SETTINGS_DATA settings.RECORD_SETTINGS_DATA
+#:import TIMES_SETTINGS_DATA settings.TIMES_SETTINGS_DATA
 
 <SettingsScreen>:
 	settings_list: settings_list
@@ -14,11 +16,11 @@
 		CustomRecycleView:
 			id: settings_list
 			size_hint_y: 0.9
-			viewclass: "SettingsButton"
+			viewclass: "ListButton"
 			VerticalListLayout:
 				padding: 0
 
-<SettingsButton>:
+<ListButton@HorizontalIconTextButton>:
 	background_color: SECONDRY_COLOR
 
 <SettingTextButton>:
@@ -26,7 +28,7 @@
 	height: dp(48)
 	background_color: SECONDRY_COLOR
 
-<SettingsPopup>:
+<SettingPopup>:
 	size_hint: 0.9, 0.9
 	CustomRecycleView:
 		viewclass: "SettingPopupButton"
@@ -63,7 +65,7 @@
 				font_size: sp(15)
 		CustomRecycleView:
 			viewclass: "RecordSettingButton"
-			data: [{"text": "Fasting Record", "name": "fasting_record"}, {"text": "Quran Study Record", "name": "quran_record"}, {"text": "Hadees Study Record", "name": "hadees_record"}]
+			data: RECORD_SETTINGS_DATA
 			VerticalListLayout:
 				padding: 0
 
@@ -78,40 +80,8 @@
 			Label:
 				text: "Prayer Times Settings"
 				font_size: sp(15)
-		ScrollView:
-			do_scroll_x: False
-			scroll_type: ["content", "bars"]
-			bar_color: 0, 0, 0, 1
-			BoxLayout:
-				orientation: "vertical"
-				size_hint_y: None
-				height: dp(512)
-				spacing: dp(10)
-				LabelCheckBox:
-					name: "Show Imsak Time"
-					active: app.settings["show_imsak_time"]
-					on_active: app.settings["show_imsak_time"] = self.active
-				SettingTextButton:
-					text: "Time Format"
-					on_press: root.open_popup("time_format")
-				SettingTextButton:
-					text: "Prayer Method"
-					on_press: root.open_popup("calc_method")
-				SettingTextButton:
-					text: "Asr Method"
-					on_press: root.open_popup("asr_factor")
-				SettingTextButton:
-					text: "High Latitude Method"
-					on_press: root.open_popup("high_lats")
-				SettingTextButton:
-					text: "Imsak Offset"
-					on_press: root.open_popup("imsak_offset")
-				SettingTextButton:
-					text: "Dhuhr Offset"
-					on_press: root.open_popup("dhuhr_offset")
-				SettingTextButton:
-					text: "Jummah Offset"
-					on_press: root.open_popup("jummah_offset")
-				SettingTextButton:
-					text: "Manual Corrections"
-					on_press: root.manual_times_popup_open()
+		CustomRecycleView:
+			viewclass: "PrayerSettingButton"
+			data: TIMES_SETTINGS_DATA
+			VerticalListLayout:
+				padding: 0

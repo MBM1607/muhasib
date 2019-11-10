@@ -47,4 +47,4 @@ SETTINGS_OPTIONS = {"calc_method": PRAYER_METHODS, "asr_factor": ASR_FACTORS,
 					"dhuhr_adjustment": OFFSET_MINUTES, "asr_adjustment": OFFSET_MINUTES,
 					"maghrib_adjustment": OFFSET_MINUTES, "isha_adjustment": OFFSET_MINUTES,
 					"fasting_record": FASTING_RECORD_OPTIONS, "quran_record": RECORD_OPTIONS,
-					"hadees_record": RECORD_OPTIONS}
+					"hadees_record": RECORD_OPTIONS, "imsak_time": RECORD_OPTIONS}
