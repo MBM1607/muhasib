@@ -273,7 +273,7 @@ class PrayerTimes():
 	def tune_times(self, times):
 		''' Apply offsets to the times '''
 		for name in times.keys():
-			times[name] += self.offset[name] / 60.0
+			times[name] += self.eval(self.offset[name]) / 60.0
 		return times
 
 	def modify_formats(self, times):

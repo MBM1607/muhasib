@@ -1,4 +1,4 @@
-''' Module for all code related to the settings screen and storage '''
+'''Module for all code related to the settings screen and storage'''
 
 import json
 
@@ -14,17 +14,17 @@ from locations import LocationForm
 
 
 class SettingsButton(HorizontalIconTextButton):
-	''' Settings button class for the opening different setting popups '''
+	'''Settings button class for the opening different setting popups'''
 	pass
 
 
 class SettingTextButton(TextButton):
-	''' TextButton for use on Setting's popups '''
+	'''TextButton for use on Setting's popups'''
 	pass
 
 
 class SettingsScreen(Screen):
-	''' Class for a settings screen to change settings '''
+	'''Class for a settings screen to change settings'''
 	settings_list = ObjectProperty()
 
 	def __init__(self, **kwargs):
@@ -34,7 +34,7 @@ class SettingsScreen(Screen):
 		self.bind(on_leave=lambda _: self.destroy_settings_list())
 	
 	def create_settings_list(self):
-		''' Create the settings list and the required popups '''
+		'''Create the settings list and the required popups'''
 		self.settings_list.data = [
 									{"text": "Prayer Times Settings", "icon": "data/time.png", "on_press": PrayerTimeSettings().open},
 									{"text": "Prayer Record Settings", "icon": "data/record.png"},
@@ -44,17 +44,40 @@ class SettingsScreen(Screen):
 								]
 
 	def destroy_settings_list(self):
-		''' Destroy the settings list '''
+		'''Destroy the settings list'''
 		self.settings_list.data = []
 
 
 class PrayerTimeSettings(CustomModalView):
-	''' Popup class to contain all prayer time settings '''
+	'''Popup class to contain all prayer time settings'''
 
 	def open_popup(self, setting_name):
-		''' Open the popup with the given setting name '''
+		'''Open the popup with the given setting name'''
 		popup = SettingsPopup(setting_name)
 		popup.open()
+
+	def manual_times_popup_open(self):
+		'''Create and open the manual times adjustment popup'''
+		popup = ManualTimesPopup()
+		popup.open()
+
+
+class ManualTimesPopup(CustomModalView):
+	'''Popup class for the manual times adjustment screen'''
+	
+	def open_times_popup(self, name):
+		'''Open the offset minutes popup'''
+		popup = SettingsPopup(name)
+		popup.open()
+
+
+class ManualTimesButton(SettingTextButton):
+	'''Button for the manaul time adjustments of prayer times'''
+
+	def on_press(self):
+		'''Call the popup's function to open the times popup to select times'''
+		popup = self.parent.parent.parent.parent
+		popup.open_times_popup(f"{self.text.lower()}_adjustment")
 
 
 class SettingsPopup(CustomModalView):
@@ -69,7 +92,7 @@ class SettingsPopup(CustomModalView):
 		self.bind(on_pre_open=lambda _: self.create_data_list())
 
 	def create_data_list(self):
-		''' Create the data list for the chosen settings '''
+		'''Create the data list for the chosen settings'''
 		for text in constants.SETTINGS_OPTIONS[self.name]:
 			btn = {"text": text}
 			if text == self.settings[self.name]:
@@ -79,14 +102,15 @@ class SettingsPopup(CustomModalView):
 			self.data.append(btn)
 
 	def save_setting(self, text):
-		''' Save the setting and dismiss the popup '''
+		'''Save the setting and dismiss the popup'''
 		self.settings[self.name] = text
 		self.dismiss()
 
 
 class SettingPopupButton(TextButton):
-	''' Button for the settings popup '''
+	'''Button for the settings popup'''
 	
 	def on_press(self):
+		'''Save the setting selected'''
 		popup = self.parent.parent.parent
 		popup.save_setting(self.text)

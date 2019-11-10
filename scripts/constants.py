@@ -40,4 +40,6 @@ OFFSET_MINUTES = tuple(f"{x} min" for x in range(61))
 SETTINGS_OPTIONS = {"calc_method": PRAYER_METHODS, "asr_factor": ASR_FACTORS,
 					"time_format": TIME_FORMATS, "high_lats": HIGH_LAT_METHODS,
 					"imsak_offset": OFFSET_MINUTES, "dhuhr_offset": OFFSET_MINUTES,
-					"jummah_offset": OFFSET_MINUTES}
+					"jummah_offset": OFFSET_MINUTES, "fajr_adjustment": OFFSET_MINUTES,
+					"dhuhr_adjustment": OFFSET_MINUTES, "asr_adjustment": OFFSET_MINUTES,
+					"maghrib_adjustment": OFFSET_MINUTES, "isha_adjustment": OFFSET_MINUTES}

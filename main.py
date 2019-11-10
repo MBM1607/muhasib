@@ -97,6 +97,11 @@ class MuhasibApp(App):
 		self.prayer_times.settings["dhuhr"] = self.settings["dhuhr_offset"]
 		self.prayer_times.settings["imsak"] = self.settings["imsak_offset"]
 		self.prayer_times.settings["jummah"] = self.settings["jummah_offset"]
+		self.prayer_times.offset["fajr"] = self.settings["fajr_adjustment"]
+		self.prayer_times.offset["dhuhr"] = self.settings["dhuhr_adjustment"]
+		self.prayer_times.offset["asr"] = self.settings["asr_adjustment"]
+		self.prayer_times.offset["maghrib"] = self.settings["maghrib_adjustment"]
+		self.prayer_times.offset["isha"] = self.settings["isha_adjustment"]
 		self.prayer_times.time_format = self.settings["time_format"]
 		self.prayer_times.asr_param = self.settings["asr_factor"]
 		self.prayer_times.set_method(self.settings["calc_method"])
@@ -144,7 +149,9 @@ class MuhasibApp(App):
 							"asr_factor": "Standard", "time_format": "24h",
 							"show_imsak_time": True, "high_lats": "Night Middle",
 							"dhuhr_offset": "0 min", "imsak_offset": "10 min",
-							"jummah_offset": "15 min"
+							"jummah_offset": "15 min", "fajr_adjustment": "0 min",
+							"dhuhr_adjustment": "0 min", "asr_adjustment": "0 min",
+							"maghrib_adjustment": "0 min", "isha_adjustment": "0 min"
 							}
 			self.save_settings()
 

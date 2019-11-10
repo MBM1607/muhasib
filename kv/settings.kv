@@ -1,6 +1,7 @@
 #:kivy 1.11.1
 
 #:import SECONDRY_COLOR constants.SECONDRY_COLOR
+#:import PRAYER_NAMES constants.PRAYER_NAMES
 
 <SettingsScreen>:
 	settings_list: settings_list
@@ -31,6 +32,23 @@
 		viewclass: "SettingPopupButton"
 		data: root.data
 		VerticalListLayout:
+
+<ManualTimesPopup>:
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(5)
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: "Manual Times Adjustments"
+				font_size: sp(15)
+		CustomRecycleView:
+			viewclass: "ManualTimesButton"
+			data: [{"text": text} for text in PRAYER_NAMES]
+			VerticalListLayout:
+				padding: 0
 
 <PrayerTimeSettings>:
 	BoxLayout:
@@ -79,3 +97,4 @@
 					on_press: root.open_popup("jummah_offset")
 				SettingTextButton:
 					text: "Manual Corrections"
+					on_press: root.manual_times_popup_open()
