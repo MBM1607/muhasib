@@ -34,11 +34,11 @@ mpl.rcParams['ytick.major.pad'] = 0
 
 
 DATA_OPTIONS = ("Last Week", "Last Two Weeks", "Last Three Weeks", "Last Month")
-GRAPH_OPTIONS = ("Bar Graph", "Pie Graph")
+GRAPH_OPTIONS = ("Stacked Bar Graph", "Pie Graphs", "Bar Graphs")
 
 
 class PrayerGraphsScreen(Screen):
-	''' Screen for the record graphs '''
+	'''Screen for the record graphs'''
 	layout = ObjectProperty()
 	graph_data = OptionProperty(DATA_OPTIONS[3], options=list(DATA_OPTIONS))
 	graph = OptionProperty(GRAPH_OPTIONS[0], options=list(GRAPH_OPTIONS))
@@ -51,7 +51,7 @@ class PrayerGraphsScreen(Screen):
 		self.bind(on_leave=lambda _: self.destroy_graph())
 
 	def get_prayer_data(self, date):
-		''' Get the prayer data from the  '''
+		'''Get the prayer data from the database'''
 		
 		# Get the starting point date
 		if self.graph_data == DATA_OPTIONS[0]:
@@ -75,34 +75,36 @@ class PrayerGraphsScreen(Screen):
 		return results
 	
 	def change_graph_data(self, value):
-		''' Change the data used to create the graph and remake the graph with new data '''
+		'''Change the data used to create the graph and remake the graph with new data'''
 		self.graph_data = value
 		self.destroy_graph()
 		self.create_graph()
 
 	def change_graph(self, graph):
-		''' Change the graph '''
+		'''Change the graph'''
 		self.graph = graph
 		self.destroy_graph()
 		self.create_graph()
 
 	def create_graph(self):
-		''' Create the graph and add it to the layout '''
+		'''Create the graph and add it to the layout'''
 		results = self.get_prayer_data(self.app.today)
-		if self.graph == "Bar Graph":
-			self.figure = create_records_bar_figure(results)
-		elif self.graph == "Pie Graph":
+		if self.graph == "Bar Graphs":
+			self.figure = create_record_bars_figure(results)
+		elif self.graph == "Stacked Bar Graph":
+			self.figure = create_record_stacked_bar_figure(results)
+		elif self.graph == "Pie Graphs":
 			self.figure = create_record_pie_graphs_figure(results)
 		self.layout.add_widget(self.figure)
 
 	def destroy_graph(self):
-		''' Remove the graph from the layout '''
+		'''Remove the graph from the layout'''
 		self.layout.remove_widget(self.figure)
 		self.figure = None
 
 
 def create_pie_graphs(axes, sizes):
-	''' Create pie graphs on all the axes '''
+	'''Create pie graphs on all the axes'''
 	for i, ax in enumerate(axes):
 		_, _, autotext = ax.pie(sizes[i], colors=PRAYER_CATEGORY_COLORS,
 								explode=(0.01, 0.01, 0.01, 0.01), autopct="")
@@ -113,10 +115,28 @@ def create_pie_graphs(axes, sizes):
 				txt.set_text(f"{sizes[i][j]}")
 				txt.set_color("white")
 
-def create_record_pie_graphs_figure(prayer_data):
-	''' Create five pie graphs displaying prayer data for each of the prayers '''
+def create_bar_graphs(axes, sizes):
+	''' Create bar graphs on all the axes '''
 
+	for i, ax in enumerate(axes):
 
+		# Create the bar and set the title
+		ax.set_title(PRAYER_NAMES[i])
+		ax.invert_yaxis()
+		ax.barh(range(4), sizes[i], color=PRAYER_CATEGORY_COLORS)
+
+		# Set the text size in the middle of the bar
+		for y, (x, c) in enumerate(zip([x/2 for x in sizes[i]], sizes[i])):
+			if c:
+				ax.text(x, y, str(int(c)), ha='center', va='center', color='white')
+		
+		# Disable the ticks
+		ax.set_yticklabels([])
+		ax.set_xticklabels([])
+
+def create_record_graphs_figure(graphing_function, prayer_data):
+	''' Base function for creating five graphs with a legend aligned with it '''
+	
 	fig = plt.figure(constrained_layout=True)
 	grid_spec = GridSpec(3, 2, figure=fig)
 	fig.add_subplot(grid_spec[0, 1])
@@ -125,7 +145,7 @@ def create_record_pie_graphs_figure(prayer_data):
 	fig.add_subplot(grid_spec[2, 0])
 	fig.add_subplot(grid_spec[2, 1])
 
-	create_pie_graphs(fig.axes, prayer_data)
+	graphing_function(fig.axes, prayer_data)
 	
 	# Create the legend of prayer categories for all the pie graphs and place it in the first axes
 	ax = fig.add_subplot(grid_spec[0, 0])
@@ -135,8 +155,16 @@ def create_record_pie_graphs_figure(prayer_data):
 
 	return FigureCanvas(fig)
 
-def create_records_bar_figure(prayer_data):
-	''' Create a stacked horizontal bar graph displaying prayer data '''
+def create_record_pie_graphs_figure(prayer_data):
+	'''Create five pie graphs displaying prayer data for each of the prayers'''
+	return create_record_graphs_figure(create_pie_graphs, prayer_data)
+
+def create_record_bars_figure(prayer_data):
+	'''Create horizontal bar graphs displaying prayer data'''
+	return create_record_graphs_figure(create_bar_graphs, prayer_data)
+
+def create_record_stacked_bar_figure(prayer_data):
+	'''Create a stacked horizontal bar graph displaying prayer data'''
 	
 	# Ready the data to be used to plot the graph
 	data_cum = [list(accumulate(x)) for x in prayer_data]

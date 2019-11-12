@@ -15,7 +15,9 @@ from locations import LocationForm
 RECORD_SETTINGS_DATA = [{"text": "Fasting Record", "name": "fasting_record"},
 						{"text": "Quran Study Record", "name": "quran_record"},
 						{"text": "Hadees Study Record", "name": "hadees_record"}]
+
 TIMES_SETTINGS_DATA = [{"text": "Imsak Time", "name": "imsak_time"},
+						{"text": "Prayer Calculation Method", "name": "calc_method"},
 						{"text": "Time Format", "name": "time_format"},
 						{"text": "Asr Factor", "name": "asr_factor"},
 						{"text": "High Latitude Method", "name": "high_lats"},
@@ -118,7 +120,7 @@ class SettingPopup(CustomModalView):
 			if text == self.settings[self.name]:
 				btn["background_color"] = constants.SECONDRY_COLOR
 			else:
-				btn["background_color"] = constants.CAUTION_COLOR
+				btn["background_color"] = constants.WARNING_COLOR
 			self.data.append(btn)
 
 	def save_setting(self, text):
@@ -132,7 +134,7 @@ class SettingPopupButton(TextButton):
 	
 	def on_press(self):
 		'''Save the setting selected'''
-		popup = self.parent.parent.parent
+		popup = self.parent.parent.parent.parent
 		popup.save_setting(self.text)
 
 

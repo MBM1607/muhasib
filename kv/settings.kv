@@ -29,11 +29,18 @@
 	background_color: SECONDRY_COLOR
 
 <SettingPopup>:
-	size_hint: 0.9, 0.9
-	CustomRecycleView:
-		viewclass: "SettingPopupButton"
-		data: root.data
-		VerticalListLayout:
+	size_hint: 1, 1
+	BoxLayout:
+		orientation: "vertical"
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+		CustomRecycleView:
+			viewclass: "SettingPopupButton"
+			data: root.data
+			VerticalListLayout:
+				padding: 0, dp(5), 0, dp(5)
 
 <ManualTimesPopup>:
 	BoxLayout:
