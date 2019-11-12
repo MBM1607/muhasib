@@ -3,6 +3,7 @@
 
 <LocationForm>:
 	location_text: location_text
+	gif_layout: layout
 
 	BoxLayout:
 		orientation: "vertical"
@@ -25,7 +26,8 @@
 			hint_text: "City, Region, Country"
 			focus: True
 			on_text_validate: root.check_input_location()
-		Widget:
+		BoxLayout:
+			id: layout
 		LocationButton:
 			text: "Submit"
 			on_press: root.check_input_location()

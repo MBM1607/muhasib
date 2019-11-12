@@ -1,10 +1,11 @@
 ''' Module for the location's form and all related functionality '''
 
-import json
+import json, threading
 
 from kivy.app import App
 from kivy.uix.modalview import ModalView
 from kivy.uix.dropdown import DropDown
+from kivy.uix.image import Image
 from kivy.properties import ObjectProperty, DictProperty
 
 from custom_widgets import TextButton, CustomModalView
@@ -27,6 +28,7 @@ class LocationButton(TextButton):
 class LocationForm(CustomModalView):
 	''' Class for location form to get user's location '''
 	location_text = ObjectProperty()
+	gif_layout = ObjectProperty()
 	
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
@@ -70,7 +72,10 @@ class LocationForm(CustomModalView):
 		if text in self.locations:
 			self.change_location(self, text)
 		elif text:
-			self.suggestion_dropdown_open(text)
+			self.gif_layout.add_widget(Image(source="data/loading.gif"))
+			loading_thread = threading.Thread(target=self.suggestion_dropdown_open, args=(text,))
+			loading_thread.start()
+			#self.gif_layout.clear_widgets()
 
 	def suggestion_dropdown_open(self, text):
 		''' Open and populate the location dropdown with suggestions '''
@@ -84,6 +89,7 @@ class LocationForm(CustomModalView):
 			btn = LocationButton(text=suggestions[key], background_color=bg_color)
 			btn.bind(on_release=lambda btn: self.suggestion_dropdown.select(btn.text))
 			self.suggestion_dropdown.add_widget(btn)
+		self.gif_layout.clear_widgets()
 		self.suggestion_dropdown.open(self.location_text)
 
 	def give_location_suggestions(self, text):
