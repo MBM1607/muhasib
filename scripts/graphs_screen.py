@@ -197,7 +197,7 @@ def create_record_stacked_bar_figure(prayer_data):
 					color='white')
 	
 	ax.legend(ncol=len(PRAYER_CATEGORY_NAMES) // 2, bbox_to_anchor=(0, 1),
-			loc='lower left')
+			loc='lower left', fontsize='small')
 
 	# Force the x-axis tick labels to be integars so decimal points aren't displayed on graphs
 	ax.xaxis.set_major_locator(MaxNLocator(integer=True))

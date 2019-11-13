@@ -5,32 +5,19 @@
 <PrayerOptions>:
 	size_hint: 0.8, 0.5
 	options_list: options_list
-	BoxLayout:
-		orientation: "vertical"
-		CustomActionBar:
-			IconButton:
-				icon: "data/back.png"
-				on_press: root.dismiss()
-			Label:
-				text: "Prayer Options"
-				font_size: sp(15)
-		CustomRecycleView:
-			id: options_list
-			viewclass: "PrayerOptionsButton"
-			VerticalListLayout:
+	CustomRecycleView:
+		id: options_list
+		viewclass: "PrayerOptionsButton"
+		VerticalListLayout:
 
 <RecordLists>:
-	orientation: "vertical"
-	salah_record_list: salah_record_list
-	extra_record_list: extra_record_list
-	CustomRecycleView:
-		id: salah_record_list
-		viewclass: "SalahButton"
-		size_hint_y: 0.65
-		VerticalListLayout:
-	CustomRecycleView:
-		id: extra_record_list
-		viewclass: "ExtraRecordButton"
-		size_hint_y: 0.35
-		VerticalListLayout:
-
+	layout: layout
+	scroll_type: ["content", "bars"]
+	bar_color: 0, 0, 0, 1
+	BoxLayout:
+		id: layout 
+		orientation: "vertical"
+		size_hint_y: None
+		spacing: dp(10)
+		padding: dp(10)
+		height: (self.padding[0] * 2) + (len(self.children) * dp(48)) + (self.spacing * (len(self.children) - 1))

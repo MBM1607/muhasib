@@ -4,8 +4,9 @@ from datetime import date
 
 from kivy.app import App
 from kivy.properties import ListProperty, ObjectProperty, StringProperty
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.behaviors.button import ButtonBehavior
+from kivy.metrics import dp
 
 from constants import CATEGORY_COLORS_DICT
 from custom_widgets import TextButton, CustomModalView, DoubleTextButton, LabelCheckBox
@@ -37,7 +38,7 @@ class PrayerOptionsButton(TextButton):
 	''' Button to be used on prayer options popup'''
 	def on_release(self):
 		''' Change the prayer record according to the button pressed '''
-		popup = self.parent.parent.parent.parent
+		popup = self.parent.parent.parent
 		popup.attach_to.update_prayer_record(popup.prayer, self.text)
 		popup.dismiss()
 
@@ -50,8 +51,7 @@ class ExtraRecordButton(LabelCheckBox):
 
 		# Ensure that this is not the first loading before saving change to the database
 		if self.parent:
-			records_list = self.parent.parent.parent
-			records_list.change_extra_record(self.name.lower(), value)
+			self.parent.parent.change_extra_record(self.name.lower(), value)
 
 
 class SalahButton(DoubleTextButton):
@@ -59,17 +59,17 @@ class SalahButton(DoubleTextButton):
 
 	def on_release(self):
 		''' On button release open the popup '''
-		self.parent.parent.parent.open_prayer_options(self.name)
+		self.parent.parent.open_prayer_options(self.name)
 
 	def on_info(self, instance, value):
 		''' Color the button according to the way the prayer is performed '''
 		self.background_color = CATEGORY_COLORS_DICT[value]
 
 
-class RecordLists(BoxLayout):
+class RecordLists(ScrollView):
 	''' Class to dispaly a day's prayer and extra records and to provide and interface to change these records '''
-	salah_record_list = ObjectProperty()
-	extra_record_list = ObjectProperty()
+
+	layout = ObjectProperty()
 
 	def __init__(self, date=date.today(), **kwargs):
 		super().__init__(**kwargs)
@@ -97,15 +97,16 @@ class RecordLists(BoxLayout):
 		if self.settings["hadees_record"] == "Show":
 			self.extra_record["hadees"] = record[8]
 
-		self.salah_record_list.data = [{"name": n.capitalize(), "info": r} for n, r in self.prayer_record.items()]
-		self.extra_record_list.data = [{"name": n.capitalize(), "active": r} for n, r in self.extra_record.items()]
-	
+		for name, info in self.prayer_record.items():
+			self.layout.add_widget(SalahButton(name=name.capitalize(), info=info))
+		for name, info in self.extra_record.items():
+			self.layout.add_widget(ExtraRecordButton(name=name.capitalize(), active=info))
+
 	def destroy_lists(self):
 		''' Destroy the record lists '''
 		self.prayer_record = {}
 		self.extra_record = {}
-		self.salah_record_list.data = []
-		self.extra_record_list.data = []
+		self.layout.clear_widgets()
 
 	def change_extra_record(self, name, value):
 		''' Update the extra records and save to database. '''
@@ -120,8 +121,8 @@ class RecordLists(BoxLayout):
 
 	def update_prayer_list(self, prayer, record):
 		''' Change the prayer record for the provided prayer '''
-		for child in self.salah_record_list.children[0].children:
-			if child.name.lower() == prayer:
+		for child in self.layout.children:
+			if (type(child) == SalahButton and child.name.lower() == prayer):
 				child.info = record
 
 	def open_prayer_options(self, prayer):

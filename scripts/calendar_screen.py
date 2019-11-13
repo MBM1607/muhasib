@@ -33,7 +33,6 @@ class CalendarScreen(Screen):
 		super().__init__(**kwargs)
 		d = datetime.date.today()
 		self.year, self.month, self.day = d.year, d.month, d.day
-		self.is_islamic = False
 
 		self.bind(on_pre_enter=lambda _: self.create_calendar())
 		self.bind(on_leave=lambda _: self.destroy_calendar())
@@ -58,10 +57,7 @@ class CalendarScreen(Screen):
 		# initialize the dates data so conflict does not happen
 		self.dates.data = []
 
-		if self.is_islamic:
-			month = islamic.monthcalendar(self.year, self.month)
-		else:
-			month = calendar.monthcalendar(self.year, self.month)
+		month = calendar.monthcalendar(self.year, self.month)
 		
 		# Flatten the dates list
 		month = [day for week in month for day in week]
@@ -118,20 +114,6 @@ class CalendarScreen(Screen):
 		''' Open a new month popup '''
 		self.month_popup.year = str(self.year)
 		self.month_popup.open()
-
-	def convert_to_islamic(self):
-		''' Converts the gregorian calendar to islamic calendar using current date '''
-		if not self.is_islamic:
-			self.year, self.month, self.day = islamic.from_gregorian(self.year, self.month, self.day)
-			self.is_islamic = True
-			self.populate_dates()
-
-	def convert_to_gregorian(self):
-		''' Converts the islamic calendar to gregorian calendar using current date '''
-		if self.is_islamic:
-			self.year, self.month, self.day = islamic.to_gregorian(self.year, self.month, self.day)
-			self.is_islamic = False
-			self.populate_dates()
 
 
 class DateButton(TextButton):
