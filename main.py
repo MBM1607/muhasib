@@ -153,7 +153,7 @@ class MuhasibApp(App):
 							"dhuhr_adjustment": "0 min", "asr_adjustment": "0 min",
 							"maghrib_adjustment": "0 min", "isha_adjustment": "0 min",
 							"fasting_record": "Show in Ramazan", "quran_record": "Don't Show",
-							"hadees_record": "Don't Show"
+							"hadees_record": "Don't Show", "hijri_adjustment": "0"
 							}
 			self.save_settings()
 

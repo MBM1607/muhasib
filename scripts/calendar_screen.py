@@ -5,7 +5,7 @@ import datetime
 
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
+from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.widget import Widget
 from kivy.uix.screenmanager import Screen
@@ -17,7 +17,7 @@ from custom_widgets import TextButton, CustomModalView
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
 
-ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabo' ath-Thani ",
+ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabi' ath-Thani",
 			"Jumada al-Ula", "Jumada al-Akhirah", "Rajab", "Sha'ban",
 			"Ramadan", "Shawwal", "Dhu al-Qa‘dah", "Dhu al-Hijjah")
 
@@ -26,6 +26,7 @@ class CalendarScreen(Screen):
 	''' Class to hold all the calendar functionality '''
 
 	month_year_button = ObjectProperty()
+	islamic_month_year = ObjectProperty()
 	dates = ObjectProperty()
 	weekdays = ObjectProperty()
 
@@ -40,6 +41,7 @@ class CalendarScreen(Screen):
 	def create_calendar(self):
 		''' Create the calendar date buttons and week labels and required popups '''
 		self.month_popup = MonthPopup(cal=self)
+		self.hijri_adjustment = int(App.get_running_app().settings["hijri_adjustment"])
 		self.weekdays.data = [{"text": day} for day in ("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")]
 		self.populate_dates()
 
@@ -52,7 +54,15 @@ class CalendarScreen(Screen):
 	def populate_dates(self):
 		''' Create the current month and year's calendar by creating and putting the month data into the widget grid'''
 		
-		self.month_year_button.text = MONTHS[self.month - 1] + ' ' + str(self.year)
+		hijri_start = islamic.from_gregorian(self.year, self.month, 1, adj=self.hijri_adjustment)
+		hijri_end = islamic.from_gregorian(self.year, self.month,
+										calendar.monthrange(self.year, self.month)[1], adj=self.hijri_adjustment)
+
+		start = f"{hijri_start[2]} {ISLAMIC_MONTHS[hijri_start[1] - 1]}"
+		end = f"{hijri_end[2]} {ISLAMIC_MONTHS[hijri_end[1] - 1]}"
+		self.islamic_month_year.text = start + " - " + end
+
+		self.month_year_button.text = f"{MONTHS[self.month - 1]} {self.year}"
 		
 		# initialize the dates data so conflict does not happen
 		self.dates.data = []

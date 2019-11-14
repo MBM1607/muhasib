@@ -4,14 +4,14 @@
 #:import MAIN_COLOR constants.MAIN_COLOR
 
 <BlackLabel@Label>:
-	color: 0, 0, 0, 1
+	color: 0.2, 0.2, 0.2, 1
 
 <CalendarScreen>:
 	name: "calendar"
 	dates: dates
 	weekdays: weekdays
 	month_year_button: month_year_button
-
+	islamic_month_year: islamic_month_year
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
@@ -20,9 +20,14 @@
 			text: "Calendar"
 		BoxLayout:
 			orientation: "vertical"
+			BlackLabel:
+				id: islamic_month_year
+				size_hint_y: None
+				height: dp(32)
 			BoxLayout:
 				orientation: "horizontal"
-				size_hint_y: 0.1
+				size_hint_y: None
+				height: dp(48)
 				spacing: dp(10)
 				padding: dp(5)
 				IconButton:

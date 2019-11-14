@@ -4,6 +4,7 @@
 #:import PRAYER_NAMES constants.PRAYER_NAMES
 #:import RECORD_SETTINGS_DATA settings.RECORD_SETTINGS_DATA
 #:import TIMES_SETTINGS_DATA settings.TIMES_SETTINGS_DATA
+#:import CALENDAR_SETTINGS_DATA settings.CALENDAR_SETTINGS_DATA
 
 <SettingsScreen>:
 	settings_list: settings_list
@@ -37,44 +38,10 @@
 				icon: "data/back.png"
 				on_press: root.dismiss()
 		CustomRecycleView:
-			viewclass: "SettingPopupButton"
+			viewclass: "PopupOptionButton"
 			data: root.data
 			VerticalListLayout:
 				padding: 0, dp(5), 0, dp(5)
-
-<ManualTimesPopup>:
-	BoxLayout:
-		orientation: "vertical"
-		spacing: dp(5)
-		CustomActionBar:
-			IconButton:
-				icon: "data/back.png"
-				on_press: root.dismiss()
-			Label:
-				text: "Manual Times Adjustments"
-				font_size: sp(15)
-		CustomRecycleView:
-			viewclass: "ManualTimesButton"
-			data: [{"text": text} for text in PRAYER_NAMES]
-			VerticalListLayout:
-				padding: 0
-
-<PrayerRecordSettings>:
-	BoxLayout:
-		orientation: "vertical"
-		spacing: dp(5)
-		CustomActionBar:
-			IconButton:
-				icon: "data/back.png"
-				on_press: root.dismiss()
-			Label:
-				text: "Prayer Record Settings"
-				font_size: sp(15)
-		CustomRecycleView:
-			viewclass: "RecordSettingButton"
-			data: RECORD_SETTINGS_DATA
-			VerticalListLayout:
-				padding: 0
 
 <PrayerTimeSettings>:
 	BoxLayout:
@@ -90,5 +57,56 @@
 		CustomRecycleView:
 			viewclass: "PrayerSettingButton"
 			data: TIMES_SETTINGS_DATA
+			VerticalListLayout:
+				padding: 0
+
+<ManualTimesPopup>:
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(5)
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: "Manual Times Adjustments"
+				font_size: sp(15)
+		CustomRecycleView:
+			viewclass: "SettingPopupButton"
+			data: [{"text": text, "name": f"{text.lower()}_adjustment"} for text in PRAYER_NAMES]
+			VerticalListLayout:
+				padding: 0
+
+<PrayerRecordSettings>:
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(5)
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: "Prayer Record Settings"
+				font_size: sp(15)
+		CustomRecycleView:
+			viewclass: "SettingPopupButton"
+			data: RECORD_SETTINGS_DATA
+			VerticalListLayout:
+				padding: 0
+
+<CalendarSettings>:
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(5)
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: "Calendar Settings"
+				font_size: sp(15)
+		CustomRecycleView:
+			viewclass: "SettingPopupButton"
+			data: CALENDAR_SETTINGS_DATA
 			VerticalListLayout:
 				padding: 0

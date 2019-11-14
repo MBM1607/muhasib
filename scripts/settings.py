@@ -12,6 +12,8 @@ from custom_widgets import CustomModalView, TextButton
 from locations import LocationForm
 
 
+CALENDAR_SETTINGS_DATA = [{"text": "Hijri Adjustment", "name": "hijri_adjustment"}]
+
 RECORD_SETTINGS_DATA = [{"text": "Fasting Record", "name": "fasting_record"},
 						{"text": "Quran Study Record", "name": "quran_record"},
 						{"text": "Hadees Study Record", "name": "hadees_record"}]
@@ -24,7 +26,7 @@ TIMES_SETTINGS_DATA = [{"text": "Imsak Time", "name": "imsak_time"},
 						{"text": "Imsak Offset", "name": "imsak_offset"},
 						{"text": "Dhuhr Offset", "name": "dhuhr_offset"},
 						{"text": "Jummah Offset", "name": "jummah_offset"},
-						{"text": "Manual Corrections", "name": "manual_times_popup_open"}]
+						{"text": "Manual Corrections"}]
 
 
 class SettingTextButton(TextButton):
@@ -47,7 +49,7 @@ class SettingsScreen(Screen):
 		self.settings_list.data = [
 									{"text": "Prayer Times Settings", "icon": "data/time.png", "on_press": PrayerTimeSettings().open},
 									{"text": "Prayer Record Settings", "icon": "data/record.png", "on_press": PrayerRecordSettings().open},
-									{"text": "Calendar Settings", "icon": "data/calendar.png"},
+									{"text": "Calendar Settings", "icon": "data/calendar.png", "on_press": CalendarSettings().open},
 									{"text": "Location Settings", "icon": "data/location.png", "on_press": LocationForm().open},
 									{"text": "Notifications Settings", "icon": "data/notification.png"}
 								]
@@ -63,43 +65,31 @@ class PrayerSettingButton(SettingTextButton):
 
 	def on_press(self):
 		'''Open the setting popup'''
-		popup = self.parent.parent.parent.parent
 		# Special case for the manual correction setting option
 		if self.text == "Manual Corrections":
-			getattr(popup, self.name)()
+			ManualTimesPopup().open()
 		else:
-			popup.open_setting_popup(self.name)
+			open_settings_popup(self.name)
 
-class PrayerTimeSettings(CustomModalView):
-	'''Popup class to contain all prayer time settings'''
 
-	def open_setting_popup(self, setting_name):
-		'''Open the popup with the given setting name'''
-		popup = SettingPopup(setting_name)
-		popup.open()
+class CalendarSettings(CustomModalView):
+	'''Popup class for calendar settings'''
+	pass
 
-	def manual_times_popup_open(self):
-		'''Create and open the manual times adjustment popup'''
-		popup = ManualTimesPopup()
-		popup.open()
+
+class PrayerRecordSettings(CustomModalView):
+	'''Popup class for the prayer records settings'''
+	pass
 
 
 class ManualTimesPopup(CustomModalView):
 	'''Popup class for the manual times adjustment screen'''
-	
-	def open_times_popup(self, name):
-		'''Open the offset minutes popup'''
-		popup = SettingPopup(name)
-		popup.open()
+	pass
 
 
-class ManualTimesButton(SettingTextButton):
-	'''Button for the manaul time adjustments of prayer times'''
-
-	def on_press(self):
-		'''Call the popup's function to open the times popup to select times'''
-		popup = self.parent.parent.parent.parent
-		popup.open_times_popup(f"{self.text.lower()}_adjustment")
+class PrayerTimeSettings(CustomModalView):
+	'''Popup class to contain all prayer time settings'''
+	pass
 
 
 class SettingPopup(CustomModalView):
@@ -129,8 +119,17 @@ class SettingPopup(CustomModalView):
 		self.dismiss()
 
 
-class SettingPopupButton(TextButton):
-	'''Button for the settings popup'''
+class SettingPopupButton(SettingTextButton):
+	'''Base Button for a single settings in any kind of settings popup'''
+	name = StringProperty()
+
+	def on_press(self):
+		'''Open the settings options popup'''
+		open_settings_popup(self.name)
+
+
+class PopupOptionButton(TextButton):
+	'''Button for the settings popup options'''
 	
 	def on_press(self):
 		'''Save the setting selected'''
@@ -138,19 +137,6 @@ class SettingPopupButton(TextButton):
 		popup.save_setting(self.text)
 
 
-class PrayerRecordSettings(CustomModalView):
-	'''Popup class for the prayer records settings'''
-
-	def open_record_popup(self, name):
-		'''Open the popup for the record which's name is passed in'''
-		popup = SettingPopup(name)
-		popup.open()
-
-class RecordSettingButton(SettingTextButton):
-	'''Button for the Prayer Record Settings'''
-	name = StringProperty()
-
-	def on_press(self):
-		'''Open the record options popup to change record viewing setting'''
-		popup = self.parent.parent.parent.parent
-		popup.open_record_popup(self.name)
+def open_settings_popup(settings_name):
+	'''Open the settings popup with the setting name'''
+	SettingPopup(settings_name).open()
