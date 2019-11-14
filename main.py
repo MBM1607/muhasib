@@ -121,6 +121,7 @@ class MuhasibApp(App):
 		self.settings["longitude"] = lng
 		self.settings["altitude"] = alt
 		self.settings["timezone"] = tz
+		self.set_prayer_time_location()
 
 	def location_check(self):
 		''' Check if location is present, if not open the form to get location '''
