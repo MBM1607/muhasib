@@ -1,8 +1,9 @@
 #:kivy 1.11.1
 
-<LeftAlignLabel@Label>:
-	halign: "left"
-	color: 0, 0, 0, 1
+<AlignedLabel@Label>:
+	text_size: self.size
+	halign: "center"
+	color: 0.2, 0.2, 0.2, 1
 
 <PrayerTimesScreen>:
 	name: "prayer_times"
@@ -21,23 +22,28 @@
 			spacing: dp(2)
 			BoxLayout:
 				orientation: "vertical"
-				size_hint_y: 0.15
+				size_hint_y: 0.2
+				padding: dp(10), dp(2), dp(10), dp(2)
 				spacing: dp(2)
 
-				LeftAlignLabel:
-					id: location
-					text: "Location"
+				AlignedLabel:
+					id: next_prayer
+					font_size: sp(15)
+					text: "Next Prayer"
+				AlignedLabel:
+					id: prayer_time_left
+					font_size: sp(15)
+					text: "Time left"
 				BoxLayout:
 					orientation: "horizontal"
-					LeftAlignLabel:
+					AlignedLabel:
 						id: current_time
 						text: "Current Time"
-					LeftAlignLabel:
-						id: next_prayer
-						text: "Next Prayer"
-				LeftAlignLabel:
-					id: prayer_time_left
-					text: "Time left"
+						halign: "left"
+					AlignedLabel:
+						id: location
+						text: "Location"
+						halign: "right"
 
 			CustomRecycleView:
 				id: times_list

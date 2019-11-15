@@ -8,8 +8,6 @@ from kivy.uix.screenmanager import Screen
 class QiblaScreen(Screen):
 	''' Class for the screen containing compass '''
 	needle_angle = NumericProperty(0)
-	needle = ObjectProperty()
-	rose = ObjectProperty()
 	location_text = StringProperty()
 
 	def __init__(self, **kwargs):

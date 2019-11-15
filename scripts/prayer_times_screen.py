@@ -65,7 +65,7 @@ class PrayerTimesScreen(Screen):
 
 		# Get just the current hour and minutes
 		current_time = datetime.strptime(datetime.strftime(self.app.get_current_time(), "%H:%M"), "%H:%M")
-		self.current_time.text = self.app.get_formatted_time(self.app.get_current_time())
+		self.current_time.text = "Current Time: " + self.app.get_formatted_time(self.app.get_current_time())
 
 		# Measure the time remaining in all prayers
 		times_remaining = []

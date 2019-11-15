@@ -2,8 +2,6 @@
 
 <QiblaScreen>:
 	name: "qibla"
-	rose: rose
-	needle: needle
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
@@ -12,14 +10,12 @@
 		Label:
 			color: 0.2, 0.2, 0.2, 1
 			size_hint_y: None
-			height: dp(48)
+			size: self.texture_size
 			text: root.location_text
 		FloatLayout:
 			Image:
-				id: rose
 				source: 'data/rose.png'
 			Image:
-				id: needle
 				source: 'data/needle.png'
 				canvas.before:
 					PushMatrix
