@@ -8,14 +8,11 @@
 
 <CalendarScreen>:
 	name: "calendar"
-	dates: dates
-	weekdays: weekdays
-	month_year_button: month_year_button
+	cal: cal
 	islamic_month_year: islamic_month_year
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
-
 		ScreenActionBar:
 			text: "Calendar"
 		BoxLayout:
@@ -24,36 +21,45 @@
 				id: islamic_month_year
 				size_hint_y: None
 				size: self.texture_size
-			BoxLayout:
-				orientation: "horizontal"
-				size_hint_y: None
-				height: dp(48)
-				spacing: dp(10)
-				padding: dp(5)
-				IconButton:
-					icon: "data/down.png"
-					color: MAIN_COLOR
-					on_press: root.previous_month()
-				TextButton:
-					id: month_year_button
-					size_hint_x: 0.7
-					on_press: root.open_month_popup()
-				IconButton:
-					icon: "data/up.png"
-					color: MAIN_COLOR
-					on_press: root.next_month()
-			CustomRecycleView:
-				id: weekdays
-				size_hint_y: 0.1
-				viewclass: "BlackLabel"
-				HorizontalListLayout:
-			WidgetGrid:
-				id: dates
-				size_hint_y: 0.8
-				cols: 7
-				spacing: dp(5)
-				padding: dp(5)
-				viewclass: "DateButton"
+			Calendar:
+				id: cal
+
+<Calendar>:
+	dates: dates
+	weekdays: weekdays
+	month_year_button: month_year_button
+	orientation: "vertical"
+	BoxLayout:
+		orientation: "horizontal"
+		size_hint_y: None
+		height: dp(48)
+		spacing: dp(10)
+		padding: dp(5)
+		IconButton:
+			icon: "data/down.png"
+			color: MAIN_COLOR
+			on_press: root.previous_month()
+		TextButton:
+			id: month_year_button
+			size_hint_x: 0.7
+			on_press: root.open_month_popup()
+		IconButton:
+			icon: "data/up.png"
+			color: MAIN_COLOR
+			on_press: root.next_month()
+	CustomRecycleView:
+		id: weekdays
+		size_hint_y: 0.1
+		data: [{"text": day} for day in ("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")]
+		viewclass: "BlackLabel"
+		HorizontalListLayout:
+	WidgetGrid:
+		id: dates
+		size_hint_y: 0.8
+		cols: 7
+		spacing: dp(5)
+		padding: dp(5)
+		viewclass: root.date_widget
 
 <RecordsPopup>:
 	record_lists: record_lists

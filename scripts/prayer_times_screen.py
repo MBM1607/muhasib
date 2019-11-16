@@ -29,7 +29,7 @@ class PrayerTimesScreen(Screen):
 		''' Create the prayer times data and schedule the upgrade event '''
 		self.update_prayer_times()
 		
-		self.update_clock_event = Clock.schedule_interval(self.update_prayer_labels, 60)
+		self.update_clock_event = Clock.schedule_interval(lambda _: self.update_prayer_labels(), 30)
 		self.location.text = self.app.settings["location"]
 
 	def destroy_prayer_data(self):
@@ -60,7 +60,7 @@ class PrayerTimesScreen(Screen):
 			else:
 				prayer["background_color"] = MAIN_COLOR
 
-	def update_prayer_labels(self, wait=0.0):
+	def update_prayer_labels(self):
 		''' Change the labels reporting information about prayers '''
 
 		# Get just the current hour and minutes
