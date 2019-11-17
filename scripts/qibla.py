@@ -1,4 +1,4 @@
-''' Module for all code relating to the determining the qibla direction '''
+'''Module for all code relating to the determining the qibla direction'''
 
 from kivy.app import App
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty
@@ -6,7 +6,7 @@ from kivy.uix.screenmanager import Screen
 
 
 class QiblaScreen(Screen):
-	''' Class for the screen containing compass '''
+	'''Class for the screen containing compass'''
 	needle_angle = NumericProperty(0)
 	location_text = StringProperty()
 
@@ -17,12 +17,12 @@ class QiblaScreen(Screen):
 		self.bind(on_leave=lambda _: self.remove_qibla_direction())
 
 	def remove_qibla_direction(self):
-		''' Remove the qibla direction '''
+		'''Remove the qibla direction'''
 		self.needle_angle = 0
 		self.location_text = ""
 
 	def set_qibla_direction(self):
-		''' Set the qibla direction from current position '''
+		'''Set the qibla direction from current position'''
 
 		self.location_text = self.app.settings["location"]
 		qibla_direction = self.app.prayer_times.get_qibla()

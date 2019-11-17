@@ -1,4 +1,4 @@
-''' Module for prayer graph screen class and all the graphing functionality need to make the record graphs '''
+'''Module for prayer graph screen class and all the graphing functionality need to make the record graphs'''
 
 from datetime import date as datetime_date
 from itertools import accumulate, chain
@@ -9,14 +9,14 @@ import matplotlib.pyplot as plt
 from kivy.app import App
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvas
 from kivy.metrics import dp
-from kivy.properties import ObjectProperty, OptionProperty
+from kivy.properties import ObjectProperty, OptionProperty, StringProperty
 from kivy.uix.screenmanager import Screen
 from matplotlib.gridspec import GridSpec
 from matplotlib.ticker import MaxNLocator
 
 from constants import (GREY_COLOR, PRAYER_CATEGORY_COLORS,
 					   PRAYER_CATEGORY_NAMES, PRAYER_NAMES)
-from custom_widgets import ColorBoxLayout
+from custom_widgets import ColorBoxLayout, CustomModalView
 from helpers import get_previous_monday
 
 # Enter the custom fonts into the matplotlib fonts list
@@ -33,38 +33,25 @@ mpl.rcParams['xtick.labelsize'] = dp(8)
 mpl.rcParams['ytick.major.pad'] = 0
 
 
-DATA_OPTIONS = ("Last Week", "Last Two Weeks", "Last Three Weeks", "Last Month")
 GRAPH_OPTIONS = ("Stacked Bar Graph", "Pie Graphs", "Bar Graphs")
 
 
 class PrayerGraphsScreen(Screen):
 	'''Screen for the record graphs'''
-	layout = ObjectProperty()
-	graph_data = OptionProperty(DATA_OPTIONS[3], options=list(DATA_OPTIONS))
+	start_date = ObjectProperty()
+	end_date = ObjectProperty()
 	graph = OptionProperty(GRAPH_OPTIONS[0], options=list(GRAPH_OPTIONS))
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 
 		self.app = App.get_running_app()
-		self.bind(on_pre_enter=lambda _: self.create_graph())
-		self.bind(on_leave=lambda _: self.destroy_graph())
 
-	def get_prayer_data(self, date):
+	def get_prayer_data(self):
 		'''Get the prayer data from the database'''
-		
-		# Get the starting point date
-		if self.graph_data == DATA_OPTIONS[0]:
-			date = get_previous_monday(date)
-		elif self.graph_data == DATA_OPTIONS[1]:
-			date = get_previous_monday(date, weeks=1)
-		elif self.graph_data == DATA_OPTIONS[2]:
-			date = get_previous_monday(date, weeks=2)
-		elif self.graph_data == DATA_OPTIONS[3]:
-			date = get_previous_monday(date, weeks=3)
 
 		results = [[0, 0, 0, 0] for _ in range(5)]
-		records = self.app.database.get_prayer_record_range(date)
+		records = self.app.database.get_prayer_record_range(self.start_date.date, self.end_date.date)
 
 		# Calculate all prayer's activity throughout the range of dates
 		for i, prayer in enumerate(chain(*records)):
@@ -73,34 +60,42 @@ class PrayerGraphsScreen(Screen):
 			results[i][j] += 1
 		
 		return results
-	
-	def change_graph_data(self, value):
-		'''Change the data used to create the graph and remake the graph with new data'''
-		self.graph_data = value
-		self.destroy_graph()
-		self.create_graph()
-
-	def change_graph(self, graph):
-		'''Change the graph'''
-		self.graph = graph
-		self.destroy_graph()
-		self.create_graph()
 
 	def create_graph(self):
-		'''Create the graph and add it to the layout'''
-		results = self.get_prayer_data(self.app.today)
-		if self.graph == "Bar Graphs":
+		'''Create the popup with the graph and open it'''
+
+		# Validate that the graph date data is valid and present
+		if (self.end_date.text and self.start_date.text) and \
+			(self.end_date.date > self.start_date.date):
+			popup = GraphPopup()
+			popup.create_graph(self.graph, self.get_prayer_data())
+			popup.open()
+
+
+class GraphPopup(CustomModalView):
+	'''Graph popup to show the graph made with the chosen data and the chosen type'''
+	layout = ObjectProperty()
+	title = StringProperty()
+	
+	def __init__(self,**kwargs):
+		super().__init__(**kwargs)
+
+		self.bind(on_dismiss=lambda _: self.destroy_graph())
+	
+	def destroy_graph(self):
+		'''Remove the graph from the popup'''
+		self.layout.remove_widget(self.figure)
+
+	def create_graph(self, graph, results):
+		'''Create the graph specified with the results and add it to layout'''
+		if graph == "Bar Graphs":
 			self.figure = create_record_bars_figure(results)
-		elif self.graph == "Stacked Bar Graph":
+		elif graph == "Stacked Bar Graph":
 			self.figure = create_record_stacked_bar_figure(results)
-		elif self.graph == "Pie Graphs":
+		elif graph == "Pie Graphs":
 			self.figure = create_record_pie_graphs_figure(results)
 		self.layout.add_widget(self.figure)
-
-	def destroy_graph(self):
-		'''Remove the graph from the layout'''
-		self.layout.remove_widget(self.figure)
-		self.figure = None
+		self.title = graph
 
 
 def create_pie_graphs(axes, sizes):
@@ -116,7 +111,7 @@ def create_pie_graphs(axes, sizes):
 				txt.set_color("white")
 
 def create_bar_graphs(axes, sizes):
-	''' Create bar graphs on all the axes '''
+	'''Create bar graphs on all the axes'''
 
 	for i, ax in enumerate(axes):
 
@@ -135,7 +130,7 @@ def create_bar_graphs(axes, sizes):
 		ax.set_xticklabels([])
 
 def create_record_graphs_figure(graphing_function, prayer_data):
-	''' Base function for creating five graphs with a legend aligned with it '''
+	'''Base function for creating five graphs with a legend aligned with it'''
 	
 	fig = plt.figure(constrained_layout=True)
 	grid_spec = GridSpec(3, 2, figure=fig)
@@ -197,7 +192,7 @@ def create_record_stacked_bar_figure(prayer_data):
 					color='white')
 	
 	ax.legend(ncol=len(PRAYER_CATEGORY_NAMES) // 2, bbox_to_anchor=(0, 1),
-			loc='lower left', fontsize='small')
+			loc='lower left')
 
 	# Force the x-axis tick labels to be integars so decimal points aren't displayed on graphs
 	ax.xaxis.set_major_locator(MaxNLocator(integer=True))

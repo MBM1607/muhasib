@@ -1,4 +1,4 @@
-''' Module to hold the class PrayerTimesScreen '''
+'''Module to hold the class PrayerTimesScreen'''
 
 from datetime import date, datetime, timedelta
 
@@ -11,7 +11,7 @@ from constants import MAIN_COLOR, SECONDRY_COLOR
 
 
 class PrayerTimesScreen(Screen):
-	''' Class for the screen to show the prayer times '''
+	'''Class for the screen to show the prayer times'''
 	times_list = ObjectProperty()
 	prayer_time_left = ObjectProperty()
 	next_prayer = ObjectProperty()
@@ -26,14 +26,14 @@ class PrayerTimesScreen(Screen):
 		self.bind(on_leave=lambda _: self.destroy_prayer_data())
 
 	def create_prayers_data(self):
-		''' Create the prayer times data and schedule the upgrade event '''
+		'''Create the prayer times data and schedule the upgrade event'''
 		self.update_prayer_times()
 		
 		self.update_clock_event = Clock.schedule_interval(lambda _: self.update_prayer_labels(), 30)
 		self.location.text = self.app.settings["location"]
 
 	def destroy_prayer_data(self):
-		''' Remove all prayer data from the screen and cancel the upgrade event '''
+		'''Remove all prayer data from the screen and cancel the upgrade event'''
 		self.update_clock_event.cancel()
 		self.times_data = {}
 		self.times_list.data = []
@@ -42,7 +42,7 @@ class PrayerTimesScreen(Screen):
 		self.next_prayer.text = ""
 
 	def update_prayer_times(self):
-		''' Update the prayer times '''
+		'''Update the prayer times'''
 
 		# Calculate today's prayer times
 		self.times_data = self.app.prayer_times.get_times(date.today())
@@ -53,7 +53,7 @@ class PrayerTimesScreen(Screen):
 		self.update_prayer_labels()
 
 	def focus_next_prayer(self, next_prayer):
-		''' Put focus on the next prayer so it can be highlighted'''
+		'''Put focus on the next prayer so it can be highlighted'''
 		for prayer in self.times_list.data:
 			if prayer["name"] == next_prayer:
 				prayer["background_color"] = SECONDRY_COLOR
@@ -61,7 +61,7 @@ class PrayerTimesScreen(Screen):
 				prayer["background_color"] = MAIN_COLOR
 
 	def update_prayer_labels(self):
-		''' Change the labels reporting information about prayers '''
+		'''Change the labels reporting information about prayers'''
 
 		# Get just the current hour and minutes
 		current_time = datetime.strptime(datetime.strftime(self.app.get_current_time(), "%H:%M"), "%H:%M")

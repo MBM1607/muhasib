@@ -14,15 +14,9 @@
 			Label:
 				text: "Location"
 				font_size: sp(15)
-		TextInput:
+		CustomTextInput:
 			id: location_text
-			multiline: False
-			hint_text_color: MAIN_COLOR
-			selection_color: (*MAIN_COLOR[:3], 0.5)
-			foreground_color: MAIN_COLOR
 			pos_hint: {'top': 1}
-			size_hint_y: None
-			height: dp(48)
 			hint_text: "City, Region, Country"
 			focus: True
 			on_text_validate: root.check_input_location()

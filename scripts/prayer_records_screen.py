@@ -1,11 +1,11 @@
-''' Module to hold the prayer record screen class '''
+'''Module to hold the prayer record screen class'''
 
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import Screen
 
 
 class PrayerRecordsScreen(Screen):
-	''' Screen to show today's record list '''
+	'''Screen to show today's record list'''
 
 	record_lists = ObjectProperty()
 

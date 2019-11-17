@@ -8,11 +8,10 @@ from kivy.properties import NumericProperty, ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.screenmanager import Screen
-from kivy.uix.widget import Widget
 
 import constants
 import convertdate.islamic as islamic
-from custom_widgets import CustomModalView, TextButton
+from custom_widgets import CustomModalView, CustomTextInput, TextButton
 
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
@@ -97,6 +96,85 @@ class DateButton(TextButton):
 			RecordsPopup(self.date).open()
 		else:
 			self.state = "normal"
+
+
+class DatePicker(CustomTextInput):
+	'''Widget to enter the date as input'''
+
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+
+		self.bind(focus=self.open_calendar_popup)
+	
+	def open_calendar_popup(self, instance, value):
+		'''Open the calendar popup when datepicker is focused'''
+		if value:
+			DatePickerPopup(base=self).open()
+	
+	@property
+	def date(self):
+		'''Get the date currently in the input field'''
+		if self.text:
+			return datetime.datetime.strptime(self.text, "%d/%m/%Y").date()
+		else:
+			raise ValueError("There is no date selected")
+
+
+class DatePickerButton(TextButton):
+	'''Buttons for the calendar popup on the datepicker'''
+	
+	def __init__(self, date=None, **kwargs):
+		super().__init__(**kwargs)
+		self.date = date
+
+	def on_press(self):
+		'''Pick the button's date and put it on the datepicker widget text'''
+		popup = self.parent.parent.parent.parent.parent
+		popup.base.text = self.date.strftime("%d/%m/%Y")
+		popup.dismiss()
+		
+
+
+class DatePickerPopup(CustomModalView):
+	'''Popup to show the calendar for the datepicker widget'''
+	cal = ObjectProperty()
+ 
+	def __init__(self, base=None,**kwargs):
+		super().__init__(**kwargs)
+
+		self.base = base
+
+		self.bind(on_pre_open=lambda _: self.create_popup())
+		self.bind(on_dismiss=lambda _: self.cal.destroy_calendar())
+
+	def create_popup(self):
+		'''Create the calendar on the popup'''
+		self.cal.populate_func = self.populate_calendar
+		self.cal.date_widget = DatePickerButton
+		self.cal.create_calendar()
+
+	def populate_calendar(self):
+		'''Create the calendar dates for the screen and set the month and year texts'''
+		self.cal.set_month_year_text()
+		
+		# initialize the dates data so conflict does not happen
+		self.cal.dates.data = []
+
+		month = self.cal.get_month_list()
+		for day in month:
+			if not day:
+				# Make an empty widget if the date doesn't exist
+				self.cal.dates.data.append({"text": "", "background_color": constants.GREY_COLOR, "disabled": True})
+			else:
+				date = datetime.date(self.cal.year, self.cal.month, day)
+
+				# Color the button
+				if date == datetime.date.today():
+					bg_color = constants.WARNING_COLOR
+				else:
+					bg_color = constants.MAIN_COLOR
+
+				self.cal.dates.data.append({"text": str(day), "date": date, "background_color": bg_color, "disabled": False})
 
 
 class Calendar(BoxLayout):

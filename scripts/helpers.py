@@ -1,4 +1,4 @@
-'''  File to store all the helper functions '''
+'''File to store all the helper functions'''
 
 import datetime
 
@@ -6,29 +6,29 @@ from pytz import timezone
 
 
 def _check_type(s):
-	''' Check if the given parameter is a string '''
+	'''Check if the given parameter is a string'''
 	if not isinstance(s, str):
 		raise TypeError(f"Expected str or unicode, got {type(s).__name__}")
 
 def daterange(start_date, end_date):
-	''' Create a range of dates from the start to the end date '''
+	'''Create a range of dates from the start to the end date'''
 	for n in range(int((end_date - start_date).days)):
 		yield start_date + datetime.timedelta(n)
 
 def is_even(num):
-	''' Takes a number and return True if the number is even else return false '''
+	'''Takes a number and return True if the number is even else return false'''
 	if num % 2:
 		return False
 	return True
 
 def utcoffset(tz):
-	''' Take the timezone name and return its UTC offset '''
+	'''Take the timezone name and return its UTC offset'''
 	now = datetime.datetime.now(tz=timezone(tz))
 	utc_offset = (now.utcoffset().days * 24) + (now.utcoffset().seconds / 3600)
 	return utc_offset
 
 def get_previous_monday(date, weeks=0):
-	''' Take a date and return the previous monday from that date
+	'''Take a date and return the previous monday from that date
 		weeks determine which week's previous monday to get where 0 is the current week
 		and 1 is the previous week
 	'''
@@ -66,7 +66,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 def jaro_winkler(s1, s2, long_tolerance=False):
-	''' Return the string metric distance between the two provided strings using the jaro-winkler algorithm '''
+	'''Return the string metric distance between the two provided strings using the jaro-winkler algorithm'''
 	return _jaro_winkler(s1, s2, long_tolerance, True)
 
 def _jaro_winkler(ying, yang, long_tolerance, winklerize):

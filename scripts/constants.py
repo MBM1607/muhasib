@@ -1,4 +1,4 @@
-''' Module for all the global constants of the app '''
+'''Module for all the global constants of the app'''
 
 MAIN_COLOR = (0, 64/255, 52/255, 1)
 SECONDRY_COLOR = (16/255, 112/255, 94/255, 1)

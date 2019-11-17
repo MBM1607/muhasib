@@ -24,6 +24,21 @@
 			Calendar:
 				id: cal
 
+<DatePickerPopup>:
+	cal: cal
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(10)
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: "Datepicker"
+				font_size: sp(15)
+		Calendar:
+			id: cal
+
 <Calendar>:
 	dates: dates
 	weekdays: weekdays

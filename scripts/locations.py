@@ -1,4 +1,4 @@
-''' Module for the location's form and all related functionality '''
+'''Module for the location's form and all related functionality'''
 
 import json, threading
 
@@ -13,10 +13,10 @@ from helpers import jaro_winkler, is_even
 import constants
 
 class LocationDropDown(DropDown):
-	''' Dropdown for the location suggestions '''
+	'''Dropdown for the location suggestions'''
 
 	def dismiss(self):
-		''' Clear children when dismissed '''
+		'''Clear children when dismissed'''
 		self.clear_widgets()
 		super().dismiss()
 
@@ -26,7 +26,7 @@ class LocationButton(TextButton):
 
 
 class LocationForm(CustomModalView):
-	''' Class for location form to get user's location '''
+	'''Class for location form to get user's location'''
 	location_text = ObjectProperty()
 	gif_layout = ObjectProperty()
 	
@@ -39,7 +39,7 @@ class LocationForm(CustomModalView):
 		self.bind(on_dismiss=lambda _: self.destroy_locations_data())
 
 	def create_locations_data(self):
-		''' Load the cities data and extract the relevent information from it '''
+		'''Load the cities data and extract the relevent information from it'''
 		with open("data/cities.json") as locations_data:
 			for data in json.load(locations_data):
 				# Case if region is not specified
@@ -57,14 +57,14 @@ class LocationForm(CustomModalView):
 		self.suggestion_dropdown.bind(on_select=self.change_location)
 
 	def destroy_locations_data(self):
-		''' Remove all location data from the class '''
+		'''Remove all location data from the class'''
 		self.location_text.text = ""
 		self.location_data = {}
 		self.locations = set()
 		self.suggestion_dropdown = None
 
 	def check_input_location(self, _=None):
-		''' Check if the input location is a valid location if not then open the suggestions '''
+		'''Check if the input location is a valid location if not then open the suggestions'''
 		text = self.location_text.text.title()
 		self.location_text.text = self.location_text.text.title()
 
@@ -78,7 +78,7 @@ class LocationForm(CustomModalView):
 			#self.gif_layout.clear_widgets()
 
 	def suggestion_dropdown_open(self, text):
-		''' Open and populate the location dropdown with suggestions '''
+		'''Open and populate the location dropdown with suggestions'''
 		suggestions = self.give_location_suggestions(text)
 		for i, key in enumerate(suggestions.keys()):
 			if is_even(i):
@@ -93,7 +93,7 @@ class LocationForm(CustomModalView):
 		self.suggestion_dropdown.open(self.location_text)
 
 	def give_location_suggestions(self, text):
-		''' Use jaro-winkler algorithm to give location suggestions for the the input text '''
+		'''Use jaro-winkler algorithm to give location suggestions for the the input text'''
 		suggestions = {}
 		for location in self.locations:
 			score = jaro_winkler(location, text)
@@ -104,7 +104,7 @@ class LocationForm(CustomModalView):
 		return {key: suggestions[key] for key in keys}
 
 	def change_location(self, instance, value):
-		''' Change the location to the selected value and close the form '''
+		'''Change the location to the selected value and close the form'''
 
 		self.app.change_location(value, *self.locations_data[value][3:])
 		self.dismiss()

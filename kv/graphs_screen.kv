@@ -1,32 +1,72 @@
 #:kivy 1.11.1
 
-#:import DATA_OPTIONS graphs_screen.DATA_OPTIONS
 #:import GRAPH_OPTIONS graphs_screen.GRAPH_OPTIONS
+
+<ColoredLabel@Label>:
+	color: 0.2, 0.2, 0.2, 1
+	#size_hint: None, None
+	#size: self.texture_size
+	font_size: sp(15)
+	text_size: self.size
+	halign: "center"
 
 <PrayerGraphsScreen>:
 	name: "record_graphs"
-	layout: layout
+	start_date: start_date
+	end_date: end_date
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
-
 		ScreenActionBar:
 			text: "Prayer Graphs"
 		BoxLayout:
-			id: layout
 			orientation: "vertical"
-			spacing: dp(5)
-			padding: dp(5)
+			spacing: dp(10)
+			padding: dp(10)
 			BoxLayout:
 				orientation: "horizontal"
 				spacing: dp(5)
-				size_hint_y: None
-				height: dp(48)
+				BoxLayout:
+					orientation: "vertical"
+					spacing: dp(2)
+					ColoredLabel:
+						text: "Start Date"
+					DatePicker:
+						id: start_date
+				BoxLayout:
+					orientation: "vertical"
+					spacing: dp(2)
+					ColoredLabel:
+						text: "End Date"
+					DatePicker:
+						id: end_date
+			BoxLayout:
+				orientation: "vertical"
+				spacing: dp(2)
+				ColoredLabel:
+					text: "Type of Graph"
 				CustomSpinner:
-					text: DATA_OPTIONS[3]
-					values: DATA_OPTIONS
-					on_text: root.change_graph_data(self.text)
-				CustomSpinner:
+					id: graph_spinner
 					text: GRAPH_OPTIONS[0]
 					values: GRAPH_OPTIONS
-					on_text: root.change_graph(self.text)
+					on_text: root.graph = self.text
+		TextButton:
+			size_hint_y: None
+			height: dp(48)
+			text: "Create Graph"
+			on_press: root.create_graph()
+		
+<GraphPopup>:
+	layout: layout
+	BoxLayout:
+		id: layout
+		orientation: "vertical"
+		spacing: dp(10)
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: root.title
+				font_size: sp(15)
+		

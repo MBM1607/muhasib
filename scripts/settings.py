@@ -11,7 +11,6 @@ import constants
 from custom_widgets import CustomModalView, TextButton
 from locations import LocationForm
 
-
 CALENDAR_SETTINGS_DATA = [{"text": "Hijri Adjustment", "name": "hijri_adjustment"}]
 
 RECORD_SETTINGS_DATA = [{"text": "Fasting Record", "name": "fasting_record"},

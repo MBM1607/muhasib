@@ -5,24 +5,23 @@ from datetime import date, datetime, timedelta
 
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.properties import DictProperty
 from kivy.garden.navigationdrawer import NavigationDrawer
 from kivy.lang.builder import Builder
+from kivy.properties import DictProperty
 from kivy.uix.screenmanager import ScreenManager
 from pytz import timezone
-
 from scripts.calendar_screen import CalendarScreen
-from scripts.qibla import QiblaScreen
-from scripts.dashboard import Dashboard
 from scripts.custom_widgets import NavigationWidget
+from scripts.dashboard import Dashboard
 from scripts.database import Database
+from scripts.graphs_screen import PrayerGraphsScreen
+from scripts.helpers import utcoffset
+from scripts.locations import LocationForm
 from scripts.prayer_records_screen import PrayerRecordsScreen
 from scripts.prayer_times import PrayerTimes
 from scripts.prayer_times_screen import PrayerTimesScreen
-from scripts.graphs_screen import PrayerGraphsScreen
+from scripts.qibla import QiblaScreen
 from scripts.settings import SettingsScreen
-from scripts.locations import LocationForm
-from scripts.helpers import utcoffset
 
 Builder.load_file("kv/custom_widgets.kv")
 Builder.load_file("kv/prayer_widgets.kv")
