@@ -1,16 +1,18 @@
 '''Module for the location's form and all related functionality'''
 
-import json, threading
+import json
+import threading
 
 from kivy.app import App
-from kivy.uix.modalview import ModalView
+from kivy.properties import DictProperty, ObjectProperty
 from kivy.uix.dropdown import DropDown
 from kivy.uix.image import Image
-from kivy.properties import ObjectProperty, DictProperty
+from kivy.uix.modalview import ModalView
 
-from custom_widgets import TextButton, CustomModalView
-from helpers import jaro_winkler, is_even
 import constants
+from custom_widgets import CustomModalView, LoadingPopup, TextButton
+from helpers import is_even, jaro_winkler
+
 
 class LocationDropDown(DropDown):
 	'''Dropdown for the location suggestions'''
@@ -28,7 +30,6 @@ class LocationButton(TextButton):
 class LocationForm(CustomModalView):
 	'''Class for location form to get user's location'''
 	location_text = ObjectProperty()
-	gif_layout = ObjectProperty()
 	
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
@@ -54,6 +55,7 @@ class LocationForm(CustomModalView):
 		
 		# Create the locations dropdown
 		self.suggestion_dropdown = LocationDropDown()
+		self.loading_popup = LoadingPopup()
 		self.suggestion_dropdown.bind(on_select=self.change_location)
 
 	def destroy_locations_data(self):
@@ -62,7 +64,7 @@ class LocationForm(CustomModalView):
 		self.location_data = {}
 		self.locations = set()
 		self.suggestion_dropdown = None
-		self.gif_layout.clear_widgets()
+		self.loading_popup = None
 
 	def check_input_location(self, _=None):
 		'''Check if the input location is a valid location if not then open the suggestions'''
@@ -72,30 +74,27 @@ class LocationForm(CustomModalView):
 		# Change the location to input text if it is a valid location
 		if text in self.locations:
 			self.change_location(self, text)
-		elif text and not self.gif_layout.children:
-			self.gif_layout.add_widget(Image(source="data/loading.gif"))
+		elif text:
+			self.loading_popup.open()
 			loading_thread = threading.Thread(target=self.suggestion_dropdown_open, args=(text,))
 			loading_thread.start()
 
 	def suggestion_dropdown_open(self, text):
 		'''Open and populate the location dropdown with suggestions'''
-		try:
-			suggestions = self.give_location_suggestions(text)
-			for i, key in enumerate(suggestions.keys()):
-				if is_even(i):
-					bg_color = constants.MAIN_COLOR
-				else:
-					bg_color = constants.SECONDRY_COLOR
+		suggestions = self.give_location_suggestions(text)
+		for i, key in enumerate(suggestions.keys()):
+			if is_even(i):
+				bg_color = constants.MAIN_COLOR
+			else:
+				bg_color = constants.SECONDRY_COLOR
 
-				btn = LocationButton(text=suggestions[key], background_color=bg_color)
-				btn.bind(on_release=lambda btn: self.suggestion_dropdown.select(btn.text))
-				self.suggestion_dropdown.add_widget(btn)
-			if text == self.location_text.text:
-				self.suggestion_dropdown.open(self.location_text)
-		except AttributeError:
-			print("Thread Errored out")
-		finally:
-			self.gif_layout.clear_widgets()
+			btn = LocationButton(text=suggestions[key], background_color=bg_color)
+			btn.bind(on_release=lambda btn: self.suggestion_dropdown.select(btn.text))
+			self.suggestion_dropdown.add_widget(btn)
+		if text == self.location_text.text:
+			self.suggestion_dropdown.open(self.location_text)
+
+		self.loading_popup.dismiss()
 
 	def give_location_suggestions(self, text):
 		'''Use jaro-winkler algorithm to give location suggestions for the the input text'''

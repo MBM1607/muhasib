@@ -1,20 +1,20 @@
-''' Module for all the custom base widget classes '''
+'''Module for all the custom base widget classes'''
 
 from itertools import chain
 
+from kivy.app import App
 from kivy.graphics import Rectangle
-from kivy.properties import (BooleanProperty, ListProperty, ObjectProperty,
-							 StringProperty, NumericProperty)
 from kivy.metrics import dp
+from kivy.properties import (BooleanProperty, ListProperty, NumericProperty,
+							 ObjectProperty, StringProperty)
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
-from kivy.app import App
 from kivy.uix.dropdown import DropDown
 from kivy.uix.image import Image
 from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
 from kivy.uix.modalview import ModalView
 from kivy.uix.recycleview import RecycleView
+from kivy.uix.textinput import TextInput
 
 import constants
 from helpers import is_even
@@ -75,7 +75,7 @@ class DoubleTextButton(BaseButton):
 
 
 class LabelCheckBox(BaseButton):
-	'''Checkbox with its very own label in a colored layout''' 
+	'''Checkbox with its very own label in a colored layout'''
 	name = StringProperty()
 	active = BooleanProperty(False)
 	checkbox_on = StringProperty()
@@ -167,6 +167,11 @@ class CustomSpinner(TextButton):
 
 class CustomModalView(ModalView):
 	'''Custom Appearance for all modalviews'''
+	pass
+
+
+class LoadingPopup(CustomModalView):
+	'''Popup to display while data is loading'''
 	pass
 
 

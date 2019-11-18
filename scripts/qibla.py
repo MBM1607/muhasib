@@ -1,7 +1,7 @@
 '''Module for all code relating to the determining the qibla direction'''
 
 from kivy.app import App
-from kivy.properties import StringProperty, NumericProperty, ObjectProperty
+from kivy.properties import NumericProperty, ObjectProperty, StringProperty
 from kivy.uix.screenmanager import Screen
 
 
@@ -9,6 +9,7 @@ class QiblaScreen(Screen):
 	'''Class for the screen containing compass'''
 	needle_angle = NumericProperty(0)
 	location_text = StringProperty()
+	title = StringProperty()
 
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
@@ -27,3 +28,4 @@ class QiblaScreen(Screen):
 		self.location_text = self.app.settings["location"]
 		qibla_direction = self.app.prayer_times.get_qibla()
 		self.needle_angle = (360 - qibla_direction) % 360
+		self.title = f"Qibla ({self.needle_angle}°)"

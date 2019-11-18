@@ -70,6 +70,8 @@ class PrayerGraphsScreen(Screen):
 			popup = GraphPopup()
 			popup.create_graph(self.graph, self.get_prayer_data())
 			popup.open()
+		else:
+			notify(message="Invalid Graph Data",mode="toast")
 
 
 class GraphPopup(CustomModalView):

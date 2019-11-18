@@ -1,4 +1,4 @@
-''' Main python file for running and defining the app object. '''
+'''Main python file for running and defining the app object.'''
 
 import json
 from datetime import date, datetime, timedelta
@@ -36,7 +36,7 @@ Builder.load_file("kv/calendar_screen.kv")
 
 
 class MuhasibApp(App):
-	''' Muhasib app object '''
+	'''Muhasib app object'''
 	use_kivy_settings = False
 	icon = 'data/logo.png'
 	settings = DictProperty()
@@ -79,18 +79,18 @@ class MuhasibApp(App):
 		Clock.schedule_interval(lambda _: self.day_pass_check(), 3600)
 	
 	def get_current_time(self):
-		''' Get the UTC time of the timezone currently set in settings '''
+		'''Get the UTC time of the timezone currently set in settings'''
 		return datetime.now(tz=timezone(self.settings["timezone"]))
 
 	def get_formatted_time(self, time):
-		''' Take a time and return it in the string format of the configuration '''
+		'''Take a time and return it in the string format of the configuration'''
 		if self.settings["time_format"] == "24h":
 			return time.strftime("%H:%M")
 		else:
 			return time.strftime("%I:%M %p")
 
 	def set_prayer_times_settings(self):
-		''' Change the prayer times calculation settings according to app's settings '''
+		'''Change the prayer times calculation settings according to app's settings'''
 		self.prayer_times.imsak_time = self.settings["imsak_time"]
 		self.prayer_times.settings["high_lats"] = self.settings["high_lats"]
 		self.prayer_times.settings["dhuhr"] = self.settings["dhuhr_offset"]
@@ -106,14 +106,14 @@ class MuhasibApp(App):
 		self.prayer_times.set_method(self.settings["calc_method"])
 
 	def set_prayer_time_location(self):
-		''' Change the prayer time location variables according to the settings '''
+		'''Change the prayer time location variables according to the settings'''
 		self.prayer_times.lat = self.settings["latitude"]
 		self.prayer_times.lng = self.settings["longitude"]
 		self.prayer_times.alt = self.settings["altitude"]
 		self.prayer_times.timezone = utcoffset(self.settings["timezone"])
 
 	def change_location(self, location, lat, lng, alt, tz):
-		''' Change all the location data and modify prayer times appropriately '''
+		'''Change all the location data and modify prayer times appropriately'''
 
 		self.settings["location"] = location
 		self.settings["latitude"] = lat
@@ -123,7 +123,7 @@ class MuhasibApp(App):
 		self.set_prayer_time_location()
 
 	def location_check(self):
-		''' Check if location is present, if not open the form to get location '''
+		'''Check if location is present, if not open the form to get location'''
 
 		if self.location_data_present():
 			self.set_prayer_time_location()
@@ -131,14 +131,14 @@ class MuhasibApp(App):
 			self.location_form.open()
 
 	def location_data_present(self):
-		''' Check if the location data is in the configuration '''
+		'''Check if the location data is in the configuration'''
 		if self.settings["location"] and self.settings["latitude"] and self.settings["longitude"] and self.settings["timezone"]:
 			return True
 		else:
 			return False
 
 	def load_settings(self):
-		''' Load the setttings configuration from the file and make the file if it doesn't exist '''
+		'''Load the setttings configuration from the file and make the file if it doesn't exist'''
 		try:
 			with open("data/settings.json", "r") as json_file:
 				self.settings = json.load(json_file)
@@ -158,23 +158,23 @@ class MuhasibApp(App):
 			self.save_settings()
 
 	def save_settings(self):
-		''' Save the settings in a json file '''
+		'''Save the settings in a json file'''
 		with open("data/settings.json", "w") as json_file:
 			json.dump(self.settings, json_file)
 
 	def on_settings(self, instance, value):
-		''' When config changes then upgrade prayer time configuration and save the settings '''
+		'''When config changes then upgrade prayer time configuration and save the settings'''
 		self.set_prayer_times_settings()
 		self.save_settings()
 
 	def day_pass_check(self):
-		''' Check if a day has passed and upgrade the prayer times and records if it has '''
+		'''Check if a day has passed and upgrade the prayer times and records if it has'''
 		if self.today != date.today():
 			self.prayer_times.timezone = utcoffset(self.settings["timezone"])
 			self.create_database_day()
 		
 	def create_database_day(self):
-		''' Create a row in the database for the day '''
+		'''Create a row in the database for the day'''
 		self.today = date.today()
 		self.database.create_record(self.today)
 
