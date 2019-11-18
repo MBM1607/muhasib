@@ -2,8 +2,24 @@
 
 import datetime
 
+from plyer import notification
+from plyer.utils import platform
 from pytz import timezone
 
+
+def notify(title="", message="", timeout=10, ticker="", mode="simple"):
+	'''Send a notification'''
+	kwargs = {'title': title, 'message': message, 'ticker': ticker}
+
+	if mode == 'simple':
+		kwargs['app_name'] = "Muhasib"
+		if platform == "win":
+			kwargs['app_icon'] = "data/logo.ico"
+		else:
+			kwargs['app_icon'] = "data/logo.png"
+	elif mode == 'toast':
+		kwargs['toast'] = True
+	notification.notify(**kwargs)
 
 def _check_type(s):
 	'''Check if the given parameter is a string'''

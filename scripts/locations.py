@@ -62,6 +62,7 @@ class LocationForm(CustomModalView):
 		self.location_data = {}
 		self.locations = set()
 		self.suggestion_dropdown = None
+		self.gif_layout.clear_widgets()
 
 	def check_input_location(self, _=None):
 		'''Check if the input location is a valid location if not then open the suggestions'''
@@ -71,26 +72,30 @@ class LocationForm(CustomModalView):
 		# Change the location to input text if it is a valid location
 		if text in self.locations:
 			self.change_location(self, text)
-		elif text:
+		elif text and not self.gif_layout.children:
 			self.gif_layout.add_widget(Image(source="data/loading.gif"))
 			loading_thread = threading.Thread(target=self.suggestion_dropdown_open, args=(text,))
 			loading_thread.start()
-			#self.gif_layout.clear_widgets()
 
 	def suggestion_dropdown_open(self, text):
 		'''Open and populate the location dropdown with suggestions'''
-		suggestions = self.give_location_suggestions(text)
-		for i, key in enumerate(suggestions.keys()):
-			if is_even(i):
-				bg_color = constants.MAIN_COLOR
-			else:
-				bg_color = constants.SECONDRY_COLOR
+		try:
+			suggestions = self.give_location_suggestions(text)
+			for i, key in enumerate(suggestions.keys()):
+				if is_even(i):
+					bg_color = constants.MAIN_COLOR
+				else:
+					bg_color = constants.SECONDRY_COLOR
 
-			btn = LocationButton(text=suggestions[key], background_color=bg_color)
-			btn.bind(on_release=lambda btn: self.suggestion_dropdown.select(btn.text))
-			self.suggestion_dropdown.add_widget(btn)
-		self.gif_layout.clear_widgets()
-		self.suggestion_dropdown.open(self.location_text)
+				btn = LocationButton(text=suggestions[key], background_color=bg_color)
+				btn.bind(on_release=lambda btn: self.suggestion_dropdown.select(btn.text))
+				self.suggestion_dropdown.add_widget(btn)
+			if text == self.location_text.text:
+				self.suggestion_dropdown.open(self.location_text)
+		except AttributeError:
+			print("Thread Errored out")
+		finally:
+			self.gif_layout.clear_widgets()
 
 	def give_location_suggestions(self, text):
 		'''Use jaro-winkler algorithm to give location suggestions for the the input text'''
