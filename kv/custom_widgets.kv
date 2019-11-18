@@ -71,9 +71,24 @@
 
 <LoadingPopup>:
 	size_hint: None, None
+	size: gif.width + label.width, gif.height
 	auto_dismiss: False
-	Image:
-		source: "data/loading.gif"
+	BoxLayout:
+		orientation: "horizontal"
+		Image:
+			id: gif
+			source: "data/loading.gif"
+			size_hint: None, None
+			size: dp(64), dp(64)
+		Label:
+			id: label
+			text: root.text
+			color: 0.2, 0.2, 0.2, 1
+			font_size: sp(15)
+			size_hint: None, None
+			height: gif.height
+			text_size: self.size
+			valign: "center"
 
 <CustomTextInput>:
 	multiline: False

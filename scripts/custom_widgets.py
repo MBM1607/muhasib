@@ -172,7 +172,7 @@ class CustomModalView(ModalView):
 
 class LoadingPopup(CustomModalView):
 	'''Popup to display while data is loading'''
-	pass
+	text = StringProperty("Loading ...")
 
 
 class CustomRecycleView(RecycleView):
