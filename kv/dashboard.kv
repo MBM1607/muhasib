@@ -9,7 +9,10 @@
 		orientation: "vertical"
 		spacing: dp(10)
 		CustomActionBar:
-
+			Widget:
+			IconButton:
+				icon: "data/location.png"
+				on_press: app.open_location_popup()
 		WidgetGrid:
 			cols: 2
 			viewclass: "DashboardButton"

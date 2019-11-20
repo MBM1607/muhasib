@@ -104,10 +104,15 @@
 	height: dp(48)
 
 <ScreenActionBar>:
-	NavigationButton:
+	IconButton:
+		on_press: app.navigationdrawer.toggle_state()
+		icon: "data/menu.png"
 	Label:
 		text: root.text
 		font_size: sp(15)
+	IconButton:
+		icon: "data/location.png"
+		on_press: app.open_location_popup()
 
 <LabelCheckBox>:
 	size_hint_y: None
@@ -153,10 +158,6 @@
 	height: self.minimum_height
 	spacing: dp(10)
 	padding: dp(10)
-
-<NavigationButton>:
-	on_press: app.navigationdrawer.toggle_state()
-	icon: "data/menu.png"
 
 <SideBarButton>:
 	on_press: app.screen_manager.current = self.screen

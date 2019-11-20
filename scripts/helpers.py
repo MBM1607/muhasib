@@ -1,11 +1,26 @@
 '''File to store all the helper functions'''
 
 import datetime
+import math
 
 from plyer import notification
 from plyer.utils import platform
 from pytz import timezone
 
+# Earth's parameters as a sphere according to WGS-84
+# https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84
+FLATTENING = 1/298.257223563
+EQUATOR_RADIUS = 6378137.0
+POLES_RADIUS = 6356752.314245
+
+
+def is_float(s):
+	'''Return if the passed string is a float or not'''
+	try:
+		float(s)
+		return True
+	except ValueError:
+		return False
 
 def notify(title="", message="", timeout=10, ticker="", mode="simple"):
 	'''Send a notification'''
@@ -20,6 +35,58 @@ def notify(title="", message="", timeout=10, ticker="", mode="simple"):
 	elif mode == 'toast':
 		kwargs['toast'] = True
 	notification.notify(**kwargs)
+
+def vincenty_distance(lat1, lon1, lat2, lon2):
+	'''Given two points calculate the distance between the two points using vincenty's formula'''
+
+	# Convert all angles to radians
+	lat1, lon1, lat2, lon2 = map(math.radians, (lat1, lon1, lat2, lon2))
+
+	# Pre-calculate the trigonometric values so that the calculations are not repeated
+	tanlat1 = (1 - FLATTENING) * math.tan(lat1)
+	coslat1 = 1 / math.sqrt(1 + tanlat1**2)
+	sinlat1 = tanlat1 * coslat1
+	tanlat2 = (1 - FLATTENING) * math.tan(lat2)
+	coslat2 = 1 / math.sqrt(1 + tanlat2**2)
+	sinlat2 = tanlat2 * coslat2
+
+	# Difference between longitudes
+	original_lon = lon2 - lon1
+
+	iteration_limit = 100
+	lon = original_lon
+	new_lon = original_lon + 1
+
+	while abs(lon - new_lon) > 1e-12 and iteration_limit > 0:
+		sinlon = math.sin(lon)
+		coslon = math.cos(lon)
+		angular_sep_sin = ((coslat2 * sinlon) ** 2) + ((coslat1 * sinlat2 - sinlat1 * coslat2 * coslon) ** 2)
+		angular_sep_sin = math.sqrt(angular_sep_sin)
+		if angular_sep_sin == 0:
+			return 0 # co-incident points
+		angular_sep_cos = sinlat1 * sinlat2 + coslat1 * coslat2 * coslon
+		angular_sep = math.atan2(angular_sep_sin, angular_sep_cos)
+		azimuth_sin = coslat1 * coslat2 * sinlon / angular_sep_sin
+		cos_sqr_azimuth = 1 - (azimuth_sin ** 2)
+		if cos_sqr_azimuth:
+			cos_angular_mid_sep = angular_sep_cos - 2 * sinlat1 * sinlat2 / cos_sqr_azimuth
+		else:
+			cos_angular_mid_sep = 0 # equatorial line: cos_sqr_azimuth = 0
+		C = FLATTENING / 16 * cos_sqr_azimuth * (4 + FLATTENING * (4 - 3 * cos_sqr_azimuth))
+		new_lon = lon
+		lon = original_lon + (1 - C) * FLATTENING * azimuth_sin * (angular_sep + C * angular_sep_sin * (cos_angular_mid_sep + C * angular_sep_cos * (-1 + 2 * (cos_angular_mid_sep) ** 2)))
+		iteration_limit -= 1
+
+	if not iteration_limit:
+		raise ValueError("Formula failed to converge")
+
+	u_sqr = cos_sqr_azimuth * ((EQUATOR_RADIUS ** 2) - (POLES_RADIUS ** 2)) / (POLES_RADIUS ** 2)
+	A = 1 + u_sqr/16384 * (4096 + u_sqr * (-768 + u_sqr * (320 - 175 * u_sqr)))
+	B = u_sqr / 1024 * (256 + u_sqr * (-128 + u_sqr * (74 - 47 * u_sqr)))
+	delta_angular_sep = B * angular_sep_sin * (cos_angular_mid_sep + B / 4 * (angular_sep_cos * (-1 + 2 * (cos_angular_mid_sep ** 2)) \
+				- B / 6 * cos_angular_mid_sep * (-3 + 4 * (angular_sep_sin ** 2)) * (-3 + 4 * (cos_angular_mid_sep ** 2))))
+
+	return POLES_RADIUS * A * (angular_sep - delta_angular_sep)
 
 def _check_type(s):
 	'''Check if the given parameter is a string'''

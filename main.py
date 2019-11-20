@@ -16,7 +16,7 @@ from scripts.dashboard import Dashboard
 from scripts.database import Database
 from scripts.graphs_screen import PrayerGraphsScreen
 from scripts.helpers import utcoffset
-from scripts.locations import LocationForm
+from scripts.locations import LocationPopup
 from scripts.prayer_records_screen import PrayerRecordsScreen
 from scripts.prayer_times import PrayerTimes
 from scripts.prayer_times_screen import PrayerTimesScreen
@@ -56,7 +56,6 @@ class MuhasibApp(App):
 		# Initializing all the screens and the screen manager
 		self.screen_manager = ScreenManager()
 		self.navigationdrawer = NavigationDrawer()
-		self.location_form = LocationForm()
 
 		# Add all the screens onto the screen manager
 		self.screen_manager.add_widget(Dashboard())
@@ -77,7 +76,11 @@ class MuhasibApp(App):
 		# Create interval events
 		Clock.schedule_once(lambda _: self.location_check())
 		Clock.schedule_interval(lambda _: self.day_pass_check(), 3600)
-	
+
+	def open_location_popup(self):
+		'''Open the location popup to select location'''
+		LocationPopup().open()
+
 	def get_current_time(self):
 		'''Get the UTC time of the timezone currently set in settings'''
 		return datetime.now(tz=timezone(self.settings["timezone"]))
@@ -128,7 +131,7 @@ class MuhasibApp(App):
 		if self.location_data_present():
 			self.set_prayer_time_location()
 		else:
-			self.location_form.open()
+			self.open_location_popup()
 
 	def location_data_present(self):
 		'''Check if the location data is in the configuration'''
@@ -172,7 +175,7 @@ class MuhasibApp(App):
 		if self.today != date.today():
 			self.prayer_times.timezone = utcoffset(self.settings["timezone"])
 			self.create_database_day()
-		
+
 	def create_database_day(self):
 		'''Create a row in the database for the day'''
 		self.today = date.today()

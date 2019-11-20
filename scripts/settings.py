@@ -1,10 +1,7 @@
 '''Module for all code related to the settings screen and storage'''
 
-import json
-
 from kivy.app import App
 from kivy.properties import ListProperty, ObjectProperty, StringProperty
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 
 import constants
@@ -42,14 +39,13 @@ class SettingsScreen(Screen):
 
 		self.bind(on_pre_enter=lambda _: self.create_settings_list())
 		self.bind(on_leave=lambda _: self.destroy_settings_list())
-	
+
 	def create_settings_list(self):
 		'''Create the settings list and the required popups'''
 		self.settings_list.data = [
 									{"text": "Prayer Times Settings", "icon": "data/time.png", "on_press": PrayerTimeSettings().open},
 									{"text": "Prayer Record Settings", "icon": "data/record.png", "on_press": PrayerRecordSettings().open},
 									{"text": "Calendar Settings", "icon": "data/calendar.png", "on_press": CalendarSettings().open},
-									{"text": "Location Settings", "icon": "data/location.png", "on_press": LocationForm().open},
 									{"text": "Notifications Settings", "icon": "data/notification.png"}
 								]
 
@@ -129,7 +125,7 @@ class SettingPopupButton(SettingTextButton):
 
 class PopupOptionButton(TextButton):
 	'''Button for the settings popup options'''
-	
+
 	def on_press(self):
 		'''Save the setting selected'''
 		popup = self.parent.parent.parent.parent

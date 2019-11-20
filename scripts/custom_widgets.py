@@ -3,10 +3,9 @@
 from itertools import chain
 
 from kivy.app import App
-from kivy.graphics import Rectangle
 from kivy.metrics import dp
 from kivy.properties import (BooleanProperty, ListProperty, NumericProperty,
-							 ObjectProperty, StringProperty)
+							 StringProperty)
 from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.dropdown import DropDown
@@ -93,11 +92,6 @@ class LabelCheckBox(BaseButton):
 		self.active = not self.active
 
 
-class NavigationButton(IconButton):
-	'''Button to open the navigation drawer'''
-	pass
-
-
 class SideBarButton(HorizontalIconTextButton):
 	'''Button for the sidebar navigation'''
 	screen = StringProperty()
@@ -134,7 +128,7 @@ class CustomSpinner(TextButton):
 		if self.dropdown.attach_to:
 			self.is_open = False
 			self.dropdown.dismiss()
-	
+
 	def open_dropdown(self):
 		'''If the dropdown is not opened then open it'''
 		if not self.dropdown.attach_to:

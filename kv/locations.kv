@@ -1,6 +1,27 @@
 #:kivy 1.11.1
 #:import MAIN_COLOR constants.MAIN_COLOR
 
+<LocationPopup>:
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(5)
+		CustomActionBar:
+			IconButton:
+				icon: "data/back.png"
+				on_press: root.dismiss()
+			Label:
+				text: app.settings["location"]
+				font_size: sp(12)
+		CustomRecycleView:
+			viewclass: "SettingTextButton"
+			data:
+				[{"text": "Locate Me", "on_press": root.locate_with_gps}, \
+				{"text": "Enter Latitude, Longitude", "on_press": root.open_latlon_popup}, \
+				{"text": "Select Manually", "on_press": root.open_location_form}]
+
+			VerticalListLayout:
+				padding: 0
+
 <LocationForm>:
 	location_text: location_text
 	BoxLayout:
@@ -9,10 +30,7 @@
 			IconButton:
 				icon: "data/back.png"
 				on_press: root.dismiss()
-			Label:
-				text: "Location"
-				font_size: sp(15)
-		CustomTextInput:
+		LocationText:
 			id: location_text
 			pos_hint: {'top': 1}
 			hint_text: "City, Region, Country"
@@ -28,3 +46,40 @@
 <LocationButton>:
 	size_hint_y: None
 	height: dp(48)
+
+<LatLonText>:
+	size_hint_y: None
+	height: dp(48)
+	input_type: "number"
+
+<LatLonPopup>:
+	size_hint: 0.8, None
+	height: dp(148)
+	lat: lat
+	lon: lon
+	BoxLayout:
+		orientation: "vertical"
+		spacing: dp(5)
+		BoxLayout:
+			orientation: "horizontal"
+			spacing: dp(5)
+			padding: dp(5), dp(5), dp(5), 0
+			BoxLayout:
+				orientation: "vertical"
+				spacing: dp(2)
+				ColoredLabel:
+					text: "Latitude"
+				LatLonText:
+					id: lat
+			BoxLayout:
+				orientation: "vertical"
+				spacing: dp(2)
+				ColoredLabel:
+					text: "Longitude"
+				LatLonText:
+					id: lon
+		TextButton:
+			text: "Enter"
+			on_press: root.change_location()
+			size_hint_y: None
+			height: dp(48)
