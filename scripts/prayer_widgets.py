@@ -80,6 +80,12 @@ class RecordLists(ScrollView):
 		self.prayer_record = {}
 		self.extra_record = {}
 
+	def change_date(self, date):
+		'''Change the date to the entered date and refresh the records data to the new data'''
+		self.date = date
+		self.destroy_lists()
+		self.create_lists()
+
 	def create_lists(self):
 		'''Create and populate the record lists from the record extracted from the database'''
 		self.database.create_record(self.date)

@@ -5,11 +5,22 @@
 <PrayerRecordsScreen>:
 	name: "prayer_records"
 	record_lists: record_lists
+	datepicker: datepicker
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
 
 		ScreenActionBar:
 			text: "Prayer Records"
+		BoxLayout:
+			padding: dp(10), 0, dp(10), 0
+			size_hint_y: None
+			height: dp(48)
+			DatePicker:
+				id: datepicker
+				font_size: sp(20)
+				text_size: self.size
+				on_text: root.change_date()
+				halign: "center"
 		RecordLists:
 			id: record_lists
