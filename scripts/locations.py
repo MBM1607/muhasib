@@ -76,7 +76,7 @@ class LocationPopup(CustomModalView):
 				pass
 
 		entered_location = distances[min(distances)]
-		self.app.change_location(entered_location, *self.locations_data[entered_location][3:])
+		self.app.change_location(entered_location, lat, lon, *self.locations_data[entered_location][5:])
 		self.loading_popup.dismiss()
 
 	def give_location_suggestions(self, text):

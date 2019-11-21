@@ -78,6 +78,9 @@
 		Image:
 			id: gif
 			source: "data/loading.gif"
+			mipmap: True
+			anim_delay: 0
+			allow_strech: True
 			size_hint: None, None
 			size: dp(64), dp(64)
 		Label:
@@ -92,6 +95,8 @@
 
 <CustomTextInput>:
 	multiline: False
+	background_normal: "data/text_input.png"
+	background_active: "data/text_input_active.png"
 	hint_text_color: MAIN_COLOR
 	selection_color: (*MAIN_COLOR[:3], 0.5)
 	foreground_color: MAIN_COLOR
