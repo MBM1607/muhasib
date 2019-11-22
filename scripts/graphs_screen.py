@@ -1,6 +1,6 @@
 '''Module for prayer graph screen class and all the graphing functionality need to make the record graphs'''
 
-from datetime import date as datetime_date
+from datetime import date as datetime_date, timedelta
 from itertools import accumulate, chain
 
 import matplotlib as mpl
@@ -17,7 +17,7 @@ from matplotlib.ticker import MaxNLocator
 from constants import (GREY_COLOR, PRAYER_CATEGORY_COLORS,
 					   PRAYER_CATEGORY_NAMES, PRAYER_NAMES)
 from custom_widgets import ColorBoxLayout, CustomModalView
-from helpers import get_previous_monday, notify
+from helpers import notify
 
 # Enter the custom fonts into the matplotlib fonts list
 font_files = mpl.font_manager.findSystemFonts(fontpaths="data/")
@@ -46,6 +46,9 @@ class PrayerGraphsScreen(Screen):
 		super().__init__(**kwargs)
 
 		self.app = App.get_running_app()
+
+		self.start_date.date = datetime_date.today() - timedelta(days=7)
+		self.end_date.date = datetime_date.today()
 
 	def get_prayer_data(self):
 		'''Get the prayer data from the database'''

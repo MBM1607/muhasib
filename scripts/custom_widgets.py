@@ -1,12 +1,11 @@
 '''Module for all the custom base widget classes'''
 
-from itertools import chain
-
 from kivy.app import App
 from kivy.metrics import dp
 from kivy.properties import (BooleanProperty, ListProperty, NumericProperty,
 							 StringProperty)
 from kivy.uix.behaviors.button import ButtonBehavior
+from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.dropdown import DropDown
 from kivy.uix.image import Image
@@ -27,9 +26,17 @@ class ColorBoxLayout(BoxLayout):
 class BaseButton(ButtonBehavior, ColorBoxLayout):
 	'''A base class for other types of custom buttons'''
 	background_color = ListProperty(constants.MAIN_COLOR)
-	background_normal = ''
-	background_down = "data/button.png"
+	background_normal = StringProperty('')
+	background_down = StringProperty("data/button.png")
 	border = ListProperty([16, 16, 16, 16])
+
+
+class BaseToggleButton(ToggleButtonBehavior, ColorBoxLayout):
+	'''A base class for other toggle button classes'''
+	background_color = ListProperty(constants.MAIN_COLOR)
+	background_normal = StringProperty('')
+	background_down = StringProperty('data/button.png')
+	border = ListProperty([16 ,16 ,16, 16])
 
 
 class TextButton(BaseButton, Label):

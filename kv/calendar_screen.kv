@@ -9,20 +9,20 @@
 <CalendarScreen>:
 	name: "calendar"
 	cal: cal
-	islamic_month_year: islamic_month_year
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
 		ScreenActionBar:
-			text: "Calendar"
+			text: root.date_text
 		BoxLayout:
 			orientation: "vertical"
-			BlackLabel:
-				id: islamic_month_year
-				size_hint_y: None
-				size: self.texture_size
 			Calendar:
 				id: cal
+
+<DatePicker>:
+	text_size: self.size
+	halign: "center"
+	font_size: sp(18)
 
 <DatePickerPopup>:
 	cal: cal

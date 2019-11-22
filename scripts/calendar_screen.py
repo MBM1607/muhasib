@@ -4,14 +4,17 @@ import calendar
 import datetime
 
 from kivy.app import App
-from kivy.properties import NumericProperty, ObjectProperty, StringProperty
+from kivy.properties import (BooleanProperty, NumericProperty, ObjectProperty,
+							 StringProperty)
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 
 import constants
 import convertdate.islamic as islamic
-from custom_widgets import CustomModalView, CustomTextInput, TextButton
+from custom_widgets import (
+	BaseToggleButton, CustomModalView, CustomTextInput, TextButton)
 
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
@@ -24,7 +27,7 @@ ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabi' ath-Thani",
 class CalendarScreen(Screen):
 	'''Screen providing a calendar to go through and change or view any dates's records'''
 
-	islamic_month_year = ObjectProperty()
+	date_text = StringProperty()
 	cal = ObjectProperty()
 
 	def __init__(self, **kwargs):
@@ -40,20 +43,16 @@ class CalendarScreen(Screen):
 		self.hijri_adjustment = int(App.get_running_app().settings["hijri_adjustment"])
 		self.cal.create_calendar()
 
-	def set_islamic_month_text(self):
+	def set_hijri_date_text(self, date):
 		'''Find the current month's islamic equivalent and set the text to that range'''
-		hijri_start = islamic.from_gregorian(self.cal.year, self.cal.month, 1, adj=self.hijri_adjustment)
-		hijri_end = islamic.from_gregorian(self.cal.year, self.cal.month,
-										calendar.monthrange(self.cal.year, self.cal.month)[1], adj=self.hijri_adjustment)
-
-		start = f"{hijri_start[2]} {ISLAMIC_MONTHS[hijri_start[1] - 1]}"
-		end = f"{hijri_end[2]} {ISLAMIC_MONTHS[hijri_end[1] - 1]}"
-		self.islamic_month_year.text = start + " - " + end
+		gregorian = f"{date.day}-{MONTHS[date.month - 1]}-{date.year}"
+		hijri_year, hijri_month, hijri_day = islamic.from_gregorian(date.year, date.month, date.day, adj=self.hijri_adjustment)
+		hijri = f"{hijri_day}-{ISLAMIC_MONTHS[hijri_month - 1]}-{hijri_year}"
+		self.date_text = gregorian + "\n" + hijri
 
 	def populate_calendar(self):
 		'''Create the calendar dates for the screen and set the month and year texts'''
 
-		self.set_islamic_month_text()
 		self.cal.set_month_year_text()
 
 		# initialize the dates data so conflict does not happen
@@ -63,15 +62,9 @@ class CalendarScreen(Screen):
 		for day in month:
 			if not day:
 				# Make an empty widget if the date doesn't exist
-				self.cal.dates.data.append({"text": "", "background_color": constants.GREY_COLOR, "editable": False})
+				self.cal.dates.data.append({"text": "", "background_color": constants.GREY_COLOR, "disabled": True})
 			else:
 				date = datetime.date(self.cal.year, self.cal.month, day)
-
-				# If date is of the future make the popup uneditable
-				if date > datetime.date.today():
-					editable = False
-				else:
-					editable = True
 
 				# Color the button
 				if date == datetime.date.today():
@@ -79,23 +72,28 @@ class CalendarScreen(Screen):
 				else:
 					bg_color = constants.MAIN_COLOR
 
-				self.cal.dates.data.append({"text": str(day), "editable": editable, "date": date, "background_color": bg_color})
+				if date == self.cal.date:
+					state = "down"
+					self.set_hijri_date_text(date)
+				else:
+					state = "normal"
+
+				self.cal.dates.data.append({"text": str(day), "date": date, "date_func": self.set_hijri_date_text,
+											"background_color": bg_color, "disabled": False, "state": state})
 
 
-class DateButton(TextButton):
+class DateButton(BaseToggleButton, Label):
 	'''Button for a day in a month'''
+	date_func = ObjectProperty()
+	allow_no_selection = False
 
-	def __init__(self, date=None, editable=True, **kwargs):
+	def __init__(self, date=None, date_func=None, **kwargs):
 		super().__init__(**kwargs)
 		self.date = date
-		self.editable = editable
+		self.group = "dates"
+		self.date_func = date_func
 
-	def on_press(self):
-		'''Display the popup with prayer record of the date'''
-		if self.editable:
-			RecordsPopup(self.date).open()
-		else:
-			self.state = "normal"
+		self.bind(on_press=lambda _: self.date_func(self.date))
 
 
 class DatePicker(CustomTextInput):
@@ -112,16 +110,21 @@ class DatePicker(CustomTextInput):
 		if self.focus:
 			popup = DatePickerPopup(base=self, date_limit=self.date_limit)
 			if self.text:
-				popup.cal.change_date(self.date)
+				popup.cal.date = self.date
 			popup.open()
 
 	@property
 	def date(self):
 		'''Get the date currently in the input field'''
 		if self.text:
-			return datetime.datetime.strptime(self.text, "%d/%m/%Y").date()
+			return datetime.datetime.strptime(self.text, "%d-%m-%Y").date()
 		else:
 			raise ValueError("There is no date selected")
+
+	@date.setter
+	def date(self, date):
+		'''Set the text in the field from the date passed in'''
+		self.text = date.strftime("%d-%m-%Y")
 
 
 class DatePickerButton(TextButton):
@@ -134,7 +137,7 @@ class DatePickerButton(TextButton):
 	def on_press(self):
 		'''Pick the button's date and put it on the datepicker widget text'''
 		popup = self.parent.parent.parent.parent.parent
-		popup.base.text = self.date.strftime("%d/%m/%Y")
+		popup.base.date = self.date
 		popup.dismiss()
 
 
@@ -181,6 +184,8 @@ class DatePickerPopup(CustomModalView):
 				# Color the button
 				if date == datetime.date.today():
 					bg_color = constants.WARNING_COLOR
+				elif self.base.text and date == self.base.date:
+					bg_color = constants.TERNARY_COLOR
 				else:
 					bg_color = constants.MAIN_COLOR
 
@@ -197,10 +202,16 @@ class Calendar(BoxLayout):
 
 	def __init__(self, populate_func=None, **kwargs):
 		super().__init__(**kwargs)
-		self.change_date(datetime.date.today())
+		self.date = datetime.date.today()
 
-	def change_date(self, date):
-		'''Change the date of the calendar'''
+	@property
+	def date(self):
+		'''Date property getter function'''
+		return datetime.date(self.year, self.month, self.day)
+
+	@date.setter
+	def date(self, date):
+		'''Date property setter function'''
 		self.year, self.month, self.day = date.year, date.month, date.day
 
 	def create_calendar(self):
@@ -225,16 +236,19 @@ class Calendar(BoxLayout):
 	def previous_month(self):
 		'''Move back one month'''
 		self.year, self.month = calendar.prevmonth(self.year, self.month)
+		self.day = 1
 		self.populate_func()
 
 	def next_month(self):
 		'''Move one month forward'''
 		self.year, self.month = calendar.nextmonth(self.year, self.month)
+		self.day = 1
 		self.populate_func()
 
 	def change_month(self, value):
 		'''Change the month to chosen month'''
 		self.month = value
+		self.day = 1
 
 	def previous_year(self):
 		'''Move one year back'''
@@ -247,6 +261,7 @@ class Calendar(BoxLayout):
 	def change_year(self, value):
 		'''Change the year to chosen year'''
 		self.year = int(value)
+		self.day = 1
 		self.month_popup.year = str(value)
 
 	def open_month_popup(self):

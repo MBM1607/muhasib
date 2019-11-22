@@ -20,7 +20,7 @@ class PrayerRecordsScreen(Screen):
 
 	def create_record_lists(self):
 		'''Create the prayer record list and set the datepicker to the current day'''
-		self.datepicker.text = date.today().strftime("%d/%m/%Y")
+		self.datepicker.date = date.today()
 
 	def change_date(self):
 		'''Change the date of the prayer record's being showen'''
