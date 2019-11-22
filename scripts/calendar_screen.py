@@ -108,8 +108,11 @@ class DatePicker(CustomTextInput):
 	
 	def open_calendar_popup(self, instance, value):
 		'''Open the calendar popup when datepicker is focused'''
-		if value:
-			DatePickerPopup(base=self).open()
+		if self.focus:
+			popup = DatePickerPopup(base=self)
+			if self.text:
+				popup.cal.change_date(self.date)
+			popup.open()
 	
 	@property
 	def date(self):
@@ -139,7 +142,7 @@ class DatePickerPopup(CustomModalView):
 	'''Popup to show the calendar for the datepicker widget'''
 	cal = ObjectProperty()
  
-	def __init__(self, base=None,**kwargs):
+	def __init__(self, base=None, **kwargs):
 		super().__init__(**kwargs)
 
 		self.base = base
@@ -187,9 +190,11 @@ class Calendar(BoxLayout):
 
 	def __init__(self, populate_func=None, **kwargs):
 		super().__init__(**kwargs)
-		d = datetime.date.today()
+		self.change_date(datetime.date.today())
 
-		self.year, self.month, self.day = d.year, d.month, d.day
+	def change_date(self, date):
+		'''Change the date of the calendar'''
+		self.year, self.month, self.day = date.year, date.month, date.day
 
 	def create_calendar(self):
 		'''Create the calendar date buttons and week labels and required popups'''

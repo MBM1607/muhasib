@@ -17,7 +17,7 @@ from matplotlib.ticker import MaxNLocator
 from constants import (GREY_COLOR, PRAYER_CATEGORY_COLORS,
 					   PRAYER_CATEGORY_NAMES, PRAYER_NAMES)
 from custom_widgets import ColorBoxLayout, CustomModalView
-from helpers import get_previous_monday
+from helpers import get_previous_monday, notify
 
 # Enter the custom fonts into the matplotlib fonts list
 font_files = mpl.font_manager.findSystemFonts(fontpaths="data/")
@@ -71,7 +71,15 @@ class PrayerGraphsScreen(Screen):
 			popup.create_graph(self.graph, self.get_prayer_data())
 			popup.open()
 		else:
-			notify(message="Invalid Graph Data",mode="toast")
+			if not self.start_date.text and not self.end_date.text:
+				message = "No value for start date and end date"
+			elif not self.start_date.text:
+				message = "No value for start date"
+			elif not self.end_date.text:
+				message = "No value for end date"
+			elif self.end_date.date <= self.start_date.date:
+				message = "End date is not greater than the start date"
+			notify(title="Invalid Graph Data", message=message,mode="toast")
 
 
 class GraphPopup(CustomModalView):
