@@ -55,7 +55,7 @@ class CalendarScreen(Screen):
 
 		self.set_islamic_month_text()
 		self.cal.set_month_year_text()
-		
+
 		# initialize the dates data so conflict does not happen
 		self.cal.dates.data = []
 
@@ -101,19 +101,20 @@ class DateButton(TextButton):
 class DatePicker(CustomTextInput):
 	'''Widget to enter the date as input'''
 
-	def __init__(self, **kwargs):
+	def __init__(self, date_limit=datetime.date.today(), **kwargs):
 		super().__init__(**kwargs)
 
+		self.date_limit = date_limit
 		self.bind(focus=self.open_calendar_popup)
-	
+
 	def open_calendar_popup(self, instance, value):
 		'''Open the calendar popup when datepicker is focused'''
 		if self.focus:
-			popup = DatePickerPopup(base=self)
+			popup = DatePickerPopup(base=self, date_limit=self.date_limit)
 			if self.text:
 				popup.cal.change_date(self.date)
 			popup.open()
-	
+
 	@property
 	def date(self):
 		'''Get the date currently in the input field'''
@@ -125,7 +126,7 @@ class DatePicker(CustomTextInput):
 
 class DatePickerButton(TextButton):
 	'''Buttons for the calendar popup on the datepicker'''
-	
+
 	def __init__(self, date=None, **kwargs):
 		super().__init__(**kwargs)
 		self.date = date
@@ -135,17 +136,18 @@ class DatePickerButton(TextButton):
 		popup = self.parent.parent.parent.parent.parent
 		popup.base.text = self.date.strftime("%d/%m/%Y")
 		popup.dismiss()
-		
+
 
 
 class DatePickerPopup(CustomModalView):
 	'''Popup to show the calendar for the datepicker widget'''
 	cal = ObjectProperty()
- 
-	def __init__(self, base=None, **kwargs):
+
+	def __init__(self, base=None, date_limit=None, **kwargs):
 		super().__init__(**kwargs)
 
 		self.base = base
+		self.date_limit = date_limit
 
 		self.bind(on_pre_open=lambda _: self.create_popup())
 		self.bind(on_dismiss=lambda _: self.cal.destroy_calendar())
@@ -159,7 +161,7 @@ class DatePickerPopup(CustomModalView):
 	def populate_calendar(self):
 		'''Create the calendar dates for the screen and set the month and year texts'''
 		self.cal.set_month_year_text()
-		
+
 		# initialize the dates data so conflict does not happen
 		self.cal.dates.data = []
 
@@ -171,13 +173,18 @@ class DatePickerPopup(CustomModalView):
 			else:
 				date = datetime.date(self.cal.year, self.cal.month, day)
 
+				if self.date_limit and date > self.date_limit:
+					disabled = True
+				else:
+					disabled = False
+
 				# Color the button
 				if date == datetime.date.today():
 					bg_color = constants.WARNING_COLOR
 				else:
 					bg_color = constants.MAIN_COLOR
 
-				self.cal.dates.data.append({"text": str(day), "date": date, "background_color": bg_color, "disabled": False})
+				self.cal.dates.data.append({"text": str(day), "date": date, "background_color": bg_color, "disabled": disabled})
 
 
 class Calendar(BoxLayout):
@@ -214,7 +221,7 @@ class Calendar(BoxLayout):
 		'''Get the current month calendar as a list of dates'''
 		month = calendar.monthcalendar(self.year, self.month)
 		return [day for week in month for day in week]
-	
+
 	def previous_month(self):
 		'''Move back one month'''
 		self.year, self.month = calendar.prevmonth(self.year, self.month)
@@ -232,7 +239,7 @@ class Calendar(BoxLayout):
 	def previous_year(self):
 		'''Move one year back'''
 		self.change_year(int(self.year) - 1)
-	
+
 	def next_year(self):
 		'''Move one year forward'''
 		self.change_year(int(self.year) + 1)
@@ -251,10 +258,10 @@ class Calendar(BoxLayout):
 class RecordsPopup(CustomModalView):
 	'''Popup displaying prayer and other records for each date'''
 	record_lists = ObjectProperty()
-	
+
 	def __init__(self, date=None,**kwargs):
 		super().__init__(**kwargs)
-		
+
 		self.record_lists.date = date
 		self.bind(on_pre_open=lambda _: self.record_lists.create_lists())
 		self.bind(on_dismiss=lambda _: self.record_lists.destroy_lists())
@@ -313,7 +320,7 @@ class YearPopup(CustomModalView):
 		'''Erase all data from popup'''
 		self.year_grid.data = {}
 		self.year_range = ""
-	
+
 
 class MonthPopup(CustomModalView):
 	'''Popup to select month for the calendar'''
@@ -354,7 +361,7 @@ class MonthPopup(CustomModalView):
 class YearButton(TextButton):
 	'''Button for the Year Popup grid'''
 	calendar = ObjectProperty()
-	
+
 	def __init__(self, cal=None, **kwargs):
 		super().__init__(**kwargs)
 		self.calendar = cal
@@ -377,7 +384,7 @@ class YearButton(TextButton):
 class MonthButton(TextButton):
 	'''Button for the Month Popup grid'''
 	calendar = ObjectProperty()
-	
+
 	def __init__(self, **kwargs):
 		super().__init__(**kwargs)
 

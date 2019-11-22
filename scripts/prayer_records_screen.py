@@ -17,11 +17,11 @@ class PrayerRecordsScreen(Screen):
 
 		self.bind(on_pre_enter=lambda _: self.create_record_lists())
 		self.bind(on_leave=lambda _: self.record_lists.destroy_lists())
-	
+
 	def create_record_lists(self):
 		'''Create the prayer record list and set the datepicker to the current day'''
 		self.datepicker.text = date.today().strftime("%d/%m/%Y")
-	
+
 	def change_date(self):
 		'''Change the date of the prayer record's being showen'''
 		if self.datepicker.text:
