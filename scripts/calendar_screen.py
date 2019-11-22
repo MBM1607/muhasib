@@ -270,18 +270,6 @@ class Calendar(BoxLayout):
 		self.month_popup.open()
 
 
-class RecordsPopup(CustomModalView):
-	'''Popup displaying prayer and other records for each date'''
-	record_lists = ObjectProperty()
-
-	def __init__(self, date=None,**kwargs):
-		super().__init__(**kwargs)
-
-		self.record_lists.date = date
-		self.bind(on_pre_open=lambda _: self.record_lists.create_lists())
-		self.bind(on_dismiss=lambda _: self.record_lists.destroy_lists())
-
-
 class YearPopup(CustomModalView):
 	'''Popup to select year for the calendar'''
 	year_grid = ObjectProperty()
