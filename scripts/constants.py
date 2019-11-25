@@ -34,7 +34,7 @@ PRAYER_METHODS = (
 
 ASR_FACTORS = ("Standard", "Hanafi")
 TIME_FORMATS = ("24h", "12h")
-HIGH_LAT_METHODS = ("Night Middle", "Angle Based", "One Seventh")
+HIGH_LAT_METHODS = ("Night Middle", "Angle Based", "One Seventh", "None")
 OFFSET_MINUTES = tuple(f"{x} min" for x in range(61))
 
 FASTING_RECORD_OPTIONS = ("Show", "Show in Ramazan", "Don't Show")

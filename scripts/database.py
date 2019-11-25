@@ -54,3 +54,9 @@ class Database():
 		cursor = self.db.cursor()
 		cursor.execute("SELECT fajr, dhuhr, asr, maghrib, isha FROM record WHERE date >= ? AND date <= ? ", (date, max_date))
 		return cursor.fetchall()
+
+	def get_locations_data(self):
+		'''Get all the locations data from the locations table'''
+		cursor = self.db.cursor()
+		cursor.execute("SELECT city, region, country, latitude, longitude, altitude, timezone FROM locations")
+		return cursor.fetchall()

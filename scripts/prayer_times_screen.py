@@ -70,17 +70,18 @@ class PrayerTimesScreen(Screen):
 		# Measure the time remaining in all prayers
 		times_remaining = []
 		for name, prayer_time in self.times_data.items():
-			if self.app.prayer_times.time_format == "12h":
-				prayer_time = datetime.strptime(prayer_time, "%I:%M %p")
-			else:
-				prayer_time = datetime.strptime(prayer_time, "%H:%M ")
+			if not prayer_time == "----":
+				if self.app.prayer_times.time_format == "12h":
+					prayer_time = datetime.strptime(prayer_time, "%I:%M %p")
+				else:
+					prayer_time = datetime.strptime(prayer_time, "%H:%M ")
 
-			# If the prayer time is less than the current time then add a day to the answer so that the result is always positive
-			if prayer_time < current_time:
-				prayer_time += timedelta(1)
+				# If the prayer time is less than the current time then add a day to the answer so that the result is always positive
+				if prayer_time < current_time:
+					prayer_time += timedelta(1)
 
-			dt = prayer_time - current_time
-			times_remaining.append((dt, name, prayer_time))
+				dt = prayer_time - current_time
+				times_remaining.append((dt, name, prayer_time))
 
 		time_left, next_prayer, prayer_time = min(times_remaining, key=lambda times_remaining: times_remaining[0])
 		time = (datetime.min + time_left).time()

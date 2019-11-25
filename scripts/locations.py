@@ -1,6 +1,5 @@
 '''Module for the location's form and all related functionality'''
 
-import json
 import threading
 
 from kivy.app import App
@@ -30,15 +29,14 @@ class LocationPopup(CustomModalView):
 
 	def create_locations_data(self):
 		'''Load the cities data and make locations datasets from it'''
-		with open("data/cities.json") as locations_data:
-			for data in json.load(locations_data):
-				# Case if region is not specified
-				if not data[2]:
-					location = ", ".join((data[0], data[1]))
-					self.locations_data[location] = data
-				else:
-					location = ", ".join((data[0], data[2], data[1]))
-					self.locations_data[location] = data
+		for data in self.app.database.get_locations_data():
+			# Case if region is not specified
+			if not data[1]:
+				location = ", ".join((data[0], data[2]))
+				self.locations_data[location] = data
+			else:
+				location = ", ".join(data[:3])
+				self.locations_data[location] = data
 
 		self.location_form = LocationForm(self)
 		self.latlon_form = LatLonPopup(self)
@@ -51,6 +49,11 @@ class LocationPopup(CustomModalView):
 		self.loading_popup = None
 		self.locations_data = {}
 		self.locations = set()
+
+		# Refresh the prayer times screen if the prayer times screen is open
+		if self.app.screen_manager.current == "prayer_times":
+			self.app.screen_manager.current = "dashboard"
+			self.app.screen_manager.current = "prayer_times"
 
 	def open_location_form(self):
 		'''Open the location form to select location with its name'''
