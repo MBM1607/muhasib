@@ -75,6 +75,7 @@
 	auto_dismiss: False
 	BoxLayout:
 		orientation: "horizontal"
+		spacing: dp(5)
 		Image:
 			id: gif
 			source: "data/loading.gif"
@@ -87,7 +88,7 @@
 			id: label
 			text: root.text
 			color: 0.2, 0.2, 0.2, 1
-			font_size: sp(15)
+			font_size: sp(12)
 			size_hint: None, None
 			height: gif.height
 			text_size: self.size

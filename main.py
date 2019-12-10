@@ -3,6 +3,8 @@
 import json
 from datetime import date, datetime, timedelta
 
+from jnius import autoclass
+from plyer.utils import platform
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.garden.navigationdrawer import NavigationDrawer
@@ -72,6 +74,18 @@ class MuhasibApp(App):
 		self.navigationdrawer.opening_transition = "out_sine"
 		self.navigationdrawer.set_side_panel(NavigationWidget())
 		self.navigationdrawer.set_main_panel(self.screen_manager)
+
+		
+		# Change the android task bar color if on android
+		if platform == "android":
+			WindowManager = autoclass("android.view.WindowManager")
+			R = autoclass("android.R")
+			activity = autoclass("mbm_1607.muhasib.PythonActivity")
+
+			window = activity.getWindow()
+			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+			window.setStatusBarColor(activity.getResources().getColor(R.color.holo_green_dark))
 
 		# Create interval events
 		Clock.schedule_once(lambda _: self.location_check())
