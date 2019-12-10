@@ -4,13 +4,13 @@ import json
 from datetime import date, datetime, timedelta
 
 from jnius import autoclass
-from plyer.utils import platform
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.garden.navigationdrawer import NavigationDrawer
 from kivy.lang.builder import Builder
 from kivy.properties import DictProperty
 from kivy.uix.screenmanager import ScreenManager
+from plyer.utils import platform
 from pytz import timezone
 from scripts.calendar_screen import CalendarScreen
 from scripts.custom_widgets import NavigationWidget
@@ -24,6 +24,12 @@ from scripts.prayer_times import PrayerTimes
 from scripts.prayer_times_screen import PrayerTimesScreen
 from scripts.qibla import QiblaScreen
 from scripts.settings import SettingsScreen
+
+try:
+	from android.runnable import run_on_ui_thread
+except ImportError:
+	# Ignore the import if not on android
+	pass
 
 Builder.load_file("kv/custom_widgets.kv")
 Builder.load_file("kv/prayer_widgets.kv")
@@ -74,18 +80,6 @@ class MuhasibApp(App):
 		self.navigationdrawer.opening_transition = "out_sine"
 		self.navigationdrawer.set_side_panel(NavigationWidget())
 		self.navigationdrawer.set_main_panel(self.screen_manager)
-
-		
-		# Change the android task bar color if on android
-		if platform == "android":
-			WindowManager = autoclass("android.view.WindowManager")
-			R = autoclass("android.R")
-			activity = autoclass("mbm_1607.muhasib.PythonActivity")
-
-			window = activity.getWindow()
-			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-			window.setStatusBarColor(activity.getResources().getColor(R.color.holo_green_dark))
 
 		# Create interval events
 		Clock.schedule_once(lambda _: self.location_check())
@@ -199,4 +193,18 @@ class MuhasibApp(App):
 		return self.navigationdrawer
 
 if __name__ == "__main__":
+	if platform == "android":
+		@run_on_ui_thread
+		def color_taskbar():
+			'''Color the android taskbar'''
+			LayoutParams = autoclass("android.view.WindowManager$LayoutParams")
+			Color = autoclass("android.graphics.Color")
+			activity = autoclass("org.kivy.android.PythonActivity")
+			window = activity.getWindow()
+			window.clearFlags(LayoutParams.FLAG_TRANSLUCENT_STATUS)
+			window.addFlags(LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+			window.setStatusBarColor(Color.parseColor("#ff10705e"))
+			
+		color_taskbar()
+
 	MuhasibApp().run()
