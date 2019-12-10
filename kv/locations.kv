@@ -24,21 +24,30 @@
 
 <LocationForm>:
 	location_text: location_text
+	suggestions_list: suggestions_list
 	BoxLayout:
 		orientation: "vertical"
 		CustomActionBar:
+			padding: dp(10), 0, 0, 0
+			spacing: dp(5)
 			IconButton:
 				icon: "data/back.png"
 				on_press: root.dismiss()
-		LocationText:
-			id: location_text
-			pos_hint: {'top': 1}
-			hint_text: "City, Region, Country"
-			focus: True
-			on_text_validate: root.check_input_location()
-		Widget:
-		LocationButton:
+			LocationText:
+				id: location_text
+				hint_text: "City, Region, Country"
+				focus: True
+				on_text_validate: root.check_input_location()
+		CustomRecycleView:
+			id: suggestions_list
+			viewclass: "LocationButton"
+			VerticalListLayout:
+				padding: 0, dp(10), 0, dp(10)
+				spacing: 0
+		TextButton:
 			text: "Submit"
+			size_hint_y: None
+			height: dp(48)
 			on_press: root.check_input_location()
 			pos_hint: {'bottom': 1}
 			size_hint_x: 1

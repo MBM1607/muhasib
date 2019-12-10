@@ -4,7 +4,6 @@ import threading
 
 from kivy.app import App
 from kivy.properties import ObjectProperty
-from kivy.uix.dropdown import DropDown
 
 import constants
 from custom_widgets import (CustomModalView, CustomTextInput, LoadingPopup,
@@ -97,44 +96,42 @@ class LocationPopup(CustomModalView):
 class LocationForm(CustomModalView):
 	'''Class for location form to get user's location'''
 	location_text = ObjectProperty()
+	suggestions_list = ObjectProperty()
 
 	def __init__(self, location_popup=None,**kwargs):
 		super().__init__(**kwargs)
 		self.location_popup = location_popup
 
-		self.suggestion_dropdown = LocationDropDown()
-		self.suggestion_dropdown.bind(on_select=self.change_location)
-
 	def check_input_location(self, _=None):
 		'''Check if the input location is a valid location if not then open the suggestions'''
 
 		if self.location_text.text in self.location_popup.locations_data.keys():
-			self.change_location(self, self.location_text.text)
+			self.change_location(self.location_text.text)
 		elif self.location_text.text:
 			self.location_popup.loading_popup.open()
-			loading_thread = threading.Thread(target=self.suggestion_dropdown_open)
+			loading_thread = threading.Thread(target=self.add_suggestions)
 			loading_thread.start()
 
-	def suggestion_dropdown_open(self):
-		'''Open and populate the location dropdown with suggestions'''
+	def add_suggestions(self):
+		'''Populate the layout with suggestions'''
 		text = self.location_text.text
 		suggestions = self.location_popup.give_location_suggestions(text)
+		self.suggestions_list.data = []
 		for i, key in enumerate(suggestions.keys()):
 			if is_even(i):
 				bg_color = constants.MAIN_COLOR
 			else:
 				bg_color = constants.SECONDRY_COLOR
 
-			btn = LocationButton(text=suggestions[key], background_color=bg_color)
-			btn.bind(on_release=lambda btn: self.suggestion_dropdown.select(btn.text))
-			self.suggestion_dropdown.add_widget(btn)
+			self.suggestions_list.data.append({"text": suggestions[key], "background_color": bg_color,
+												"func": self.change_location})
 
-		self.suggestion_dropdown.open(self.location_text)
 		self.location_popup.loading_popup.dismiss()
 
-	def change_location(self, instance, value):
+	def change_location(self, text):
 		'''Change the location to the selected value and close the form'''
-		self.location_popup.change_location(value)
+		self.location_popup.change_location(text)
+		self.suggestions_list.data = []
 		self.dismiss()
 
 
@@ -146,17 +143,16 @@ class LocationText(CustomTextInput):
 		self.text = value.title()
 
 
-class LocationDropDown(DropDown):
-	'''Dropdown for the location suggestions'''
-
-	def dismiss(self):
-		'''Clear children when dismissed'''
-		self.clear_widgets()
-		super().dismiss()
-
-
 class LocationButton(TextButton):
-	pass
+	'''Button for the location suggestions'''
+	func = ObjectProperty()
+
+	def __init__(self, func=print, **kwargs):
+		super().__init__(**kwargs)
+
+		self.func = func
+		self.bind(on_release=lambda _: self.func(self.text))
+
 
 
 class LatLonPopup(CustomModalView):
