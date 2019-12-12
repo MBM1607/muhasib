@@ -2,11 +2,10 @@
 
 from kivy.app import App
 from kivy.properties import ListProperty, ObjectProperty, StringProperty
-from kivy.uix.screenmanager import Screen
 
 import constants
-from custom_widgets import (CustomModalView, HorizontalIconTextButton,
-							TextButton)
+from custom_widgets import (CustomModalView, CustomScreen,
+							HorizontalIconTextButton, TextButton)
 
 CALENDAR_SETTINGS_DATA = [{"text": "Hijri Adjustment", "name": "hijri_adjustment"}]
 
@@ -33,7 +32,7 @@ SETTING_NAME_DATA = {"Calendar Settings": CALENDAR_SETTINGS_DATA,
 					 "Manual Time Adjustments": MANUAL_TIMES_DATA}
 
 
-class SettingsScreen(Screen):
+class SettingsScreen(CustomScreen):
 	'''Class for a settings screen to change settings'''
 	settings_list = ObjectProperty()
 

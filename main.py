@@ -27,6 +27,7 @@ from scripts.settings import SettingsScreen
 
 try:
 	from android.runnable import run_on_ui_thread
+	from android.loadingscreen import hide_loading_screen
 except ImportError:
 	# Ignore the import if not on android
 	pass
@@ -133,11 +134,18 @@ class MuhasibApp(App):
 		self.settings["timezone"] = tz
 		self.set_prayer_time_location()
 
+		# Refresh the screen currently opened if required
+		if hasattr(self.screen_manager.current_screen, "refresh"):
+			self.screen_manager.current_screen.refresh()
+
 	def location_check(self):
 		'''Check if location is present, if not open the form to get location'''
 
 		if self.location_data_present():
 			self.set_prayer_time_location()
+		elif platform == "android":
+			loc_popup = LocationPopup()
+			loc_popup.request_gps_permission()
 		else:
 			self.open_location_popup()
 
@@ -168,10 +176,18 @@ class MuhasibApp(App):
 							}
 			self.save_settings()
 
+	def display_settings(self, *args):
+		'''Overriding the kivy app settings display function to not display that ugly monstrosity'''
+		return False
+
 	def save_settings(self):
 		'''Save the settings in a json file'''
 		with open("data/settings.json", "w") as json_file:
 			json.dump(self.settings, json_file)
+
+	def on_pause(self):
+		'''Pause the app'''
+		return True
 
 	def on_settings(self, instance, value):
 		'''When config changes then upgrade prayer time configuration and save the settings'''
@@ -190,7 +206,10 @@ class MuhasibApp(App):
 		self.database.create_record(self.today)
 
 	def build(self):
+		if platform == "android":
+			hide_loading_screen()
 		return self.navigationdrawer
+
 
 if __name__ == "__main__":
 	if platform == "android":
@@ -204,7 +223,7 @@ if __name__ == "__main__":
 			window.clearFlags(LayoutParams.FLAG_TRANSLUCENT_STATUS)
 			window.addFlags(LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 			window.setStatusBarColor(Color.parseColor("#ff10705e"))
-			
+
 		color_taskbar()
 
 	MuhasibApp().run()

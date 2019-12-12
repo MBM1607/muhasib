@@ -1,6 +1,7 @@
 '''Module for prayer graph screen class and all the graphing functionality need to make the record graphs'''
 
-from datetime import date as datetime_date, timedelta
+from datetime import date as datetime_date
+from datetime import timedelta
 from itertools import accumulate, chain
 
 import matplotlib as mpl
@@ -10,13 +11,12 @@ from kivy.app import App
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvas
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty, OptionProperty, StringProperty
-from kivy.uix.screenmanager import Screen
 from matplotlib.gridspec import GridSpec
 from matplotlib.ticker import MaxNLocator
 
 from constants import (GREY_COLOR, PRAYER_CATEGORY_COLORS,
 					   PRAYER_CATEGORY_NAMES, PRAYER_NAMES)
-from custom_widgets import ColorBoxLayout, CustomModalView
+from custom_widgets import ColorBoxLayout, CustomModalView, CustomScreen
 from helpers import notify
 
 # Enter the custom fonts into the matplotlib fonts list
@@ -36,7 +36,7 @@ mpl.rcParams['ytick.major.pad'] = 0
 GRAPH_OPTIONS = ("Stacked Bar Graph", "Pie Graphs", "Bar Graphs")
 
 
-class PrayerGraphsScreen(Screen):
+class PrayerGraphsScreen(CustomScreen):
 	'''Screen for the record graphs'''
 	start_date = ObjectProperty()
 	end_date = ObjectProperty()
@@ -61,7 +61,7 @@ class PrayerGraphsScreen(Screen):
 			i = i % len(PRAYER_NAMES)
 			j = PRAYER_CATEGORY_NAMES.index(prayer)
 			results[i][j] += 1
-		
+
 		return results
 
 	def create_graph(self):
@@ -82,19 +82,19 @@ class PrayerGraphsScreen(Screen):
 				message = "No value for end date"
 			elif self.end_date.date <= self.start_date.date:
 				message = "End date is not greater than the start date"
-			notify(title="Invalid Graph Data", message=message,mode="toast")
+			notify(title="Invalid Graph Data", message=message, mode="toast")
 
 
 class GraphPopup(CustomModalView):
 	'''Graph popup to show the graph made with the chosen data and the chosen type'''
 	layout = ObjectProperty()
 	title = StringProperty()
-	
+
 	def __init__(self,**kwargs):
 		super().__init__(**kwargs)
 
 		self.bind(on_dismiss=lambda _: self.destroy_graph())
-	
+
 	def destroy_graph(self):
 		'''Remove the graph from the popup'''
 		self.layout.remove_widget(self.figure)
@@ -137,14 +137,14 @@ def create_bar_graphs(axes, sizes):
 		for y, (x, c) in enumerate(zip([x/2 for x in sizes[i]], sizes[i])):
 			if c:
 				ax.text(x, y, str(int(c)), ha='center', va='center', color='white')
-		
+
 		# Disable the ticks
 		ax.set_yticklabels([])
 		ax.set_xticklabels([])
 
 def create_record_graphs_figure(graphing_function, prayer_data):
 	'''Base function for creating five graphs with a legend aligned with it'''
-	
+
 	fig = plt.figure(constrained_layout=True)
 	grid_spec = GridSpec(3, 2, figure=fig)
 	fig.add_subplot(grid_spec[0, 1])
@@ -154,7 +154,7 @@ def create_record_graphs_figure(graphing_function, prayer_data):
 	fig.add_subplot(grid_spec[2, 1])
 
 	graphing_function(fig.axes, prayer_data)
-	
+
 	# Create the legend of prayer categories for all the pie graphs and place it in the first axes
 	ax = fig.add_subplot(grid_spec[0, 0])
 	handles = [mpatches.Patch(color=PRAYER_CATEGORY_COLORS[i], label=PRAYER_CATEGORY_NAMES[i]) for i in range(4)]
@@ -173,7 +173,7 @@ def create_record_bars_figure(prayer_data):
 
 def create_record_stacked_bar_figure(prayer_data):
 	'''Create a stacked horizontal bar graph displaying prayer data'''
-	
+
 	# Ready the data to be used to plot the graph
 	data_cum = [list(accumulate(x)) for x in prayer_data]
 
@@ -186,8 +186,8 @@ def create_record_stacked_bar_figure(prayer_data):
 
 	# Make horizontal bars for all the categories
 	for i, colname in enumerate(PRAYER_CATEGORY_NAMES):
-		
-		# Calculate the width of the bars and the starting coordinates of the bars 
+
+		# Calculate the width of the bars and the starting coordinates of the bars
 		widths = [x[i] for x in prayer_data]
 		accumul_data = [x[i] for x in data_cum]
 		starts = [x - y for x, y in zip(accumul_data, widths)]
@@ -197,13 +197,13 @@ def create_record_stacked_bar_figure(prayer_data):
 
 		ax.barh(PRAYER_NAMES, widths, left=starts, height=0.5,
 				label=colname, color=PRAYER_CATEGORY_COLORS[i])
-		
+
 		# Put the width number at the center of all bars
 		for y, (x, c) in enumerate(zip(xcenters, widths)):
 			if c:
 				ax.text(x, y, str(int(c)), ha='center', va='center',
 					color='white')
-	
+
 	ax.legend(ncol=len(PRAYER_CATEGORY_NAMES) // 2, bbox_to_anchor=(0, 1),
 			loc='lower left')
 

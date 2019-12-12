@@ -1,6 +1,7 @@
 '''Module for all the custom base widget classes'''
 
 from kivy.app import App
+from kivy.core.window import Window
 from kivy.metrics import dp
 from kivy.properties import (BooleanProperty, ListProperty, NumericProperty,
 							 StringProperty)
@@ -12,6 +13,7 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.modalview import ModalView
 from kivy.uix.recycleview import RecycleView
+from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
 
 import constants
@@ -42,6 +44,27 @@ class BaseToggleButton(ToggleButtonBehavior, ColorBoxLayout):
 class TextButton(BaseButton, Label):
 	'''A custom Button which is identical to the normal kivy button'''
 	pass
+
+
+class CustomScreen(Screen):
+	'''Custom class for functionality common to all screens'''
+
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+		self.screen_manager = App.get_running_app().screen_manager
+
+		Window.bind(on_keyboard=self.key_input)
+
+	def key_input(self, window, key, scancode, codepoint, modifier):
+		'''Handle keyboard input'''
+		if key == 27:
+			if self.screen_manager.current != "dashboard":
+				self.screen_manager.current = "dashboard"
+				return True
+			else:
+				return False
+		else:
+			return False
 
 
 class CustomActionBar(ColorBoxLayout):

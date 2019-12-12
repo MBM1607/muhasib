@@ -1,6 +1,5 @@
 #:kivy 1.11.1
 
-#:import MAIN_COLOR constants.MAIN_COLOR
 #:import NAVIGATION_DATA constants.NAVIGATION_DATA
 
 <Dashboard>:
@@ -8,11 +7,7 @@
 	BoxLayout:
 		orientation: "vertical"
 		spacing: dp(10)
-		CustomActionBar:
-			Widget:
-			IconButton:
-				icon: "data/location.png"
-				on_press: app.open_location_popup()
+		ScreenActionBar:
 		WidgetGrid:
 			cols: 2
 			viewclass: "DashboardButton"

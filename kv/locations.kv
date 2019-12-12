@@ -1,5 +1,4 @@
 #:kivy 1.11.1
-#:import MAIN_COLOR constants.MAIN_COLOR
 
 <LocationPopup>:
 	BoxLayout:
@@ -15,7 +14,7 @@
 		CustomRecycleView:
 			viewclass: "SettingTextButton"
 			data:
-				[{"text": "Locate Me", "on_press": root.locate_with_gps}, \
+				[{"text": "Locate Me", "on_press": root.request_gps_permission}, \
 				{"text": "Enter Latitude, Longitude", "on_press": root.open_latlon_popup}, \
 				{"text": "Select Manually", "on_press": root.open_location_form}]
 
@@ -36,7 +35,6 @@
 			LocationText:
 				id: location_text
 				hint_text: "City, Region, Country"
-				focus: True
 				on_text_validate: root.check_input_location()
 		CustomRecycleView:
 			id: suggestions_list

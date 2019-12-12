@@ -3,13 +3,21 @@
 import threading
 
 from kivy.app import App
+from kivy.clock import mainthread
 from kivy.properties import ObjectProperty
+from plyer import gps
+from plyer.utils import platform
 
 import constants
 from custom_widgets import (CustomModalView, CustomTextInput, LoadingPopup,
 							TextButton)
 from helpers import is_even, is_float, jaro_winkler, notify, vincenty_distance
 
+try:
+	from android.permissions import Permission, request_permissions
+except ImportError:
+	# Ignore the import if not on android
+	pass
 
 class LocationPopup(CustomModalView):
 	'''Location Popup with various methods to determine current location'''
@@ -18,16 +26,6 @@ class LocationPopup(CustomModalView):
 		super().__init__(**kwargs)
 		self.app = App.get_running_app()
 		self.locations_data = {}
-
-		self.bind(on_pre_open=lambda _: self.create_locations_data())
-		self.bind(on_dismiss=lambda _: self.destroy_locations_data())
-
-	def change_location(self, location):
-		'''Change the app's location to the location passed in'''
-		self.app.change_location(location, *self.locations_data[location][3:])
-
-	def create_locations_data(self):
-		'''Load the cities data and make locations datasets from it'''
 		for data in self.app.database.get_locations_data():
 			# Case if region is not specified
 			if not data[1]:
@@ -37,22 +35,49 @@ class LocationPopup(CustomModalView):
 				location = ", ".join(data[:3])
 				self.locations_data[location] = data
 
-		self.location_form = LocationForm(self)
-		self.latlon_form = LatLonPopup(self)
 		self.loading_popup = LoadingPopup()
 
+		self.bind(on_pre_open=lambda _: self.create_locations_data())
+		self.bind(on_dismiss=lambda _: self.destroy_locations_data())
+
+		if platform == "android":
+			gps.configure(on_location=self.gps_location)
+
+	def request_gps_permission(self):
+		if platform == "android":
+			request_permissions([Permission.ACCESS_FINE_LOCATION], callback=self.locate_with_gps)
+		else:
+			notify(title="GPS Needed", message="This device does not have a gps", mode="toast")
+
+	def locate_with_gps(self, perm_names, perms):
+		'''Select a location with gps'''
+		if perms[0]:
+			gps.start(1000, 1)
+			self.loading_popup.open()
+		else:
+			notify(title="GPS Needed", message="Permission is needed to get the position", mode="toast")
+
+	@mainthread
+	def gps_location(self, lat=0.0, lon=0.0, speed=0.0, bearing=0.0, altitude=0.0, accuracy=0.0):
+		gps.stop()
+		thread = threading.Thread(target=self.get_location_from_coords, args=(lat, lon, altitude))
+		thread.start()
+
+	def change_location(self, location):
+		'''Change the app's location to the location passed in'''
+		self.app.change_location(location, *self.locations_data[location][3:])
+
+	def create_locations_data(self):
+		'''Create the location popups'''
+
+		self.location_form = LocationForm(self)
+		self.latlon_form = LatLonPopup(self)
+
 	def destroy_locations_data(self):
-		'''Get rid of all the locations datasets in the memory'''
+		'''Remove the location popups'''
 		self.location_form = None
 		self.latlon_form = None
 		self.loading_popup = None
-		self.locations_data = {}
-		self.locations = set()
-
-		# Refresh the prayer times screen if the prayer times screen is open
-		if self.app.screen_manager.current == "prayer_times":
-			self.app.screen_manager.current = "dashboard"
-			self.app.screen_manager.current = "prayer_times"
 
 	def open_location_form(self):
 		'''Open the location form to select location with its name'''
@@ -62,11 +87,7 @@ class LocationPopup(CustomModalView):
 		'''Open the latlong popup to select location with manual latitude, longitude'''
 		self.latlon_form.open()
 
-	def locate_with_gps(self):
-		'''Select a location with gps'''
-		pass
-
-	def get_location_from_latlon(self, lat, lon):
+	def get_location_from_coords(self, lat, lon, alt=0.0):
 		'''Get location from latitude and longitude'''
 		distances = {}
 		for location in self.locations_data.keys():
@@ -78,7 +99,10 @@ class LocationPopup(CustomModalView):
 				pass
 
 		entered_location = distances[min(distances)]
-		self.app.change_location(entered_location, lat, lon, *self.locations_data[entered_location][5:])
+		if not alt:
+			alt = self.locations_data[entered_location][5]
+
+		self.app.change_location(entered_location, lat, lon, alt, *self.locations_data[entered_location][6:])
 		self.loading_popup.dismiss()
 
 	def give_location_suggestions(self, text):
@@ -185,7 +209,7 @@ class LatLonPopup(CustomModalView):
 
 	def get_location(self, lat, lon):
 		'''Get the location from these latitude and longitude by calling popup's method'''
-		self.location_popup.get_location_from_latlon(lat, lon)
+		self.location_popup.get_location_from_coords(lat, lon)
 		self.dismiss()
 
 

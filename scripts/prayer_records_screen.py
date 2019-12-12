@@ -3,10 +3,11 @@
 from datetime import date
 
 from kivy.properties import ObjectProperty
-from kivy.uix.screenmanager import Screen
+
+from custom_widgets import CustomScreen
 
 
-class PrayerRecordsScreen(Screen):
+class PrayerRecordsScreen(CustomScreen):
 	'''Screen to show today's record list'''
 
 	record_lists = ObjectProperty()
@@ -21,7 +22,7 @@ class PrayerRecordsScreen(Screen):
 	def set_date(self):
 		'''Set the datepicker to the current day'''
 		self.datepicker.date = date.today()
-	
+
 	def remove_date(self):
 		'''Remove the date and the records lists'''
 		self.datepicker.text = ""

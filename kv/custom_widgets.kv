@@ -16,9 +16,6 @@
 			pos: self.pos
 			size: self.size
 
-<Screen>:
-	ColorBoxLayout:
-	
 <BaseButton, BaseToggleButton>:
 	state_image: self.background_normal if self.state == 'normal' else self.background_down
 	canvas.before:
@@ -93,6 +90,9 @@
 			height: gif.height
 			text_size: self.size
 			valign: "center"
+
+<CustomScreen>:
+	ColorBoxLayout:
 
 <CustomTextInput>:
 	multiline: False

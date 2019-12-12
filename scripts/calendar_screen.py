@@ -9,12 +9,11 @@ from kivy.properties import (BooleanProperty, NumericProperty, ObjectProperty,
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
-from kivy.uix.screenmanager import Screen
 
 import constants
 import convertdate.islamic as islamic
-from custom_widgets import (
-	BaseToggleButton, CustomModalView, CustomTextInput, TextButton)
+from custom_widgets import (BaseToggleButton, CustomModalView, CustomScreen,
+							CustomTextInput, TextButton)
 
 MONTHS = ["January", "Feburary", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "December"]
@@ -24,7 +23,7 @@ ISLAMIC_MONTHS = ("Muharram", "Safar", "Rabi' al-Awwal", "Rabi' ath-Thani",
 			"Ramadan", "Shawwal", "Dhu al-Qa‘dah", "Dhu al-Hijjah")
 
 
-class CalendarScreen(Screen):
+class CalendarScreen(CustomScreen):
 	'''Screen providing a calendar to go through and change or view any dates's records'''
 
 	date_text = StringProperty()

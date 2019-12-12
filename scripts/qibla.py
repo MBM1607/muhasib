@@ -2,10 +2,11 @@
 
 from kivy.app import App
 from kivy.properties import NumericProperty, ObjectProperty, StringProperty
-from kivy.uix.screenmanager import Screen
+
+from custom_widgets import CustomScreen
 
 
-class QiblaScreen(Screen):
+class QiblaScreen(CustomScreen):
 	'''Class for the screen containing compass'''
 	needle_angle = NumericProperty(0)
 	location_text = StringProperty()
@@ -16,6 +17,10 @@ class QiblaScreen(Screen):
 		self.app = App.get_running_app()
 		self.bind(on_pre_enter=lambda _: self.set_qibla_direction())
 		self.bind(on_leave=lambda _: self.remove_qibla_direction())
+
+	def refresh(self):
+		'''Refresh the screen'''
+		self.set_qibla_direction()
 
 	def remove_qibla_direction(self):
 		'''Remove the qibla direction'''
