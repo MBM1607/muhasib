@@ -4,6 +4,7 @@ from kivy.app import App
 from kivy.properties import NumericProperty, ObjectProperty, StringProperty
 
 from custom_widgets import CustomScreen
+from helpers import notify
 
 
 class QiblaScreen(CustomScreen):
@@ -29,8 +30,10 @@ class QiblaScreen(CustomScreen):
 
 	def set_qibla_direction(self):
 		'''Set the qibla direction from current position'''
-
-		self.location_text = self.app.settings["location"]
-		qibla_direction = self.app.prayer_times.get_qibla()
-		self.needle_angle = (360 - qibla_direction) % 360
-		self.title = f"Qibla ({self.needle_angle}°)"
+		if self.app.location_data_present():
+			self.location_text = self.app.settings["location"]
+			qibla_direction = self.app.prayer_times.get_qibla()
+			self.needle_angle = (360 - qibla_direction) % 360
+			self.title = f"Qibla ({self.needle_angle}°)"
+		else:
+			notify(title="Location Needed", message="Location is needed to get qibla direction")

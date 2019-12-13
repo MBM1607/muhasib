@@ -33,20 +33,24 @@ class PrayerTimesScreen(CustomScreen):
 
 	def create_prayers_data(self):
 		'''Create the prayer times data and schedule the upgrade event'''
-		self.update_prayer_times()
+		if self.app.location_data_present():
+			self.update_prayer_times()
 
-		self.update_clock_event = Clock.schedule_interval(lambda _: self.update_prayer_labels(), 30)
-		self.location.text = self.app.settings["location"]
+			self.update_clock_event = Clock.schedule_interval(lambda _: self.update_prayer_labels(), 30)
+			self.location.text = self.app.settings["location"]
+		else:
+			notify(title="Location Needed", message="Location is needed to calculate the prayer times")
 
 	def destroy_prayer_data(self):
 		'''Remove all prayer data from the screen and cancel the upgrade event'''
-		self.update_clock_event.cancel()
-		self.times_data = {}
-		self.prayer_times = {}
-		self.times_list.data = []
-		self.current_time.text = ""
-		self.location.text = ""
-		self.next_prayer.text = ""
+		if self.app.location_data_present():
+			self.update_clock_event.cancel()
+			self.times_data = {}
+			self.prayer_times = {}
+			self.times_list.data = []
+			self.current_time.text = ""
+			self.location.text = ""
+			self.next_prayer.text = ""
 
 	def update_prayer_times(self):
 		'''Update the prayer times'''

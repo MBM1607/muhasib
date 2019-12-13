@@ -58,7 +58,7 @@ class LocationPopup(CustomModalView):
 			self.timeout_event = Clock.schedule_once(lambda _: self.gps_timeout(), 60)
 			self.loading_popup.open()
 		else:
-			notify(title="Location Permission", message="Permission is needed to get the position")
+			notify(title="Location Permission", message="Permission is needed to get location")
 
 	def gps_timeout(self):
 		'''Cancel the gps location callback and send a toast notification informing the user'''
