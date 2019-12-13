@@ -3,7 +3,7 @@
 import threading
 
 from kivy.app import App
-from kivy.clock import mainthread
+from kivy.clock import mainthread, Clock
 from kivy.properties import ObjectProperty
 from plyer import gps
 from plyer.utils import platform
@@ -42,26 +42,39 @@ class LocationPopup(CustomModalView):
 
 		if platform == "android":
 			gps.configure(on_location=self.gps_location)
+			self.located = False
 
 	def request_gps_permission(self):
+		'''Get the user's permission to access gps'''
 		if platform == "android":
 			request_permissions([Permission.ACCESS_FINE_LOCATION], callback=self.locate_with_gps)
 		else:
-			notify(title="GPS Needed", message="This device does not have a gps", mode="toast")
+			notify(title="GPS Needed", message="This device does not have a gps")
 
 	def locate_with_gps(self, perm_names, perms):
 		'''Select a location with gps'''
 		if perms[0]:
 			gps.start(1000, 1)
+			self.timeout_event = Clock.schedule_once(lambda _: self.gps_timeout(), 60)
 			self.loading_popup.open()
 		else:
-			notify(title="GPS Needed", message="Permission is needed to get the position", mode="toast")
+			notify(title="Location Permission", message="Permission is needed to get the position")
+
+	def gps_timeout(self):
+		'''Cancel the gps location callback and send a toast notification informing the user'''
+		gps.stop()
+		notify(title="GPS Timeout", message="Check your internet connection")
+		self.loading_popup.dismiss()
 
 	@mainthread
 	def gps_location(self, lat=0.0, lon=0.0, speed=0.0, bearing=0.0, altitude=0.0, accuracy=0.0):
-		gps.stop()
-		thread = threading.Thread(target=self.get_location_from_coords, args=(lat, lon, altitude))
-		thread.start()
+		'''Gps on location callback to get location from latitude and longitude'''
+		if not self.located:
+			self.located = True
+			gps.stop()
+			self.timeout_event.cancel()
+			thread = threading.Thread(target=self.get_location_from_coords, args=(lat, lon, altitude))
+			thread.start()
 
 	def change_location(self, location):
 		'''Change the app's location to the location passed in'''
@@ -205,7 +218,7 @@ class LatLonPopup(CustomModalView):
 				message = "Longitude has no value"
 			else:
 				message = "One or more values cannot be converted to decimals"
-			notify(title=title,message=message, mode="toast")
+			notify(title=title,message=message)
 
 	def get_location(self, lat, lon):
 		'''Get the location from these latitude and longitude by calling popup's method'''

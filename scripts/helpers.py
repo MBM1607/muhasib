@@ -22,18 +22,18 @@ def is_float(s):
 	except ValueError:
 		return False
 
-def notify(title="", message="", timeout=10, ticker="", mode="simple"):
+def notify(title="", message="", timeout=4, ticker="", mode="toast"):
 	'''Send a notification'''
-	kwargs = {'title': title, 'message': message, 'ticker': ticker}
+	kwargs = {"title": title, "message": message, "ticker": ticker, "timeout": timeout}
 
-	if mode == 'simple':
-		kwargs['app_name'] = "Muhasib"
+	if mode == "simple":
+		kwargs["app_name"] = "Muhasib"
 		if platform == "win":
-			kwargs['app_icon'] = "data/logo.ico"
+			kwargs["app_icon"] = "data/logo.ico"
 		else:
-			kwargs['app_icon'] = "data/logo.png"
-	elif mode == 'toast':
-		kwargs['toast'] = True
+			kwargs["app_icon"] = "data/logo.png"
+	elif mode == "toast":
+		kwargs["toast"] = True
 	notification.notify(**kwargs)
 
 def vincenty_distance(lat1, lon1, lat2, lon2):

@@ -66,6 +66,8 @@ class MuhasibApp(App):
 		self.screen_manager = ScreenManager()
 		self.navigationdrawer = NavigationDrawer()
 
+		self.location_popup = LocationPopup()
+
 		# Add all the screens onto the screen manager
 		self.screen_manager.add_widget(Dashboard())
 		self.screen_manager.add_widget(PrayerTimesScreen())
@@ -85,10 +87,6 @@ class MuhasibApp(App):
 		# Create interval events
 		Clock.schedule_once(lambda _: self.location_check())
 		Clock.schedule_interval(lambda _: self.day_pass_check(), 3600)
-
-	def open_location_popup(self):
-		'''Open the location popup to select location'''
-		LocationPopup().open()
 
 	def get_current_time(self):
 		'''Get the UTC time of the timezone currently set in settings'''
@@ -144,10 +142,9 @@ class MuhasibApp(App):
 		if self.location_data_present():
 			self.set_prayer_time_location()
 		elif platform == "android":
-			loc_popup = LocationPopup()
-			loc_popup.request_gps_permission()
+			self.location_popup.request_gps_permission()
 		else:
-			self.open_location_popup()
+			self.location_popup.open()
 
 	def location_data_present(self):
 		'''Check if the location data is in the configuration'''

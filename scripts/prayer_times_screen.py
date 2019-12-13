@@ -117,7 +117,7 @@ class PrayerTimesScreen(CustomScreen):
 	def display_notification(self, prayer):
 		'''Display the prayer toast notification'''
 
-		notify(title=prayer, message=self.prayer_times[prayer.lower()], mode="toast")
+		notify(title=prayer, message=self.prayer_times[prayer.lower()], timeout=2)
 
 
 class PrayerButton(DoubleTextButton):

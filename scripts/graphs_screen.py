@@ -82,7 +82,7 @@ class PrayerGraphsScreen(CustomScreen):
 				message = "No value for end date"
 			elif self.end_date.date <= self.start_date.date:
 				message = "End date is not greater than the start date"
-			notify(title="Invalid Graph Data", message=message, mode="toast")
+			notify(title="Invalid Graph Data", message=message)
 
 
 class GraphPopup(CustomModalView):

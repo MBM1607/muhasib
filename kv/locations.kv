@@ -3,23 +3,26 @@
 <LocationPopup>:
 	BoxLayout:
 		orientation: "vertical"
-		spacing: dp(5)
+		spacing: dp(10)
 		CustomActionBar:
 			IconButton:
 				icon: "data/back.png"
 				on_press: root.dismiss()
 			Label:
-				text: app.settings["location"]
+				text: "Location Options"
 				font_size: sp(12)
+		Label:
+			color: 0.2, 0.2, 0.2, 1
+			size_hint_y: None
+			size: self.texture_size
+			text: app.settings["location"]
 		CustomRecycleView:
 			viewclass: "SettingTextButton"
 			data:
 				[{"text": "Locate Me", "on_press": root.request_gps_permission}, \
 				{"text": "Enter Latitude, Longitude", "on_press": root.open_latlon_popup}, \
 				{"text": "Select Manually", "on_press": root.open_location_form}]
-
 			VerticalListLayout:
-				padding: 0
 
 <LocationForm>:
 	location_text: location_text
