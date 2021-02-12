@@ -1,6 +1,7 @@
 '''Main python file for running and defining the app object.'''
 
 import json
+from os.path import join
 from datetime import date, datetime, timedelta
 
 from kivy.app import App
@@ -48,7 +49,7 @@ Builder.load_file("kv/calendar_screen.kv")
 class MuhasibApp(App):
 	'''Muhasib app object'''
 	use_kivy_settings = False
-	icon = 'data/logo.png'
+	icon = join("data", "logo.png")
 	settings = DictProperty()
 
 	def __init__(self, **kwargs):
@@ -157,7 +158,7 @@ class MuhasibApp(App):
 	def load_settings(self):
 		'''Load the setttings configuration from the file and make the file if it doesn't exist'''
 		try:
-			with open("data/settings.json", "r") as json_file:
+			with open("settings.json", "r") as json_file:
 				self.settings = json.load(json_file)
 		except FileNotFoundError:
 			self.settings = {
@@ -180,7 +181,7 @@ class MuhasibApp(App):
 
 	def save_settings(self):
 		'''Save the settings in a json file'''
-		with open("data/settings.json", "w") as json_file:
+		with open(join("data", "settings.json"), "w") as json_file:
 			json.dump(self.settings, json_file)
 
 	def on_pause(self):

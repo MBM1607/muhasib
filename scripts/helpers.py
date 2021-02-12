@@ -2,6 +2,7 @@
 
 import datetime
 import math
+from os.path import join
 
 from plyer import notification
 from plyer.utils import platform
@@ -29,9 +30,9 @@ def notify(title="", message="", timeout=4, ticker="", mode="toast"):
 	if mode == "simple":
 		kwargs["app_name"] = "Muhasib"
 		if platform == "win":
-			kwargs["app_icon"] = "data/logo.ico"
+			kwargs["app_icon"] = join("data", "logo.ico")
 		else:
-			kwargs["app_icon"] = "data/logo.png"
+			kwargs["app_icon"] = join("data", "logo.png")
 	elif mode == "toast":
 		kwargs["toast"] = True
 	try:

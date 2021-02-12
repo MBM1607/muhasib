@@ -1,4 +1,5 @@
 import sqlite3
+from os.path import join
 from datetime import date, timedelta
 
 import convertdate.islamic as islamic
@@ -8,7 +9,7 @@ class Database():
 	'''Class to handle all the database related functionality'''
 
 	def __init__(self):
-		self.db = sqlite3.connect("data/muhasib.sqlite", detect_types=sqlite3.PARSE_DECLTYPES)
+		self.db = sqlite3.connect(join("data", "muhasib.sqlite"), detect_types=sqlite3.PARSE_DECLTYPES)
 
 	def create_record(self, date):
 		'''Create a record of this date'''
@@ -23,7 +24,7 @@ class Database():
 				fast_required = False
 			cursor.execute("INSERT INTO record(date, fast_required) VALUES(?, ?)", (date, fast_required))
 			self.db.commit()
-	
+
 	def update_record(self, date, fajr="Not Prayed", dhuhr="Not Prayed", asr="Not Prayed", maghrib="Not Prayed",
 							isha="Not Prayed", fast=0, quran=0, hadees=0):
 		'''Update the prayer record of the date in record table'''
@@ -43,7 +44,7 @@ class Database():
 		cursor.execute("SELECT fajr, dhuhr, asr, maghrib, isha, fast_required, fast, quran_study, hadees_study FROM record WHERE date = ?", (date,))
 		record = cursor.fetchone()
 		return record
-	
+
 	def get_prayer_record_range(self, date, max_date=date.today()):
 		'''Get the prayer records of all days after the specified date and upto the maximum date'''
 
