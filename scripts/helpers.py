@@ -34,7 +34,10 @@ def notify(title="", message="", timeout=4, ticker="", mode="toast"):
 			kwargs["app_icon"] = "data/logo.png"
 	elif mode == "toast":
 		kwargs["toast"] = True
-	notification.notify(**kwargs)
+	try:
+		notification.notify(**kwargs)
+	except NotImplementedError:
+		print("Error: System does not support notifications")
 
 def vincenty_distance(lat1, lon1, lat2, lon2):
 	'''Given two points calculate the distance between the two points using vincenty's formula'''

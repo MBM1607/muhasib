@@ -1,5 +1,5 @@
 {
 	"python.linting.enabled": true,
 	"python.linting.pylintEnabled": true,
-	"python.pythonPath": "../kivy_venv\\Scripts\\python.exe"
+	"python.pythonPath": ".venv/bin/python"
 }

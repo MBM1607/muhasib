@@ -87,9 +87,6 @@ class PrayerTimesScreen(CustomScreen):
 				else:
 					prayer_time = datetime.strptime(prayer_time, "%H:%M ")
 
-				# If the prayer time is less than the current time then add a day to the answer so that the result is always positive
-				#if prayer_time < current_time:
-				#	prayer_time += timedelta(1)
 				if prayer_time > current_time:
 					dt = prayer_time - current_time
 					dt = (datetime.min + dt).time()
@@ -109,14 +106,16 @@ class PrayerTimesScreen(CustomScreen):
 
 					self.prayer_times[name] = dt_str
 
-		time_left, next_prayer, prayer_time = min(prayers_left, key=lambda prayer: prayer[2])
-
-		self.prayer_time_left.text = time_left
-		# Set the next prayer text
-		self.next_prayer.text = next_prayer.capitalize() + ": " + self.app.get_formatted_time(prayer_time)
-
-		# Put colored focus on the next prayer time
-		self.focus_next_prayer(next_prayer.split(":")[0].capitalize())
+		if prayers_left:
+			time_left, next_prayer, prayer_time = min(prayers_left, key=lambda prayer: prayer[2])
+			self.prayer_time_left.text = time_left
+			# Set the next prayer text
+			self.next_prayer.text = next_prayer.capitalize() + ": " + self.app.get_formatted_time(prayer_time)
+			# Put colored focus on the next prayer time
+			self.focus_next_prayer(next_prayer.split(":")[0].capitalize())
+		else:
+			self.prayer_time_left.text = ""
+			self.next_prayer.text = ""
 
 	def display_notification(self, prayer):
 		'''Display the prayer toast notification'''

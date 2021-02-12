@@ -3,15 +3,15 @@
 import json
 from datetime import date, datetime, timedelta
 
-from jnius import autoclass
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.garden.navigationdrawer import NavigationDrawer
 from kivy.lang.builder import Builder
 from kivy.properties import DictProperty
 from kivy.uix.screenmanager import ScreenManager
 from plyer.utils import platform
 from pytz import timezone
+
+from scripts.navigationdrawer import NavigationDrawer
 from scripts.calendar_screen import CalendarScreen
 from scripts.custom_widgets import NavigationWidget
 from scripts.dashboard import Dashboard
@@ -28,6 +28,7 @@ from scripts.settings import SettingsScreen
 try:
 	from android.runnable import run_on_ui_thread
 	from android.loadingscreen import hide_loading_screen
+	from jnius import autoclass
 except ImportError:
 	# Ignore the import if not on android
 	pass

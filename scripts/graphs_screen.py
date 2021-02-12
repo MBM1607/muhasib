@@ -8,12 +8,12 @@ import matplotlib as mpl
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 from kivy.app import App
-from kivy.garden.matplotlib.backend_kivyagg import FigureCanvas
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty, OptionProperty, StringProperty
 from matplotlib.gridspec import GridSpec
 from matplotlib.ticker import MaxNLocator
 
+from backend_kivyagg import FigureCanvas
 from constants import (GREY_COLOR, PRAYER_CATEGORY_COLORS,
 					   PRAYER_CATEGORY_NAMES, PRAYER_NAMES)
 from custom_widgets import ColorBoxLayout, CustomModalView, CustomScreen
